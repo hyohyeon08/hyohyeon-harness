@@ -1,0 +1,33 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node {{INTENT_ROOT}}/dist/hooks/session-start.js" }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "node {{INTENT_ROOT}}/dist/hooks/pre-write-guard.js" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node {{INTENT_ROOT}}/dist/hooks/stop-continue.js" }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node {{INTENT_ROOT}}/dist/hooks/pre-compact.js" }
+        ]
+      }
+    ]
+  }
+}
