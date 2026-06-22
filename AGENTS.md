@@ -15,16 +15,17 @@ Personal AI coding harness. Not a platform, not a framework.
 | Hook architecture (4 hooks) | [AGENT.md §7](AGENT.md) |
 | Security / anti-cheat | [AGENT.md §8](AGENT.md) |
 | Claude Code 어댑터 | [CLAUDE.md](CLAUDE.md) |
+| Codex 어댑터 | [.codex/hooks.template.json](.codex/hooks.template.json) · `.agents/skills` 설치 |
 | Zod 계약 | [src/runtime/schemas.ts](src/runtime/schemas.ts) |
 
 ## Skills (필요할 때만 로드됨 — progressive disclosure)
 
 | Skill | Trigger | Purpose |
 |-------|---------|---------|
-| Interview | `/interview` | GAP 줄이기 → 공유 이해 spec (구현 전) |
-| Intent | `/intent` | 의도(무엇·왜·스코프·DoD) 선언 → draft |
-| Wiki | `/wiki` | LLM Wiki compile/lint (지식 축적) |
-| Postmortem | `/postmortem` | 실패 → 원인·재발방지 → 위키 + 규칙 분기 |
+| Interview | Claude `/interview` · Codex `$interview` | GAP 줄이기 → 공유 이해 spec (구현 전) |
+| Intent | Claude `/intent` · Codex `$intent` | 의도(무엇·왜·스코프·DoD) 선언 → draft |
+| Wiki | Claude `/wiki` · Codex `$wiki` | LLM Wiki compile/lint (지식 축적) |
+| Postmortem | Claude `/postmortem` · Codex `$postmortem` | 실패 → 원인·재발방지 → 위키 + 규칙 분기 |
 
 ## State Files
 
@@ -35,7 +36,8 @@ Personal AI coding harness. Not a platform, not a framework.
 | `intents/*.json` | 의도 (draft → approved → done) |
 | `rules/*.json` | 게이트 규칙 (draft → approved, 사람만) |
 | `wiki/index.md` | 위키 인덱스 (SessionStart에 주입) |
-| `wiki/articles/*.md` | 위키 본문 (`intent wiki show`로 drill-in) |
+| `wiki/knowledge/*.md` | 정보 위키 본문 (`intent wiki show`로 drill-in) |
+| `wiki/problems/*.md` | 문제/실패 위키 본문 (`intent wiki show`로 drill-in) |
 | `handoff/latest.md` | 세션 인수인계 (PreCompact가 생성) |
 | `handoff/scratch.json` | 작업 중 노트 (dead-ends / next / questions) |
 | `decisions.md` `learnings.md` | 결정 / 학습 로그 |

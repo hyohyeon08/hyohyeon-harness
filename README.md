@@ -29,7 +29,7 @@
 ```bash
 npm install
 npm run build
-npm test          # 86 tests
+npm test          # 99 tests
 ```
 
 다른 프로젝트에 적용 (한 줄):
@@ -37,12 +37,15 @@ npm test          # 86 tests
 ```bash
 npm link                              # 하네스 레포에서 한 번 — `intent`를 전역 등록
 cd /path/to/your-project
-intent setup --install-hooks          # .intent/ + .claude/settings.json(hook) + .claude/skills/
+intent setup --install-hooks          # .intent/ + Claude/Codex hooks + skills
 ```
 
-hook은 `.intent/` 없는 프로젝트에선 no-op이라, 전역 hook 등록도 다른 프로젝트를 건드리지 않는다.
+`--install-hooks` 는 Claude Code(`.claude/settings.json`, `.claude/skills`)와 Codex(`.codex/hooks.json`, `.agents/skills`)를 함께 설치한다. 한쪽만 필요하면 `--install-claude` 또는 `--install-codex` 를 쓴다.
+hook은 `.intent/` 없는 프로젝트에선 no-op이라, 전역/공유 hook 등록도 다른 프로젝트를 건드리지 않는다.
 
 ## 워크플로
+
+Claude Code에서는 `/intent` 형태로, Codex에서는 `$intent` 형태로 repo skill을 명시 호출한다. 자연어 요청과 skill description이 맞으면 자동 선택될 수도 있다.
 
 ```
 /interview  →  /intent  →  코딩  →  dod check / learn  →  complete
@@ -75,7 +78,7 @@ hook은 `.intent/` 없는 프로젝트에선 no-op이라, 전역 hook 등록도 
 |---|---|
 | Edit/Write 직전 | ① `.intent/` 직접 편집 ② 승인된 forbid 규칙 ③ 승인된 의도 없는 비사소 변경 ④ 의도 스코프 밖 변경 |
 | 세션 종료 | DoD 미완 / behavior 의도의 학습 노트 미작성 |
-| 승인 명령 | `CLAUDECODE=1`(AI 셸)에서 `approve` 거부 — 사람 셸에서만 |
+| 승인 명령 | Claude/Codex AI 셸에서 `approve` 거부 — 사람 셸에서만 |
 
 **사소한 변경**(≤5줄·주석/포맷)은 게이트를 통과한다 — 마찰 최소화.
 
@@ -98,6 +101,6 @@ skills/        intent · interview · wiki · postmortem (SKILL.md)
 
 ## 상태
 
-v1(게이트) + v2(지식) 완성. 86/86 테스트 통과. breathe in/out 호흡 게이트는 v3 후보.
+v1(게이트) + v2(지식) 완성. Claude Code와 Codex 어댑터 지원. 99/99 테스트 통과. breathe in/out 호흡 게이트는 v3 후보.
 
 MIT License.
