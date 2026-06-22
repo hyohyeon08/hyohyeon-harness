@@ -10,6 +10,7 @@ export interface RawEdit {
   newText: string
   oldText: string
   isNewFile: boolean
+  deletesFile?: boolean
 }
 
 // Language-agnostic heuristics. Comment lines are excluded before testing, so
@@ -41,5 +42,6 @@ export function extractChange(edit: RawEdit): Change {
     addsControlFlow: CONTROL_FLOW_RE.test(codeText),
     onlyCommentsOrFormat: nonBlank.length > 0 && codeLines.length === 0,
     isNewFile: edit.isNewFile,
+    deletesFile: edit.deletesFile ?? false,
   }
 }

@@ -1,6 +1,6 @@
 /**
  * SessionStart — memory injection. Writes open intents + recent decisions and
- * learnings to stderr (the context channel) so a fresh session resumes work
+ * learnings as structured additional context so a fresh session resumes work
  * instead of re-deriving it. The cure for "컨텍스트 단절". Silent-fail.
  */
 import { readStdinJson } from './_stdin.js'
@@ -11,7 +11,14 @@ async function main(): Promise<void> {
   const payload = await readStdinJson()
   const root = rootOf(payload)
   if (!isIntentProject(root)) return
-  process.stderr.write(readSessionContext(root) + '\n')
+  process.stdout.write(
+    JSON.stringify({
+      hookSpecificOutput: {
+        hookEventName: 'SessionStart',
+        additionalContext: readSessionContext(root),
+      },
+    }),
+  )
 }
 
 main().catch((e) => {

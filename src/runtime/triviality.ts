@@ -18,6 +18,8 @@ export interface Change {
   onlyCommentsOrFormat: boolean
   /** This change creates a file that did not exist. */
   isNewFile: boolean
+  /** This change deletes an existing file. */
+  deletesFile?: boolean
 }
 
 export type Triviality = 'trivial' | 'non-trivial'
@@ -28,6 +30,9 @@ export interface TrivialityVerdict {
 }
 
 export function classifyChange(change: Change, maxLines = 5): TrivialityVerdict {
+  if (change.deletesFile) {
+    return { triviality: 'non-trivial', reason: 'deletes file' }
+  }
   if (change.isNewFile) {
     return { triviality: 'non-trivial', reason: 'new file' }
   }

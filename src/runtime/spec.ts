@@ -29,7 +29,7 @@ export function draftSpec(root: string, title: string): { slug: string } {
   return { slug }
 }
 
-/** Human-only sign-off (gated on CLAUDECODE in the CLI). */
+/** Human-only sign-off (gated on AI-agent environment markers in the CLI). */
 export function approveSpec(root: string, slug: string, by = 'human'): void {
   if (!specExists(root, slug)) throw new Error(`no such spec: ${slug}`)
   appendArticle(root, slug, composeSpecStatus('approved', by, new Date().toISOString().slice(0, 10)))
