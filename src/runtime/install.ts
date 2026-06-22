@@ -15,6 +15,26 @@ export function mergeHooks(existing: Record<string, any>, incomingHooks: Record<
   return { ...existing, hooks: { ...(existing.hooks ?? {}), ...incomingHooks } }
 }
 
+function isIntentHookGroup(value: unknown): boolean {
+  return JSON.stringify(value).includes('/dist/hooks/')
+}
+
+/**
+ * Merge Codex hooks without deleting unrelated groups on the same event.
+ * Reinstalling replaces only previously installed intent groups.
+ */
+export function mergeCodexHooks(
+  existing: Record<string, any>,
+  incomingHooks: Record<string, unknown>,
+): Record<string, any> {
+  const hooks = { ...(existing.hooks ?? {}) }
+  for (const [event, incoming] of Object.entries(incomingHooks)) {
+    const current = Array.isArray(hooks[event]) ? hooks[event].filter((group: unknown) => !isIntentHookGroup(group)) : []
+    hooks[event] = [...current, ...(Array.isArray(incoming) ? incoming : [incoming])]
+  }
+  return { ...existing, hooks }
+}
+
 /** Render settings.template.json and merge it into <project>/.claude/settings.json. */
 export function installHooks(harnessRoot: string, projectRoot: string): string {
   const tpl = readFileSync(join(harnessRoot, '.claude', 'settings.template.json'), 'utf8')
@@ -26,11 +46,20 @@ export function installHooks(harnessRoot: string, projectRoot: string): string {
   return settingsPath
 }
 
-/** Copy each skill folder into <project>/.claude/skills/. Returns the count. */
-export function installSkills(harnessRoot: string, projectRoot: string): number {
+/** Render hooks.template.json and merge it into <project>/.codex/hooks.json. */
+export function installCodexHooks(harnessRoot: string, projectRoot: string): string {
+  const tpl = readFileSync(join(harnessRoot, '.codex', 'hooks.template.json'), 'utf8')
+  const rendered = JSON.parse(renderTemplate(tpl, harnessRoot)) as { hooks: Record<string, unknown> }
+  const hooksPath = join(projectRoot, '.codex', 'hooks.json')
+  const existing = existsSync(hooksPath) ? JSON.parse(readFileSync(hooksPath, 'utf8')) : {}
+  mkdirSync(dirname(hooksPath), { recursive: true })
+  writeFileSync(hooksPath, JSON.stringify(mergeCodexHooks(existing, rendered.hooks), null, 2) + '\n', 'utf8')
+  return hooksPath
+}
+
+function copySkills(harnessRoot: string, dst: string): number {
   const src = join(harnessRoot, 'skills')
   if (!existsSync(src)) return 0
-  const dst = join(projectRoot, '.claude', 'skills')
   mkdirSync(dst, { recursive: true })
   let n = 0
   for (const name of readdirSync(src)) {
@@ -40,4 +69,14 @@ export function installSkills(harnessRoot: string, projectRoot: string): number 
     n++
   }
   return n
+}
+
+/** Copy each skill folder into <project>/.claude/skills/. Returns the count. */
+export function installSkills(harnessRoot: string, projectRoot: string): number {
+  return copySkills(harnessRoot, join(projectRoot, '.claude', 'skills'))
+}
+
+/** Copy each skill folder into <project>/.agents/skills/. Returns the count. */
+export function installCodexSkills(harnessRoot: string, projectRoot: string): number {
+  return copySkills(harnessRoot, join(projectRoot, '.agents', 'skills'))
 }

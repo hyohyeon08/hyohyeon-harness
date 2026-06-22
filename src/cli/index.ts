@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join, resolve } from 'node:path'
 import { paths } from '../state/paths.js'
-import { installHooks, installSkills } from '../runtime/install.js'
+import { installCodexHooks, installCodexSkills, installHooks, installSkills } from '../runtime/install.js'
 
 /** Find the harness install root (works for both dist/ and ts-node src/ layouts). */
 function findHarnessRoot(start: string): string {
@@ -51,7 +51,7 @@ import type { RuleKind } from '../runtime/schemas.js'
 /** Approvals are human-only — refuse when an AI agent runs the CLI. */
 function assertHumanShell(): void {
   if (isAiAgent()) {
-    console.error('approval is human-only (CLAUDECODE=1 detected). Run this from your own shell.')
+    console.error('approval is human-only (AI agent environment detected). Run this from your own shell.')
     process.exit(1)
   }
 }
@@ -75,16 +75,27 @@ function cmdSetup(): void {
   mkdirSync(p.rulesDir, { recursive: true })
   console.log(`intent: initialized .intent/ at ${p.base}`)
 
-  if (args.includes('--install-hooks')) {
+  const installAll = args.includes('--install-hooks')
+  const installClaude = installAll || args.includes('--install-claude')
+  const installCodex = installAll || args.includes('--install-codex')
+  if (installClaude || installCodex) {
     if (root === HARNESS_ROOT) {
       console.error('refusing to install hooks into the harness repo itself; run from a target project')
       process.exit(1)
     }
-    const settings = installHooks(HARNESS_ROOT, root)
-    const n = installSkills(HARNESS_ROOT, root)
-    console.log(`intent: hooks → ${settings}`)
-    console.log(`intent: ${n} skills → ${join(root, '.claude', 'skills')}`)
-    console.log('intent: restart Claude Code (new session) to load hooks/skills.')
+    if (installClaude) {
+      const settings = installHooks(HARNESS_ROOT, root)
+      const n = installSkills(HARNESS_ROOT, root)
+      console.log(`intent: Claude hooks → ${settings}`)
+      console.log(`intent: ${n} Claude skills → ${join(root, '.claude', 'skills')}`)
+    }
+    if (installCodex) {
+      const hooks = installCodexHooks(HARNESS_ROOT, root)
+      const n = installCodexSkills(HARNESS_ROOT, root)
+      console.log(`intent: Codex hooks → ${hooks}`)
+      console.log(`intent: ${n} Codex skills → ${join(root, '.agents', 'skills')}`)
+    }
+    console.log('intent: restart Claude Code/Codex (new session) to load hooks/skills.')
   }
 }
 
