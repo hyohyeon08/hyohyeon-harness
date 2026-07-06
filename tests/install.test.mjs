@@ -93,6 +93,10 @@ test('CLI setup --install-codex installs a complete Codex target', () => {
 
   assert.equal(result.status, 0, result.stderr)
   assert.equal(existsSync(join(project, '.intent', 'state.json')), true)
+  assert.equal(existsSync(join(project, '.intent', 'runs')), true)
+  assert.equal(existsSync(join(project, '.intent', 'raw', 'typecheck-results')), true)
+  assert.equal(existsSync(join(project, '.intent', 'raw', 'unit_test-results')), true)
+  assert.equal(existsSync(join(project, '.intent', 'raw', 'custom-results')), true)
   assert.equal(existsSync(join(project, '.codex', 'hooks.json')), true)
   assert.equal(existsSync(join(project, '.agents', 'skills', 'intent', 'SKILL.md')), true)
   assert.match(result.stdout, /Codex hooks/)

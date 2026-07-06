@@ -16,6 +16,8 @@ import { loadIntents } from '../src/runtime/intents.js'
 import { isProtectedPath } from '../src/runtime/guard.js'
 import { checkRules } from '../src/runtime/rules.js'
 import { loadRules } from '../src/runtime/rules.js'
+import { activeContract, checkContractForbiddenScope } from '../src/runtime/contracts.js'
+import { tryAppendSpanToActiveRun } from '../src/runtime/observability.js'
 import { rootOf, isIntentProject } from './_env.js'
 
 function deny(reason: string): void {
@@ -94,6 +96,20 @@ function editsFromPayload(root: string, payload: Record<string, any>): RawEdit[]
   return []
 }
 
+function recordEditSpan(root: string, tool: string, edit: RawEdit, status: 'ok' | 'blocked', reason: string): void {
+  tryAppendSpanToActiveRun(root, {
+    kind: tool.includes('apply_patch') ? 'apply_patch' : 'edit',
+    name: `pre-write ${tool || 'write'}`,
+    status,
+    attributes: {
+      tool,
+      path: edit.path,
+      isNewFile: edit.isNewFile,
+      reason,
+    },
+  })
+}
+
 async function main(): Promise<void> {
   const payload = await readStdinJson()
   const root = rootOf(payload)
@@ -101,30 +117,46 @@ async function main(): Promise<void> {
   const edits = editsFromPayload(root, payload)
   if (edits.length === 0) return // not ours -> allow
 
+  const tool = toolName(payload)
   const rules = loadRules(root)
   const intents = loadIntents(root)
+  const contract = activeContract(root)
   for (const edit of edits) {
     // anti-cheat: .intent/ is human-only — the AI must use the `intent` CLI.
     if (isProtectedPath(edit.path, root)) {
-      deny(
+      const reason =
         '[intent guard] .intent/ is human-only state. Use the `intent` CLI ' +
-          '(e.g. `intent approve <id>`), do not edit state files directly.',
-      )
+        '(e.g. `intent approve <id>`), do not edit state files directly.'
+      recordEditSpan(root, tool, edit, 'blocked', reason)
+      deny(reason)
       return
     }
 
     // approved gate rules are hard blocks — checked before the intent gate.
     const ruleHit = checkRules(edit.path, edit.newText, rules)
     if (ruleHit.blocked) {
-      deny(`[intent rule] ${ruleHit.reason}`)
+      const reason = `[intent rule] ${ruleHit.reason}`
+      recordEditSpan(root, tool, edit, 'blocked', reason)
+      deny(reason)
+      return
+    }
+
+    const contractHit = checkContractForbiddenScope(edit.path, contract)
+    if (contractHit.blocked) {
+      const reason = `[contract gate] ${contractHit.reason}`
+      recordEditSpan(root, tool, edit, 'blocked', reason)
+      deny(reason)
       return
     }
 
     const decision = decideGate(extractChange(edit), intents)
     if (!decision.allow) {
-      deny(`[intent gate] ${decision.reason}`)
+      const reason = `[intent gate] ${decision.reason}`
+      recordEditSpan(root, tool, edit, 'blocked', reason)
+      deny(reason)
       return
     }
+    recordEditSpan(root, tool, edit, 'ok', decision.reason)
   }
 }
 

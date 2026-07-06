@@ -45,13 +45,23 @@ import {
 import { loadRules, draftRule, approveRule } from '../runtime/rules.js'
 import { recordPostmortem } from '../runtime/postmortem.js'
 import { draftSpec, approveSpec } from '../runtime/spec.js'
+import { activeRun, createRun, findRun, loadRuns, updateRun } from '../runtime/runs.js'
+import { runVerification } from '../runtime/verification.js'
+import { createContract, findContract, loadContracts } from '../runtime/contracts.js'
+import { findDetection, loadDetections, resolveDetection, unIngestedDetections } from '../runtime/detections.js'
 import { isAiAgent } from '../runtime/env.js'
-import type { RuleKind } from '../runtime/schemas.js'
+import {
+  DetectionResultSchema,
+  VerificationEvidenceTypeSchema,
+  type DetectionRecord,
+  type RuleKind,
+  type SprintContract,
+} from '../runtime/schemas.js'
 
-/** Approvals are human-only — refuse when an AI agent runs the CLI. */
-function assertHumanShell(): void {
+/** Human decisions are human-only — refuse when an AI agent runs the CLI. */
+function assertHumanShell(action = 'approval'): void {
   if (isAiAgent()) {
-    console.error('approval is human-only (AI agent environment detected). Run this from your own shell.')
+    console.error(`${action} is human-only (AI agent environment detected). Run this from your own shell.`)
     process.exit(1)
   }
 }
@@ -69,6 +79,11 @@ function cmdSetup(): void {
   if (!existsSync(p.config)) writeJsonAtomic(p.config, DEFAULT_CONFIG)
   if (!existsSync(p.decisions)) writeFileSync(p.decisions, '# Decisions\n\n', 'utf8')
   if (!existsSync(p.learnings)) writeFileSync(p.learnings, '# Learnings\n\n', 'utf8')
+  mkdirSync(p.runsDir, { recursive: true })
+  mkdirSync(p.rawDir, { recursive: true })
+  for (const type of VerificationEvidenceTypeSchema.options) {
+    mkdirSync(p.verificationResultsDir(type), { recursive: true })
+  }
   mkdirSync(p.wikiKnowledgeDir, { recursive: true })
   mkdirSync(p.wikiProblemsDir, { recursive: true })
   if (!existsSync(p.wikiIndex)) rebuildIndex(root)
@@ -215,8 +230,243 @@ function cmdComplete(): void {
     console.error('usage: intent complete <id>')
     process.exit(1)
   }
-  const i = completeIntent(root, id)
+  const i = completeIntent(root, id, activeRun(root))
   console.log(`completed ${i.id}`)
+}
+
+function runLine(run: { runId: string; status: string; phase: string; objective: string; intentId: string | null }): string {
+  const intent = run.intentId ? ` (${run.intentId})` : ''
+  return `${run.runId} [${run.status}/${run.phase}] ${run.objective}${intent}`
+}
+
+function cmdRun(): void {
+  const sub = args[0]
+  try {
+    if (sub === 'start') {
+      const [intentId, objective] = [args[1], args[2]]
+      if (!intentId || !objective) {
+        console.error('usage: intent run start <intentId> "<objective>"')
+        process.exit(1)
+      }
+      findIntent(intentId)
+      const run = createRun(root, { intentId, objective })
+      console.log(`started ${run.runId} for ${intentId}: ${run.objective}`)
+    } else if (sub === 'status') {
+      const run = activeRun(root)
+      if (!run) {
+        console.log('active run: none')
+        return
+      }
+      console.log('active run')
+      console.log(`  ${runLine(run)}`)
+      if (run.nextAction) console.log(`  next: ${run.nextAction}`)
+      if (run.notes.length > 0) {
+        console.log('  notes:')
+        for (const note of run.notes) console.log(`    - ${note}`)
+      }
+    } else if (sub === 'list' || !sub) {
+      const runs = loadRuns(root)
+      if (runs.length === 0) {
+        console.log('no runs')
+        return
+      }
+      for (const run of runs) {
+        const intent = run.intentId ? `  ${run.intentId}` : ''
+        console.log(`${run.runId}  [${run.status}/${run.phase}]  ${run.objective}${intent}`)
+      }
+    } else if (sub === 'note') {
+      const text = args[1]
+      if (!text) {
+        console.error('usage: intent run note "<text>"')
+        process.exit(1)
+      }
+      const run = activeRun(root)
+      if (!run) {
+        console.error('no active run')
+        process.exit(1)
+      }
+      const updated = updateRun(root, run.runId, (r) => ({ ...r, notes: [...r.notes, text] }))
+      console.log(`noted ${updated.runId}`)
+    } else {
+      console.error('usage: intent run list | start <intentId> "<objective>" | status | note "<text>"')
+      process.exit(1)
+    }
+  } catch (e) {
+    console.error((e as Error).message)
+    process.exit(1)
+  }
+}
+
+function cmdVerify(): void {
+  const sub = args[0]
+  try {
+    if (sub === 'list') {
+      const run = activeRun(root)
+      if (!run) {
+        console.error('no active run')
+        process.exit(1)
+      }
+      if (run.evidence.length === 0) {
+        console.log(`no evidence for ${run.runId}`)
+        return
+      }
+      for (const evidence of run.evidence) {
+        const exit = evidence.exitCode === null ? 'null' : String(evidence.exitCode)
+        const command = [evidence.command, ...evidence.args].join(' ')
+        console.log(`${evidence.evidenceId}  [${evidence.status}]  ${evidence.type}  exit=${exit}  ${command}`)
+        console.log(`  log: ${evidence.logPath}`)
+      }
+      return
+    }
+
+    const type = VerificationEvidenceTypeSchema.safeParse(sub)
+    const separator = args.indexOf('--')
+    if (!type.success || separator !== 1 || separator === args.length - 1) {
+      console.error('usage: intent verify <type> -- <command...> | intent verify list')
+      process.exit(1)
+    }
+    const commandAndArgs = args.slice(separator + 1)
+    const [verifyCommand, ...verifyArgs] = commandAndArgs
+    const run = activeRun(root)
+    if (!run) {
+      console.error('no active run')
+      process.exit(1)
+    }
+
+    const evidence = runVerification(root, {
+      runId: run.runId,
+      type: type.data,
+      command: verifyCommand,
+      args: verifyArgs,
+    })
+    const exit = evidence.exitCode === null ? 'null' : String(evidence.exitCode)
+    console.log(`verify ${evidence.status}: ${run.runId} ${evidence.type} exit=${exit}`)
+    console.log(`log: ${evidence.logPath}`)
+    if (evidence.exitCode !== 0) process.exit(evidence.exitCode ?? 1)
+  } catch (e) {
+    console.error((e as Error).message)
+    process.exit(1)
+  }
+}
+
+function contractSummary(contract: SprintContract): string {
+  return `${contract.contractId} [${contract.status}] ${contract.runId} ${contract.intentId}`
+}
+
+function printContract(contract: SprintContract): void {
+  console.log(contractSummary(contract))
+  console.log('allowed scope:')
+  for (const item of contract.allowedScope) console.log(`  - ${item}`)
+  console.log('forbidden scope:')
+  for (const item of contract.forbiddenScope.length > 0 ? contract.forbiddenScope : ['—']) console.log(`  - ${item}`)
+  console.log('required checks:')
+  for (const item of contract.requiredChecks.length > 0 ? contract.requiredChecks : ['—']) console.log(`  - ${item}`)
+  console.log('definition of done:')
+  for (const item of contract.definitionOfDone.length > 0 ? contract.definitionOfDone : ['—']) console.log(`  - ${item}`)
+}
+
+function cmdContract(): void {
+  const sub = args[0]
+  try {
+    if (sub === 'draft') {
+      const runId = args[1] ?? activeRun(root)?.runId
+      if (!runId) {
+        console.error('usage: intent contract draft [runId]')
+        process.exit(1)
+      }
+      const run = findRun(root, runId)
+      if (!run) throw new Error(`no such run: ${runId}`)
+      if (!run.intentId) throw new Error(`run ${run.runId} has no linked intent`)
+      const intent = findIntent(run.intentId)
+      const contract = createContract(root, { runId: run.runId, intent })
+      updateRun(root, run.runId, (r) => ({ ...r, contractId: contract.contractId }))
+      console.log(`contract drafted ${contract.contractId} for ${run.runId} (${intent.id})`)
+      console.log(`required: ${contract.requiredChecks.join(', ') || 'none'}`)
+    } else if (sub === 'show') {
+      const id = args[1]
+      if (!id) {
+        console.error('usage: intent contract show <contractId>')
+        process.exit(1)
+      }
+      const contract = findContract(root, id)
+      if (!contract) throw new Error(`no such contract: ${id}`)
+      printContract(contract)
+    } else if (sub === 'list' || !sub) {
+      const contracts = loadContracts(root)
+      if (contracts.length === 0) {
+        console.log('no contracts')
+        return
+      }
+      for (const contract of contracts) console.log(contractSummary(contract))
+    } else {
+      console.error('usage: intent contract list | draft [runId] | show <contractId>')
+      process.exit(1)
+    }
+  } catch (e) {
+    console.error((e as Error).message)
+    process.exit(1)
+  }
+}
+
+function detectionLine(detection: DetectionRecord): string {
+  const run = detection.runId ? ` (${detection.runId})` : ''
+  return `${detection.detectionId} [${detection.result}] ${detection.type} ${detection.title}${run}`
+}
+
+function printDetection(detection: DetectionRecord): void {
+  console.log(detectionLine(detection))
+  console.log(`summary: ${detection.summary}`)
+  if (detection.intentId) console.log(`intent: ${detection.intentId}`)
+  if (detection.runId) console.log(`run: ${detection.runId}`)
+  console.log('evidence:')
+  for (const ref of detection.evidenceRefs.length > 0 ? detection.evidenceRefs : ['—']) console.log(`  - ${ref}`)
+  console.log('attributes:')
+  console.log(JSON.stringify(detection.attributes, null, 2))
+  if (detection.resolution) console.log(`resolution: ${detection.resolution}`)
+  if (detection.resolvedAt) console.log(`resolvedAt: ${detection.resolvedAt}`)
+}
+
+function cmdDetection(): void {
+  const sub = args[0]
+  try {
+    if (sub === 'list') {
+      const detections = loadDetections(root)
+      if (detections.length === 0) {
+        console.log('no detections')
+        return
+      }
+      for (const detection of detections) console.log(detectionLine(detection))
+      return
+    }
+    if (sub === 'show') {
+      const id = args[1]
+      if (!id) {
+        console.error('usage: intent detection show <id>')
+        process.exit(1)
+      }
+      const detection = findDetection(root, id)
+      if (!detection) throw new Error(`no such detection: ${id}`)
+      printDetection(detection)
+      return
+    }
+    if (sub === 'resolve') {
+      assertHumanShell('detection resolve')
+      const [id, resultText, resolution] = [args[1], args[2], args[3]]
+      const result = DetectionResultSchema.safeParse(resultText)
+      if (!id || !result.success || result.data === 'candidate' || !resolution) {
+        console.error('usage: intent detection resolve <id> <confirmed|dismissed> "<resolution>"')
+        process.exit(1)
+      }
+      const detection = resolveDetection(root, id, result.data, resolution)
+      console.log(`resolved ${detection.detectionId} as ${detection.result}`)
+      return
+    }
+    console.error('usage: intent detection list | show <id> | resolve <id> <confirmed|dismissed> "<resolution>"')
+    process.exit(1)
+  } catch (e) {
+    console.error((e as Error).message)
+    process.exit(1)
+  }
 }
 
 function cmdHandoff(): void {
@@ -268,10 +518,12 @@ function cmdWiki(): void {
       process.stdout.write(existsSync(p.wikiLog) ? readFileSync(p.wikiLog, 'utf8') : '(no wiki log yet)\n')
     } else if (sub === 'lint') {
       const r = lintWiki(listArticles(root))
+      const unIngested = unIngestedDetections(root).map((detection) => detection.detectionId)
       console.log(`orphans: ${r.orphans.join(', ') || 'none'}`)
       console.log(`dead links: ${r.deadLinks.map((d) => `${d.from}→${d.to}`).join(', ') || 'none'}`)
       console.log(`low confidence: ${r.lowConfidence.join(', ') || 'none'}`)
       console.log(`open problems: ${r.openProblems.join(', ') || 'none'}`)
+      console.log(`un-ingested detections: ${unIngested.join(', ') || 'none'}`)
     } else if (sub === 'list' || !sub) {
       for (const a of listArticles(root)) {
         const st = a.status ? ` (${a.status})` : ''
@@ -341,7 +593,7 @@ function cmdSpec(): void {
 
 /** Consulted by the Stop hook (Phase 4). Exit 1 + reasons when the gate blocks. */
 function cmdStopCheck(): void {
-  const decision = evaluateStopGate(loadIntents(root))
+  const decision = evaluateStopGate(loadIntents(root), activeRun(root))
   if (decision.block) {
     console.error('intent: session blocked — unfinished work:')
     for (const r of decision.reasons) console.error(`  - ${r}`)
@@ -378,6 +630,18 @@ switch (command) {
   case 'complete':
     cmdComplete()
     break
+  case 'run':
+    cmdRun()
+    break
+  case 'verify':
+    cmdVerify()
+    break
+  case 'contract':
+    cmdContract()
+    break
+  case 'detection':
+    cmdDetection()
+    break
   case 'stop-check':
     cmdStopCheck()
     break
@@ -398,7 +662,7 @@ switch (command) {
     break
   default:
     console.error(
-      'commands: setup | status | draft | approve | list | dod | check | learn | complete | stop-check | handoff | wiki | rule | postmortem | spec',
+      'commands: setup | status | draft | approve | list | dod | check | learn | complete | run | verify | contract | detection | stop-check | handoff | wiki | rule | postmortem | spec',
     )
     process.exit(command ? 1 : 0)
 }
