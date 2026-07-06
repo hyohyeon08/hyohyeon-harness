@@ -1,5 +1,13 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { existsSync, mkdtempSync, readFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import {
+  createDetection,
+  recordDetectionWikiPage,
+  unIngestedDetections,
+} from '../dist/src/runtime/detections.js'
 import {
   composeIndex,
   extractLinks,
@@ -9,6 +17,10 @@ import {
   lintWiki,
   areaOf,
 } from '../dist/src/runtime/wiki.js'
+
+function tempRoot() {
+  return mkdtempSync(join(tmpdir(), 'intent-wiki-'))
+}
 
 const art = (over) => {
   const type = over.type ?? 'concept'
@@ -94,4 +106,46 @@ test('lintWiki reports open problems', () => {
 
 test('overview pages are not treated as orphans', () => {
   assert.deepEqual(lintWiki([art({ slug: 'overview', type: 'overview' })]).orphans, [])
+})
+
+test('recordDetectionWikiPage writes a problem wiki page with detection evidence', () => {
+  const root = tempRoot()
+  const detection = createDetection(root, {
+    type: 'false_success',
+    runId: 'RUN-001',
+    intentId: 'INT-001',
+    title: 'Completion attempted without required evidence',
+    summary: 'unit_test evidence was missing.',
+    evidenceRefs: ['intent:INT-001', 'run:RUN-001', '.intent/raw/unit_test-results/RUN-001.log'],
+    attributes: { missingEvidenceTypes: ['unit_test'] },
+  })
+
+  const recorded = recordDetectionWikiPage(root, detection.detectionId)
+
+  assert.equal(recorded.slug, 'detection-det-001-completion-attempted-without-required-evidence')
+  assert.equal(existsSync(recorded.file), true)
+  const md = readFileSync(recorded.file, 'utf8')
+  assert.match(md, /type: issue/)
+  assert.match(md, /status: open/)
+  assert.match(md, /unit_test evidence was missing\./)
+  assert.match(md, /\.intent\/raw\/unit_test-results\/RUN-001\.log/)
+  assert.match(readFileSync(join(root, '.intent', 'wiki', 'index.md'), 'utf8'), /detection-det-001/)
+})
+
+test('unIngestedDetections reports detections that do not have wiki pages yet', () => {
+  const root = tempRoot()
+  const detection = createDetection(root, {
+    type: 'thrashing',
+    runId: 'RUN-001',
+    title: 'Repeated command failure',
+    summary: 'npm test failed repeatedly.',
+    evidenceRefs: ['span:RUN-001:SPAN-001'],
+    attributes: { command: 'npm.cmd' },
+  })
+
+  assert.deepEqual(unIngestedDetections(root).map((d) => d.detectionId), ['DET-001'])
+
+  recordDetectionWikiPage(root, detection.detectionId)
+
+  assert.deepEqual(unIngestedDetections(root), [])
 })

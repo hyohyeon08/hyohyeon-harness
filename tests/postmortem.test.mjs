@@ -1,6 +1,11 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { slugify, composePostmortem } from '../dist/src/runtime/postmortem.js'
+import {
+  slugify,
+  composePostmortem,
+  composeDetectionWikiBody,
+  detectionWikiSlug,
+} from '../dist/src/runtime/postmortem.js'
 
 test('slugify makes kebab-case from ascii', () => {
   assert.equal(slugify('Stock Restore On Cancel!'), 'stock-restore-on-cancel')
@@ -30,4 +35,29 @@ test('composePostmortem references a drafted rule when present', () => {
 test('composePostmortem omits rule line when absent', () => {
   const md = composePostmortem({ cause: 'c', prevention: 'p' })
   assert.doesNotMatch(md, /gate rule/)
+})
+
+test('composeDetectionWikiBody renders detection refs and attributes', () => {
+  const detection = {
+    detectionId: 'DET-001',
+    type: 'thrashing',
+    result: 'candidate',
+    runId: 'RUN-001',
+    intentId: 'INT-001',
+    title: 'Repeated command failure',
+    summary: 'npm test failed repeatedly.',
+    evidenceRefs: ['span:RUN-001:SPAN-001', '.intent/raw/unit_test-results/RUN-001.log'],
+    attributes: { command: 'npm.cmd', exitCode: 1 },
+    resolution: null,
+    createdAt: '2026-07-06T07:00:00.000Z',
+    updatedAt: '2026-07-06T07:00:00.000Z',
+    resolvedAt: null,
+  }
+
+  assert.equal(detectionWikiSlug(detection), 'detection-det-001-repeated-command-failure')
+  const md = composeDetectionWikiBody(detection)
+  assert.match(md, /## Detection/)
+  assert.match(md, /- id: DET-001/)
+  assert.match(md, /span:RUN-001:SPAN-001/)
+  assert.match(md, /"command": "npm.cmd"/)
 })

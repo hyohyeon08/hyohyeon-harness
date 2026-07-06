@@ -1,6 +1,6 @@
 import { newArticle, appendArticle, listArticles } from './wiki.js'
 import { draftRule } from './rules.js'
-import type { RuleKind } from './schemas.js'
+import type { DetectionRecord, RuleKind } from './schemas.js'
 
 /** kebab-case slug that keeps unicode letters (so Korean titles stay meaningful). */
 export function slugify(title: string): string {
@@ -32,11 +32,34 @@ export function composePostmortem(parts: PostmortemParts): string {
   return lines.join('\n')
 }
 
+export function detectionWikiSlug(detection: DetectionRecord): string {
+  return `detection-${detection.detectionId.toLowerCase()}-${slugify(detection.title)}`
+}
+
+export function composeDetectionWikiBody(detection: DetectionRecord): string {
+  const lines = [
+    `_recorded ${new Date().toISOString().slice(0, 10)}_`,
+    '',
+    '## Detection',
+    `- id: ${detection.detectionId}`,
+    `- type: ${detection.type}`,
+    `- result: ${detection.result}`,
+  ]
+  if (detection.intentId) lines.push(`- intent: ${detection.intentId}`)
+  if (detection.runId) lines.push(`- run: ${detection.runId}`)
+  lines.push('', '## 요약', detection.summary || '—', '', '## 증거')
+  for (const ref of detection.evidenceRefs.length > 0 ? detection.evidenceRefs : ['—']) lines.push(`- ${ref}`)
+  lines.push('', '## 속성', '```json', JSON.stringify(detection.attributes, null, 2), '```')
+  if (detection.resolution) lines.push('', '## 판단', detection.resolution)
+  return lines.join('\n')
+}
+
 export interface RecordOptions {
   title: string
   cause: string
   prevention: string
   rule?: { kind: RuleKind; pattern: string }
+  sourceDetectionId?: string | null
 }
 
 /**
@@ -49,7 +72,9 @@ export function recordPostmortem(root: string, opts: RecordOptions): { slug: str
 
   let ruleId: string | undefined
   if (opts.rule) {
-    ruleId = draftRule(root, opts.rule.kind, opts.rule.pattern, `재발 방지: ${opts.title}`).id
+    ruleId = draftRule(root, opts.rule.kind, opts.rule.pattern, `재발 방지: ${opts.title}`, {
+      sourceDetectionId: opts.sourceDetectionId ?? null,
+    }).id
   }
 
   const body = composePostmortem({ cause: opts.cause, prevention: opts.prevention, ruleRef: ruleId })

@@ -25,8 +25,18 @@ function nextRuleId(root: string): string {
   return `RULE-${String(loadRules(root).length + 1).padStart(3, '0')}`
 }
 
+export interface DraftRuleOptions {
+  sourceDetectionId?: string | null
+}
+
 /** AI may draft a rule (e.g. from a postmortem); only a human can approve it. */
-export function draftRule(root: string, kind: RuleKind, pattern: string, reason: string): Rule {
+export function draftRule(
+  root: string,
+  kind: RuleKind,
+  pattern: string,
+  reason: string,
+  opts: DraftRuleOptions = {},
+): Rule {
   const now = new Date().toISOString()
   const rule = RuleSchema.parse({
     id: nextRuleId(root),
@@ -35,6 +45,7 @@ export function draftRule(root: string, kind: RuleKind, pattern: string, reason:
     reason,
     status: 'draft',
     approvedBy: null,
+    sourceDetectionId: opts.sourceDetectionId ?? null,
     createdAt: now,
     updatedAt: now,
   })
