@@ -34,7 +34,7 @@
 
 ### 1.2 현재 상태
 
-- v1(게이트 레이어) + v2(지식 레이어) 완성. Claude Code와 Codex 어댑터 지원. 99/99 테스트 통과.
+- v1(게이트 레이어) + v2(지식 레이어) 완성. Claude Code와 Codex 어댑터 지원. 200/200 테스트 통과.
 - TypeScript + zod + `node:test`. 외부 런타임 의존성 없음(zod만).
 - 미구현: README 외 docs/ 없음(의도적), breathe in/out 호흡 게이트(v3 후보), git 초기화.
 
@@ -103,10 +103,19 @@ intent/
 ```bash
 npm ci            # 또는 npm install
 npm run build     # tsc → dist/
-npm test          # build → node --test tests/*.test.mjs (99)
+npm test          # build → node --test tests/*.test.mjs (200)
 
 node dist/src/cli/index.js setup    # .intent/ 골격 생성
 node dist/src/cli/index.js status   # 현재 상태
+```
+
+Windows PowerShell에서 `npm.ps1` 실행 정책 오류가 나면 npm 명령은 `npm.cmd`로 실행한다.
+
+```powershell
+npm.cmd ci
+npm.cmd run build
+npm.cmd run typecheck
+npm.cmd test
 ```
 
 다른 프로젝트 적용 (자동): `npm link`로 `intent`를 전역 등록 후, 대상 프로젝트에서
@@ -131,6 +140,8 @@ Red (실패 테스트)  →  Green (최소 구현)  →  Refactor (구조 개선
 npm run typecheck   # tsc --noEmit, TS 에러 0
 npm test            # 모든 테스트 통과
 ```
+
+Windows PowerShell에서는 같은 검증을 `npm.cmd run typecheck`, `npm.cmd test`로 실행한다.
 
 - 런타임 로직은 전부 **순수 함수**로 두고 단위 테스트한다 (hook은 그 위의 얇은 어댑터).
 - 한 번에 하나의 DoD만 진행한다 (`intent dod <id>`).

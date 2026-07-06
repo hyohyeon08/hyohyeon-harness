@@ -29,7 +29,16 @@
 ```bash
 npm install
 npm run build
-npm test          # 99 tests
+npm test          # 200 tests
+```
+
+Windows PowerShell에서 `npm.ps1` 실행 정책 오류가 나면 npm 스크립트는 `npm.cmd`로 실행한다.
+
+```powershell
+npm.cmd install
+npm.cmd run build
+npm.cmd run typecheck
+npm.cmd test
 ```
 
 다른 프로젝트에 적용 (한 줄):
@@ -64,6 +73,7 @@ Claude Code에서는 `/intent` 형태로, Codex에서는 `$intent` 형태로 rep
 | `intent approve <id>` | 의도 승인 (**사람만**) |
 | `intent dod <id>` / `check <id> "<항목>"` | DoD 조회 / 체크 |
 | `intent learn <id> "<배운 것>"` / `complete <id>` | 학습 기록 / 완료 |
+| `intent run start <intentId> "<목표>"` / `status` / `list` / `note "<텍스트>"` | Agent 실행 단위 추적 |
 | `intent wiki new <slug> "<제목>" --type <T> [--status]` | 위키 글 (type이 정보/문제 영역 결정) |
 | `intent wiki list\|show\|index\|log\|lint\|resolve <slug>` | 목록·조회·인덱스·로그·건강점검·이슈 해결 |
 | `intent rule draft <kind> <pattern> "<이유>"` / `approve <id>` | 게이트 규칙 (승인 **사람만**) |
@@ -101,6 +111,6 @@ skills/        intent · interview · wiki · postmortem (SKILL.md)
 
 ## 상태
 
-v1(게이트) + v2(지식) 완성. Claude Code와 Codex 어댑터 지원. 99/99 테스트 통과. breathe in/out 호흡 게이트는 v3 후보.
+v1(게이트) + v2(지식) 완성. Claude Code와 Codex 어댑터 지원. 200/200 테스트 통과. breathe in/out 호흡 게이트는 v3 후보.
 
 MIT License.
