@@ -1,4 +1,4 @@
-import type { Intent } from './schemas.js'
+import type { Intent, RunState, VerificationEvidenceType } from './schemas.js'
 
 /**
  * Can this approved intent transition to 'done'?
@@ -14,7 +14,28 @@ export interface CompletionCheck {
   reason: string
 }
 
-export function canComplete(intent: Intent): CompletionCheck {
+export function missingRequiredEvidenceTypes(run?: RunState | null): VerificationEvidenceType[] {
+  if (!run) return []
+  return run.requiredEvidenceTypes.filter((type) => !run.evidence.some((e) => e.type === type))
+}
+
+function requiredEvidenceCheck(run?: RunState | null): CompletionCheck {
+  if (!run || run.requiredEvidenceTypes.length === 0) return { ok: true, reason: 'no required verification evidence' }
+
+  const missing = missingRequiredEvidenceTypes(run)
+  if (missing.length > 0) return { ok: false, reason: `required evidence missing: ${missing.join(', ')}` }
+
+  const notPassing = run.requiredEvidenceTypes.filter((type) => !hasPassingEvidence(run, type))
+  if (notPassing.length > 0) return { ok: false, reason: `required evidence failed: ${notPassing.join(', ')}` }
+
+  return { ok: true, reason: 'required verification evidence passed' }
+}
+
+function hasPassingEvidence(run: RunState, type: VerificationEvidenceType): boolean {
+  return run.evidence.some((e) => e.type === type && e.status === 'passed')
+}
+
+export function canComplete(intent: Intent, run?: RunState | null): CompletionCheck {
   if (intent.status !== 'approved') {
     return { ok: false, reason: `not approved (status: ${intent.status})` }
   }
@@ -32,7 +53,13 @@ export function canComplete(intent: Intent): CompletionCheck {
       reason: `behavior change needs a learning note — run \`intent learn ${intent.id} "..."\``,
     }
   }
+  const evidence = requiredEvidenceCheck(runAppliesToIntent(intent, run) ? run : null)
+  if (!evidence.ok) return evidence
   return { ok: true, reason: 'ready to complete' }
+}
+
+function runAppliesToIntent(intent: Intent, run?: RunState | null): boolean {
+  return !!run && (!run.intentId || run.intentId === intent.id)
 }
 
 /**
@@ -45,11 +72,11 @@ export interface StopDecision {
   reasons: string[]
 }
 
-export function evaluateStopGate(intents: Intent[]): StopDecision {
+export function evaluateStopGate(intents: Intent[], run?: RunState | null): StopDecision {
   const reasons: string[] = []
   for (const i of intents) {
     if (i.status !== 'approved') continue
-    const c = canComplete(i)
+    const c = canComplete(i, run)
     if (!c.ok) reasons.push(`${i.id}: ${c.reason}`)
   }
   return { block: reasons.length > 0, reasons }

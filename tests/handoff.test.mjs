@@ -1,6 +1,13 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { composeHandoff } from '../dist/src/runtime/handoff.js'
+import { mkdtempSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { appendScratch, composeHandoff, readScratch } from '../dist/src/runtime/handoff.js'
+
+function tempRoot() {
+  return mkdtempSync(join(tmpdir(), 'intent-handoff-'))
+}
 
 const intent = (over) => ({
   id: 'INT-001',
@@ -18,9 +25,26 @@ const intent = (over) => ({
   ...over,
 })
 
+const run = (over) => ({
+  runId: 'RUN-001',
+  objective: 'Wire handoff context',
+  phase: 'act',
+  status: 'active',
+  intentId: 'INT-001',
+  specSlug: null,
+  planId: null,
+  contractId: null,
+  nextAction: 'Add verification schema',
+  notes: ['Use activeRun(root) in writeHandoff'],
+  createdAt: 't',
+  updatedAt: 't',
+  ...over,
+})
+
 const base = {
   generatedAt: '2026-06-17T00:00:00Z',
   openIntents: [intent()],
+  activeRun: null,
   scratch: { deadEnds: [], nextSteps: [], openQuestions: [] },
   recentDecisions: [],
   recentLearnings: [],
@@ -52,4 +76,25 @@ test('knowledge deltas combine decisions and learnings', () => {
 test('no open intents states it explicitly', () => {
   const md = composeHandoff({ ...base, openIntents: [intent({ status: 'done' })] })
   assert.match(md, /진행 중인 의도 없음/)
+})
+
+test('active run is rendered as a separate handoff section', () => {
+  const md = composeHandoff({ ...base, activeRun: run() })
+  assert.match(md, /## Active Run/)
+  assert.match(md, /RUN-001 \[active\/act\] Wire handoff context \(INT-001\)/)
+  assert.match(md, /next: Add verification schema/)
+  assert.match(md, /Use activeRun\(root\) in writeHandoff/)
+})
+
+test('appendScratch stores scratch notes without losing existing sections', () => {
+  const root = tempRoot()
+
+  appendScratch(root, 'deadend', 'avoid retrying stale branch')
+  appendScratch(root, 'next', 'run typecheck')
+  const scratch = appendScratch(root, 'question', 'confirm release scope')
+
+  assert.deepEqual(scratch.deadEnds, ['avoid retrying stale branch'])
+  assert.deepEqual(scratch.nextSteps, ['run typecheck'])
+  assert.deepEqual(scratch.openQuestions, ['confirm release scope'])
+  assert.deepEqual(readScratch(root), scratch)
 })

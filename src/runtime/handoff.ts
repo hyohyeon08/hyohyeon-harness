@@ -3,7 +3,8 @@ import { dirname } from 'node:path'
 import { paths } from '../state/paths.js'
 import { readJson, writeJsonAtomic } from '../utils/json.js'
 import { loadIntents } from './intents.js'
-import type { Intent } from './schemas.js'
+import { activeRun } from './runs.js'
+import type { Intent, RunState } from './schemas.js'
 
 /**
  * Session handoff — the "퇴근 전 인수인계" document. Triggered deterministically
@@ -31,16 +32,20 @@ export function readScratch(root: string): Scratch {
 
 export function appendScratch(root: string, kind: ScratchKind, text: string): Scratch {
   const s = readScratch(root)
-  if (kind === 'deadend') s.deadEnds.push(text)
-  else if (kind === 'next') s.nextSteps.push(text)
-  else s.openQuestions.push(text)
-  writeJsonAtomic(paths(root).handoffScratch, s)
-  return s
+  const next =
+    kind === 'deadend'
+      ? { ...s, deadEnds: [...s.deadEnds, text] }
+      : kind === 'next'
+        ? { ...s, nextSteps: [...s.nextSteps, text] }
+        : { ...s, openQuestions: [...s.openQuestions, text] }
+  writeJsonAtomic(paths(root).handoffScratch, next)
+  return next
 }
 
 export interface HandoffParts {
   generatedAt: string
   openIntents: Intent[]
+  activeRun?: RunState | null
   scratch: Scratch
   recentDecisions: string[]
   recentLearnings: string[]
@@ -49,6 +54,15 @@ export interface HandoffParts {
 function section(title: string, items: string[]): string {
   if (items.length === 0) return `## ${title}\n\n— 없음\n`
   return `## ${title}\n\n` + items.map((i) => `- ${i}`).join('\n') + '\n'
+}
+
+function activeRunSection(run: RunState | null | undefined): string {
+  if (!run) return `## Active Run\n\n— 없음\n`
+  const intent = run.intentId ? ` (${run.intentId})` : ''
+  const lines = [`- ${run.runId} [${run.status}/${run.phase}] ${run.objective}${intent}`]
+  if (run.nextAction) lines.push(`- next: ${run.nextAction}`)
+  for (const note of run.notes.slice(-3)) lines.push(`- note: ${note}`)
+  return `## Active Run\n\n${lines.join('\n')}\n`
 }
 
 /** Pure formatter for handoff/latest.md. */
@@ -69,6 +83,7 @@ export function composeHandoff(parts: HandoffParts): string {
     ``,
     stateLines.join('\n'),
     ``,
+    activeRunSection(parts.activeRun),
     section('막다른 길 (반복 금지)', parts.scratch.deadEnds),
     section('다음 단계', parts.scratch.nextSteps),
     section('열린 질문', parts.scratch.openQuestions),
@@ -85,6 +100,7 @@ export function writeHandoff(root: string, recent: { decisions: string[]; learni
   const md = composeHandoff({
     generatedAt: new Date().toISOString(),
     openIntents: loadIntents(root),
+    activeRun: activeRun(root),
     scratch: readScratch(root),
     recentDecisions: recent.decisions,
     recentLearnings: recent.learnings,

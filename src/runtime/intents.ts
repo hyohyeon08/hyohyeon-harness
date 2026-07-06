@@ -2,7 +2,7 @@ import { readdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { paths } from '../state/paths.js'
 import { readJson, writeJsonAtomic } from '../utils/json.js'
-import { IntentSchema, type Intent, type IntentType } from './schemas.js'
+import { IntentSchema, type Intent, type IntentType, type RunState } from './schemas.js'
 import { canComplete } from './stop-gate.js'
 
 function intentFile(root: string, id: string): string {
@@ -87,9 +87,9 @@ export function recordLearning(root: string, id: string, note: string): Intent {
 }
 
 /** Transition approved -> done. Throws unless canComplete passes. */
-export function completeIntent(root: string, id: string): Intent {
+export function completeIntent(root: string, id: string, run?: RunState | null): Intent {
   return updateIntent(root, id, (i) => {
-    const c = canComplete(i)
+    const c = canComplete(i, run)
     if (!c.ok) throw new Error(`cannot complete ${id}: ${c.reason}`)
     return { ...i, status: 'done' }
   })

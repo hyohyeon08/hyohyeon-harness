@@ -18,6 +18,22 @@ const intent = (over) => ({
   ...over,
 })
 
+const run = (over) => ({
+  runId: 'RUN-001',
+  objective: 'Wire SessionStart context',
+  phase: 'act',
+  status: 'active',
+  intentId: 'INT-001',
+  specSlug: null,
+  planId: null,
+  contractId: null,
+  nextAction: 'Add active run formatter',
+  notes: [],
+  createdAt: 't',
+  updatedAt: 't',
+  ...over,
+})
+
 test('no open intents reports none', () => {
   const out = formatSessionContext({ intents: [], decisions: [], learnings: [] })
   assert.match(out, /open intents: none/)
@@ -41,4 +57,17 @@ test('recent decisions and learnings are included', () => {
   })
   assert.match(out, /chose zod/)
   assert.match(out, /JPA flush timing/)
+})
+
+test('active run summary is surfaced without full run history', () => {
+  const out = formatSessionContext({
+    intents: [],
+    decisions: [],
+    learnings: [],
+    activeRun: run(),
+  })
+
+  assert.match(out, /active run:/)
+  assert.match(out, /RUN-001 \[active\/act\] Wire SessionStart context/)
+  assert.match(out, /next: Add active run formatter/)
 })

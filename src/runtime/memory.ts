@@ -1,7 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { paths } from '../state/paths.js'
 import { loadIntents } from './intents.js'
-import type { Intent } from './schemas.js'
+import { activeRun } from './runs.js'
+import type { Intent, RunState } from './schemas.js'
 
 /** Last N non-empty lines of a markdown log file (recent decisions/learnings). */
 export function recentLogLines(file: string, n: number): string[] {
@@ -16,6 +17,7 @@ export interface SessionContextParts {
   intents: Intent[]
   decisions: string[]
   learnings: string[]
+  activeRun?: RunState | null
 }
 
 /**
@@ -36,6 +38,18 @@ export function formatSessionContext(parts: SessionContextParts): string {
       lines.push(`    ${i.id} [${i.status}] ${i.what}${dod}`)
     }
   }
+  if (parts.activeRun) {
+    const run = parts.activeRun
+    const intent = run.intentId ? ` (${run.intentId})` : ''
+    lines.push('  active run:')
+    lines.push(`    ${run.runId} [${run.status}/${run.phase}] ${run.objective}${intent}`)
+    if (run.nextAction) lines.push(`    next: ${run.nextAction}`)
+    const recentNotes = run.notes.slice(-3)
+    if (recentNotes.length > 0) {
+      lines.push('    recent notes:')
+      for (const note of recentNotes) lines.push(`      - ${note}`)
+    }
+  }
   if (parts.decisions.length > 0) {
     lines.push('  recent decisions:')
     for (const d of parts.decisions) lines.push(`    - ${d}`)
@@ -54,6 +68,7 @@ export function readSessionContext(root: string): string {
     intents: loadIntents(root),
     decisions: recentLogLines(p.decisions, 5),
     learnings: recentLogLines(p.learnings, 5),
+    activeRun: activeRun(root),
   })
   const blocks: string[] = []
   // Progressive disclosure: inject the previous handoff + the wiki INDEX only
