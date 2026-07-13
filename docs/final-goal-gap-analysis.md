@@ -48,7 +48,7 @@ User Goal
 | User Goal / Interview | 구현 | structured summary, approval immutability, archive/revise, supersedes lineage, SessionStart/handoff | 필수 gap 없음. |
 | Plan | 구현 | strategy artifact, approval/immutability, archive/revise, contract phase precondition | 필수 gap 없음. |
 | Sprint Contract | 구현 | Plan/Interview lineage, scope/completion, archive/revise, Run pause | 필수 gap 없음. |
-| RunState | MVP+ 구현 | strict loader, collision-safe create, governed run, derived index rebuild, `intent reconcile` | transaction journal 없이 safe missing-backlink reconciliation을 사용한다. |
+| RunState | MVP+ 구현 | strict loader, collision-safe create, governed run, derived index rebuild, durable completion journal, `intent reconcile` | 필수 gap 없음. |
 | Execution Loop | 구현 | `src/runtime/execution-governance.ts`, feature/fix write gate, phase prerequisites, command/monitor/completion loop | 일부 unified/streaming shell 호출은 upstream hook 제약으로 wrapper가 필요하다. |
 | Verification Evidence | 구현 | latest-result, post-edit stale 판정, scoped SHA-256 content manifest, legacy reverify, raw logs | symlink 외부 대상 내용과 very large scope 성능 정책은 더 감사할 수 있다. |
 | Observability | MVP+ 구현 | `src/runtime/observability.ts`, `src/runtime/commands.ts`, pre-write/PostToolUse hooks, verify runner | upstream hook이 제공하지 않는 shell 호출과 unobserved direct write는 wrapper 밖에서 관측할 수 없다. |

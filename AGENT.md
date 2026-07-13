@@ -44,6 +44,7 @@
 | 15 | Run index는 validated Run에서 재구축 가능한 derived cache다. Reconcile은 missing lineage만 idempotent하게 채우고 기존 lineage 충돌 시 전체 apply를 거부한다. | `reconcile.ts`, `runs.ts` |
 | 16 | Embedding/Judge는 hook 밖에서 candidate thrashing에만 실행되고 vector/input/batch budget과 digest cache를 적용한다. Feature/fix completion은 approved Contract와 verify phase를 요구한다. | `judge-policy.ts`, `judge-adapter.ts`, `stop-gate.ts` |
 | 17 | Interview/Plan/Contract 변경은 approved artifact를 사람이 archive한 뒤 supersedes lineage를 가진 새 draft revision으로 만든다. Archive는 Run pointer를 비우고 phase를 되돌려 재승인 전 실행을 멈춘다. | artifact runtimes, CLI |
+| 18 | Intent와 Run의 terminal 전이는 durable completion journal을 먼저 쓴다. 중간 실패는 `reconcile`이 idempotent하게 마무리하며, terminal state와 committed journal의 불일치는 자동 수정하지 않고 fail-closed다. | `completion-transaction.ts`, `reconcile.ts` |
 
 ### 1.2 현재 상태
 
@@ -75,6 +76,7 @@ intent/
 │   │   ├── scope.ts            # 글롭 스코프 매처
 │   │   ├── stop-gate.ts        # DoD + 학습 게이트
 │   │   ├── completion.ts       # governed Run context + CLI/Stop 공통 orchestration
+│   │   ├── completion-transaction.ts # Intent + Run 완료 저널·재시도·복구
 │   │   ├── guard.ts            # .intent/ 보호 (anti-cheat 1차)
 │   │   ├── command-guard.ts    # Agent Bash의 승인/.intent 직접 write 차단
 │   │   ├── env.ts              # Claude/Codex AI 셸 승인 가드 (defense in depth)
@@ -125,6 +127,7 @@ intent/
 └── .intent/            # 런타임 상태 (setup이 생성)
     ├── intents/*.json          # 의도 (draft→approved→done)
     ├── runs/*.json             # Agent 실행 상태 + evidence refs
+    ├── transactions/completions/*.json # Intent + Run 완료 트랜잭션 저널
     ├── plans/*.json            # Plan artifact (scope/test/risk/steps)
     ├── contracts/*.json        # Sprint Contract
     ├── raw/*-results/*.log     # verification raw logs

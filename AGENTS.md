@@ -38,6 +38,7 @@ Personal AI coding harness. Not a platform, not a framework.
 |------|---------|
 | `intents/*.json` | 의도 (draft → approved → done) |
 | `runs/*.json` `runs/latest-runs.json` | Agent 실행 상태, active run, evidence refs |
+| `transactions/completions/*.json` | Intent + Run 완료 전이 저널, retry/reconcile 복구 |
 | `interviews/*.json` | Structured InterviewSummary, approval, append-only lineage |
 | `plans/*.json` | Plan artifact, scope/test/risk/steps, human approval metadata |
 | `contracts/*.json` | Sprint Contract, human approval, allowed/forbidden scope, required checks |

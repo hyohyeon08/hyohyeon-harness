@@ -12,6 +12,8 @@ export function paths(root: string) {
     config: join(base, 'config.json'),
     runsDir: join(base, 'runs'),
     runsLatest: join(base, 'runs', 'latest-runs.json'),
+    completionTransactionsDir: join(base, 'transactions', 'completions'),
+    completionTransactionFile: (intentId: string) => join(base, 'transactions', 'completions', `${intentId}.json`),
     interviewsDir: join(base, 'interviews'),
     interviewFile: (interviewId: string) => join(base, 'interviews', `${interviewId}.json`),
     plansDir: join(base, 'plans'),

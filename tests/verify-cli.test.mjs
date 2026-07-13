@@ -138,6 +138,8 @@ test('intent complete checks active run required evidence', () => {
   assert.equal(completed.status, 0, completed.stderr)
   assert.match(completed.stdout, /completed INT-001/)
   assert.equal(readRun(project).phase, 'done')
+  const transaction = JSON.parse(readFileSync(join(project, '.intent', 'transactions', 'completions', 'INT-001.json'), 'utf8'))
+  assert.equal(transaction.status, 'committed')
   assert.equal(readRun(project).status, 'passing')
 })
 

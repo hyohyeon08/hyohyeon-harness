@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import {
+  CompletionTransactionSchema,
   RunPhaseSchema,
   RunStateSchema,
   RunStatusSchema,
@@ -74,8 +75,26 @@ test('StateSchema remains compatible with existing state files', () => {
   assert.equal(state.activeIntentId, null)
 })
 
+test('CompletionTransactionSchema validates the durable completion journal', () => {
+  const transaction = CompletionTransactionSchema.parse({
+    version: 1,
+    transactionId: 'COMPLETE-INT-001',
+    intentId: 'INT-001',
+    runId: 'RUN-001',
+    status: 'pending',
+    createdAt: '2026-07-13T00:00:00.000Z',
+    updatedAt: '2026-07-13T00:00:00.000Z',
+  })
+
+  assert.equal(transaction.status, 'pending')
+})
+
 test('paths include .intent/runs locations', () => {
   const p = paths('C:\\work\\project')
   assert.equal(p.runsDir, join('C:\\work\\project', '.intent', 'runs'))
   assert.equal(p.runsLatest, join('C:\\work\\project', '.intent', 'runs', 'latest-runs.json'))
+  assert.equal(
+    p.completionTransactionsDir,
+    join('C:\\work\\project', '.intent', 'transactions', 'completions'),
+  )
 })

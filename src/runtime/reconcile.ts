@@ -1,4 +1,5 @@
 import { loadContracts } from './contracts.js'
+import { inspectCompletionTransactions } from './completion-transaction.js'
 import { linkInterview, loadInterviews } from './interviews.js'
 import { linkPlanInterview, loadPlans, updatePlan } from './plans.js'
 import {
@@ -52,6 +53,10 @@ export function reconcileState(root: string, apply = false): ReconciliationResul
     conflictKeys.add(description)
     conflicts.push(description)
   }
+
+  const completion = inspectCompletionTransactions(root)
+  for (const repair of completion.repairs) addAction(repair.description, repair.apply)
+  for (const conflict of completion.conflicts) addConflict(conflict)
 
   for (const run of runs) {
     if (run.interviewId) {

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtempSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createRun, findRun, loadRunIndex, updateRun } from '../dist/src/runtime/runs.js'
@@ -9,6 +9,7 @@ import { createPlan } from '../dist/src/runtime/plans.js'
 import { createContract } from '../dist/src/runtime/contracts.js'
 import { reconcileState } from '../dist/src/runtime/reconcile.js'
 import { paths } from '../dist/src/state/paths.js'
+import { CompletionTransactionStateError } from '../dist/src/runtime/completion-transaction.js'
 
 function root() {
   return mkdtempSync(join(tmpdir(), 'intent-reconcile-'))
@@ -63,4 +64,12 @@ test('reconcile reports conflicting lineage without applying partial repairs', (
   assert.equal(result.applied, false)
   assert.match(result.conflicts.join('\n'), /RUN-001 conflicts with PLAN-001 linked to RUN-002/)
   assert.equal(findRun(project, first.runId)?.planId, plan.planId)
+})
+
+test('reconcile fails closed on a malformed completion transaction', () => {
+  const project = root()
+  mkdirSync(paths(project).completionTransactionsDir, { recursive: true })
+  writeFileSync(join(paths(project).completionTransactionsDir, 'INT-001.json'), '{ corrupt', 'utf8')
+
+  assert.throws(() => reconcileState(project), CompletionTransactionStateError)
 })

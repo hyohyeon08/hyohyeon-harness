@@ -25,9 +25,9 @@ import {
   approveIntent,
   checkDod,
   recordLearning,
-  completeIntent,
 } from '../runtime/intents.js'
 import { evaluateCompletionAttempt } from '../runtime/completion.js'
+import { completeIntentTransaction } from '../runtime/completion-transaction.js'
 import { parseDraftArgs } from '../runtime/draft-args.js'
 import { appendScratch, writeHandoff, type ScratchKind } from '../runtime/handoff.js'
 import { recentLogLines } from '../runtime/memory.js'
@@ -68,7 +68,6 @@ import {
   createRun,
   findRun,
   loadRuns,
-  markRunComplete,
   recordRunAttempt,
   setRunAttemptBudget,
   transitionRunPhase,
@@ -151,6 +150,7 @@ function cmdSetup(): void {
   if (!existsSync(p.decisions)) writeFileSync(p.decisions, '# Decisions\n\n', 'utf8')
   if (!existsSync(p.learnings)) writeFileSync(p.learnings, '# Learnings\n\n', 'utf8')
   mkdirSync(p.runsDir, { recursive: true })
+  mkdirSync(p.completionTransactionsDir, { recursive: true })
   mkdirSync(p.interviewsDir, { recursive: true })
   mkdirSync(p.plansDir, { recursive: true })
   mkdirSync(p.rawDir, { recursive: true })
@@ -365,8 +365,7 @@ function cmdComplete(): void {
     const attempt = evaluateCompletionAttempt(root, [intent])
     if (attempt.block) throw new Error(`cannot complete ${id}: ${attempt.reasons.join('; ')}`)
     const context = attempt.contexts[0]
-    const i = completeIntent(root, id, context.run, context.contract)
-    if (context.run) markRunComplete(root, context.run.runId)
+    const i = completeIntentTransaction(root, id, context.run, context.contract)
     console.log(`completed ${i.id}`)
   } catch (e) {
     console.error((e as Error).message)

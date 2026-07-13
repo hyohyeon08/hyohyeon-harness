@@ -30,6 +30,21 @@ export const IntentSchema = z.object({
 })
 export type Intent = z.infer<typeof IntentSchema>
 
+/** Durable journal for the cross-record Intent + Run completion transition. */
+export const CompletionTransactionStatusSchema = z.enum(['pending', 'committed', 'aborted'])
+export type CompletionTransactionStatus = z.infer<typeof CompletionTransactionStatusSchema>
+
+export const CompletionTransactionSchema = z.object({
+  version: z.literal(1),
+  transactionId: z.string(),
+  intentId: z.string(),
+  runId: z.string().nullable().default(null),
+  status: CompletionTransactionStatusSchema,
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+export type CompletionTransaction = z.infer<typeof CompletionTransactionSchema>
+
 /**
  * A machine-enforced gate rule, distinct from the readable wiki. Failures that
  * can be expressed deterministically become rules (Beck: a gate beats a text
