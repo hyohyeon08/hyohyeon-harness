@@ -10,8 +10,18 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "npm run build && node --test tests/*.test.mjs",
+    "coverage": "npm run build && node --experimental-test-coverage --test tests/*.test.mjs",
+    "prepack": "npm run build",
     "intent": "node --loader ts-node/esm src/cli/index.ts"
   },
+  "files": [
+    "dist/",
+    "skills/",
+    ".claude/settings.template.json",
+    ".codex/hooks.template.json",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "zod": "^3.23.0"
   },

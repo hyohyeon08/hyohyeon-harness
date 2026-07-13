@@ -207,7 +207,6 @@ export function reviseInterview(root: string, interviewId: string, title?: strin
 }
 
 function appendLineageValue(
-  interviewId: string,
   key: keyof InterviewLineage,
   current: string | null,
   next: string | null | undefined,
@@ -226,10 +225,10 @@ export function linkInterview(root: string, interviewId: string, lineage: Interv
   if (existing.status === 'archived') throw new Error(`archived interview ${interviewId} is immutable`)
   const updated = InterviewSummarySchema.parse({
     ...existing,
-    intentId: appendLineageValue(interviewId, 'intentId', existing.intentId, lineage.intentId),
-    specSlug: appendLineageValue(interviewId, 'specSlug', existing.specSlug, lineage.specSlug),
-    planId: appendLineageValue(interviewId, 'planId', existing.planId, lineage.planId),
-    runId: appendLineageValue(interviewId, 'runId', existing.runId, lineage.runId),
+    intentId: appendLineageValue('intentId', existing.intentId, lineage.intentId),
+    specSlug: appendLineageValue('specSlug', existing.specSlug, lineage.specSlug),
+    planId: appendLineageValue('planId', existing.planId, lineage.planId),
+    runId: appendLineageValue('runId', existing.runId, lineage.runId),
     updatedAt: refreshedTimestamp(existing.updatedAt),
   })
   writeJsonAtomic(paths(root).interviewFile(interviewId), updated)

@@ -12,8 +12,9 @@
 
 - `npm run typecheck` 통과
 - `npm test` 통과
-- 총 330개 테스트 통과
-- coverage: line 89.14%, branch 71.40%, function 88.65%
+- 총 344개 테스트 통과
+- coverage: line 89.26%, branch 71.38%, function 88.21%
+- `npm pack --dry-run --json`: runtime allowlist 65 files, 75.8 KB
 
 PowerShell에서 `npm.ps1` 실행 정책 오류가 나면 `npm.cmd run typecheck`, `npm.cmd test`를 사용한다.
 
@@ -74,7 +75,8 @@ User Goal
 
 AI가 `.intent/` 상태 파일을 직접 편집하는 것을 막고, AI 환경에서 approval 계열 명령을 거부한다.
 
-- 관련 코드: `src/runtime/guard.ts`, `src/runtime/env.ts`, `src/runtime/intents.ts`, `src/runtime/rules.ts`
+- 관련 코드: `src/runtime/guard.ts`, `src/runtime/command-guard.ts`, `src/runtime/env.ts`, `src/runtime/intents.ts`, `src/runtime/rules.ts`
+- 지원 Claude/Codex 채널의 Bash 사전 hook이 승인 명령과 직접 `.intent/` write를 실행 전에 차단한다.
 - CLI: `intent approve`, `intent rule approve`, `intent spec approve`, `intent detection resolve`
 
 ### 3. RunState / Plan / Contract workflow
@@ -116,7 +118,8 @@ trace/span 저장 구조가 있고 일부 작업이 자동 기록된다.
 - 같은 command+args+exitCode 반복 실패
 - 같은 errorSignature 반복 실패
 - 같은 파일 반복 수정
-- complete/stop/Stop hook에서 monitor detection 자동 생성과 run blocked 전이
+- complete/stop/Stop hook에서 monitor detection 자동 생성
+- candidate는 유형과 무관하게 기록만 하고 confirmed detection만 Run을 hard block
 
 ### 6. LLM-Wiki / Rule / Eval feedback
 
@@ -129,7 +132,21 @@ Detection Record를 wiki page, rule draft, eval draft로 전환하는 runtime과
 
 hook 안에서는 LLM/네트워크 호출을 하지 않는다. 외부 judge는 `intent judge run <detectionId> -- <command...>`로 hook 밖에서 candidate detection에만 실행한다.
 
-## 최근 완료된 Phase 28
+## 최근 완료된 Phase 29
+
+Phase 29에서 거버넌스 경계와 실제 배포·운영 준비를 재감사했다.
+
+1. 지원 Agent Bash에서 human-only 승인과 직접 `.intent/` write를 사전 차단하고 위협 모델을 명시했다.
+2. semantic code edit는 줄 수와 무관하게 Intent/active Run governance를 요구한다.
+3. 모든 candidate detection을 record-only로 통일하고 confirmed만 Run을 차단한다.
+4. Intent+Run 완료 전이에 durable journal, idempotent retry, reconcile 복구를 추가했다.
+5. 저장소 자체 hook/`.intent` dogfooding, Node 20/22 CI, MIT LICENSE, package allowlist/prepack을 추가했다.
+6. CLI를 `core`·`feedback`·`knowledge` command 모듈로 분리하고 전체 344개 테스트를 통과했다.
+7. Coverage line 89.26%, branch 71.38%, function 88.21%와 65-file package dry-run을 통과했다.
+
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 29와 `docs/phase/phase-29-governance-operational-hardening.md`를 본다.
+
+## 이전 완료 Phase 28
 
 Phase 28에서 artifact lifecycle과 최종 completion audit를 마쳤다.
 
@@ -320,7 +337,7 @@ Phase 16에서 이전 추천 1-6은 구현 완료됐다.
 
 ### `docs/final-goal-phase-feature-spec.md`
 
-구현 ledger다. Phase 1-28과 hardening 항목의 상태와 verification evidence를 기록한다.
+구현 ledger다. Phase 1-29와 hardening 항목의 상태와 verification evidence를 기록한다.
 
 ### `README.md`
 

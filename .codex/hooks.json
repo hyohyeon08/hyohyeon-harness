@@ -1,0 +1,73 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"dist/hooks/session-start.js\"",
+            "statusMessage": "Loading intent context"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"dist/hooks/pre-command-guard.js\"",
+            "statusMessage": "Checking protected command boundary"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"dist/hooks/pre-write-guard.js\"",
+            "statusMessage": "Checking intent gate"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"dist/hooks/post-command.js\"",
+            "statusMessage": "Recording command trace"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"dist/hooks/stop-continue.js\"",
+            "statusMessage": "Checking intent completion"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"dist/hooks/pre-compact.js\"",
+            "statusMessage": "Writing intent handoff"
+          }
+        ]
+      }
+    ]
+  }
+}

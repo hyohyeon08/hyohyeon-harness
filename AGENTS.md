@@ -58,7 +58,7 @@ Personal AI coding harness. Not a platform, not a framework.
 
 ## Current Gap
 
-Phase 1-28 핵심 workflow 항목은 구현되어 있고 330개 테스트가 통과한다. Artifact revision/archive까지 닫혔고 feature/fix는 approved Contract chain, verify phase, fresh content provenance를 끝까지 요구한다.
+Phase 1-29 핵심 workflow와 운영 hardening이 구현되어 있고 344개 테스트가 통과한다. 저장소 자체가 `.intent/`와 상대경로 Claude/Codex hook을 dogfood하며, feature/fix는 approved Contract chain, verify phase, fresh content provenance를 끝까지 요구한다.
 
 필수 구현 gap은 없다. Upstream hook 밖 shell은 `intent command` wrapper를 사용하며, AGENTS/CI 자동 patch는 candidate/reflection 이후 사람이 명시적으로 선택하는 후속 기능으로 유지한다.
 

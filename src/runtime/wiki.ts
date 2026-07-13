@@ -226,7 +226,7 @@ function findArticleFile(root: string, slug: string): { file: string; area: Area
   return null
 }
 
-function readDirArticles(root: string, dir: string, area: Area): ArticleMeta[] {
+function readDirArticles(dir: string, area: Area): ArticleMeta[] {
   if (!existsSync(dir)) return []
   return readdirSync(dir)
     .filter((f) => f.endsWith('.md'))
@@ -254,8 +254,8 @@ function readDirArticles(root: string, dir: string, area: Area): ArticleMeta[] {
 export function listArticles(root: string): ArticleMeta[] {
   const p = paths(root)
   return [
-    ...readDirArticles(root, p.wikiKnowledgeDir, 'knowledge'),
-    ...readDirArticles(root, p.wikiProblemsDir, 'problem'),
+    ...readDirArticles(p.wikiKnowledgeDir, 'knowledge'),
+    ...readDirArticles(p.wikiProblemsDir, 'problem'),
   ].sort((a, b) => a.slug.localeCompare(b.slug))
 }
 

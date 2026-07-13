@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "triviality": {
+    "maxLines": 5
+  },
+  "judge": {
+    "embeddingModelKey": "default",
+    "similarityThreshold": 0.82,
+    "maxEmbeddingCandidates": 20,
+    "maxEmbeddingInputChars": 50000,
+    "maxEmbeddingDimensions": 4096,
+    "maxJudgeCandidates": 3,
+    "maxJudgeInputCharsPerCandidate": 16000,
+    "maxJudgeInputChars": 40000
+  }
+}
