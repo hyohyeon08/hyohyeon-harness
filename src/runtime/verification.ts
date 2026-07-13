@@ -10,6 +10,7 @@ import {
   type VerificationEvidence,
   type VerificationEvidenceType,
 } from './schemas.js'
+import { createRunContentFingerprint } from './provenance.js'
 
 export interface RunVerificationArgs {
   runId: string
@@ -112,6 +113,8 @@ export function runVerification(root: string, args: RunVerificationArgs): Verifi
   mkdirSync(logDir, { recursive: true })
   writeFileSync(join(logDir, logFile), outputLog, 'utf8')
 
+  const provenance = createRunContentFingerprint(root, run)
+
   const evidence = VerificationEvidenceSchema.parse({
     evidenceId: evidenceIdFor(run),
     type: args.type,
@@ -120,6 +123,7 @@ export function runVerification(root: string, args: RunVerificationArgs): Verifi
     args: args.args ?? [],
     exitCode: typeof result.status === 'number' ? result.status : null,
     logPath: relativeLogPath(args.type, logFile),
+    provenance,
     startedAt,
     finishedAt,
   })

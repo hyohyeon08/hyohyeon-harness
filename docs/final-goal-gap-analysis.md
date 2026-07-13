@@ -1,41 +1,31 @@
 # hyohyeon-harness final goal gap analysis
 
-## 목적
+## 기준
 
-이 문서는 `hyohyeon-harness-최종목표.md`의 최종 비전과 현재 프로젝트 구현을 대조해, 무엇이 이미 있고 무엇이 부족하거나 다른지 정리한다. 결론부터 말하면 현재 프로젝트는 `Intent-First Gate + LLM Wiki + handoff + postmortem`까지 구현된 v1/v2 하네스이고, 최종목표 문서는 이를 `RunState + verification evidence + observability + monitor + detection + reviewer/eval`까지 확장하려는 다음 단계 청사진이다.
+이 문서의 기준은 `hyohyeon-harness-최종목표.md`다. 그 문서가 제품 비전과 상위 요구사항의 SSOT다.
 
-현재 구현은 작고 강한 게이트 중심이다. 최종목표 문서는 작업 실행 전체를 관리하는 운영체계에 가깝다.
+`docs/final-goal-phase-feature-spec.md`는 구현 ledger이고, 이 문서는 최종목표 대비 gap matrix다.
 
-## 현재 프로젝트의 실제 상태
+## 현재 검증 상태
 
-현재 레포의 중심은 `intent` CLI와 4개 hook이다.
+현재 checkout 기준:
 
-- CLI: `src/cli/index.ts`
-- 상태 경로: `src/state/paths.ts`
-- 상태 스키마: `src/runtime/schemas.ts`
-- 의도 CRUD: `src/runtime/intents.ts`
-- 의도/스코프 게이트: `src/runtime/intent-gate.ts`, `src/runtime/scope.ts`
-- 사소한 변경 판정: `src/runtime/triviality.ts`, `src/runtime/change-extract.ts`, `src/runtime/apply-patch.ts`
-- Stop gate: `src/runtime/stop-gate.ts`
-- `.intent/` 보호와 human-only 승인: `src/runtime/guard.ts`, `src/runtime/env.ts`
-- rule 후보와 강제 규칙: `src/runtime/rules.ts`
-- wiki: `src/runtime/wiki.ts`
-- handoff: `src/runtime/handoff.ts`
-- failure -> wiki/rule: `src/runtime/postmortem.ts`
-- shared spec: `src/runtime/spec.ts`
-- hooks: `hooks/session-start.ts`, `hooks/pre-write-guard.ts`, `hooks/stop-continue.ts`, `hooks/pre-compact.ts`
+- `npm run typecheck` 통과
+- `npm test` 통과
+- 총 330개 테스트 통과
+- coverage: line 89.14%, branch 71.40%, function 88.65%
 
-검증 상태:
+PowerShell에서 `npm.ps1` 실행 정책 오류가 나면 `npm.cmd run typecheck`, `npm.cmd test`를 사용한다.
 
-- `npm.cmd run typecheck` 통과
-- `npm.cmd test` 통과
-- 총 105개 테스트 통과
+## 한 줄 결론
 
-주의: PowerShell에서는 `npm.ps1` 실행 정책 때문에 `npm run ...`이 막혔고, `npm.cmd ...`로 검증했다.
+현재 코드는 최종목표의 핵심 데이터 레이어와 운영 loop의 대부분을 구현했다.
 
-## 최종목표 문서의 핵심 요구
+`Intent Gate + RunState + Verification Evidence + Observability + Detection + Wiki/Rule/Reviewer/Eval + Contract/Execution Loop CLI`에 더해 completion/stop 자동 탐지, 외부 judge adapter, rule impact/reflection, spec/plan 자동 run 연결, governed completion 판정까지 연결되어 있다.
 
-목표 문서는 다음 흐름을 제안한다.
+최종목표의 필수 workflow와 hardening은 연결됐다. 남은 항목은 upstream hook 제공 범위와 명시적으로 선택적인 AGENTS/CI patch 적용처럼 제품 경계 또는 의도적 human decision이다.
+
+## 최종목표 흐름 대비 구현률
 
 ```text
 User Goal
@@ -53,603 +43,297 @@ User Goal
   -> AGENTS.md / Hook / Reviewer / Eval 반영
 ```
 
-이 흐름에서 현재 프로젝트와 가장 큰 차이는 `Run` 중심 모델의 부재다. 현재 프로젝트는 `Intent`를 중심으로 "비사소 변경을 승인된 의도와 scope 안에서만 허용"한다. 반면 최종목표 문서는 각 작업을 `RunState`로 관리하고, 검증/관측/탐지 증거를 붙여 완료를 외부적으로 판정하려 한다.
+| 최종목표 단계 | 현재 상태 | 구현 위치 | 남은 gap |
+| --- | --- | --- | --- |
+| User Goal / Interview | 구현 | structured summary, approval immutability, archive/revise, supersedes lineage, SessionStart/handoff | 필수 gap 없음. |
+| Plan | 구현 | strategy artifact, approval/immutability, archive/revise, contract phase precondition | 필수 gap 없음. |
+| Sprint Contract | 구현 | Plan/Interview lineage, scope/completion, archive/revise, Run pause | 필수 gap 없음. |
+| RunState | MVP+ 구현 | strict loader, collision-safe create, governed run, derived index rebuild, `intent reconcile` | transaction journal 없이 safe missing-backlink reconciliation을 사용한다. |
+| Execution Loop | 구현 | `src/runtime/execution-governance.ts`, feature/fix write gate, phase prerequisites, command/monitor/completion loop | 일부 unified/streaming shell 호출은 upstream hook 제약으로 wrapper가 필요하다. |
+| Verification Evidence | 구현 | latest-result, post-edit stale 판정, scoped SHA-256 content manifest, legacy reverify, raw logs | symlink 외부 대상 내용과 very large scope 성능 정책은 더 감사할 수 있다. |
+| Observability | MVP+ 구현 | `src/runtime/observability.ts`, `src/runtime/commands.ts`, pre-write/PostToolUse hooks, verify runner | upstream hook이 제공하지 않는 shell 호출과 unobserved direct write는 wrapper 밖에서 관측할 수 없다. |
+| Monitor | 구현 | structural candidates, cached external embeddings, cosine similarity, confirmed-only hard block | Embedding provider는 command adapter로 교체 가능하게 유지한다. |
+| Detection Record | 구현 | embedding cache, Judge classification/action/input digest, bounded queue/batch CLI | Hook 밖의 명시적 adapter 실행을 요구한다. |
+| Persist to LLM-Wiki | 구현 | `recordDetectionWikiPage`, resolve 자동 ingest, `wiki lint`, 수동 ingest CLI | candidate의 자동 ingest는 하지 않는다. |
+| Rule Candidate | 구현 | `draftRule`, `sourceDetectionId`, `intent rule draft-from-detection`, `agents-candidate`, `ci-candidate`, `impact`, `reflect` | AGENTS/CI 파일 자동 patch 적용은 하지 않고 candidate/reflection 추적까지만 한다. |
+| Reviewer / Eval | 구현 | `reviewer.ts`, `judge.ts`, `judge-adapter.ts`, span replay `evals.ts`, CLI | false_success eval은 아직 source state 비교 중심이다. |
 
-## 현재 있음
+## 이미 구현된 기반
 
-### 1. Intent-First Gate
+### 1. Intent-first gate
 
-현재 구현은 비사소 변경을 승인된 intent 없이 막는다.
+비사소 변경은 승인된 intent 없이는 차단된다.
 
-- 작은 변경, 주석/포맷 변경은 통과
-- 새 파일, 삭제, 새 symbol, control flow, 큰 변경은 intent 필요
-- 승인된 intent가 있어도 scope 밖이면 차단
-- Codex `apply_patch` payload도 파싱해서 검사
+- 관련 코드: `src/runtime/intent-gate.ts`, `src/runtime/triviality.ts`, `src/runtime/change-extract.ts`, `src/runtime/apply-patch.ts`
+- hook: `hooks/pre-write-guard.ts`
+- 테스트: `tests/intent-gate.test.mjs`, `tests/triviality.test.mjs`, `tests/apply-patch.test.mjs`, `tests/codex-hooks.test.mjs`
 
-관련 구현:
+최종목표의 "규칙은 실행 가능한 게이트여야 한다"는 방향과 맞는다.
 
-- `src/runtime/intent-gate.ts`
-- `src/runtime/triviality.ts`
-- `src/runtime/change-extract.ts`
-- `src/runtime/apply-patch.ts`
-- `hooks/pre-write-guard.ts`
+### 2. Human-only approval / anti-cheat
 
-최종목표 문서의 "종료 조건 외부화"와 "아키텍처 경계 강제" 철학과 방향이 맞다. 다만 현재는 작업 전체 계약이 아니라 파일 변경 직전의 게이트다.
+AI가 `.intent/` 상태 파일을 직접 편집하는 것을 막고, AI 환경에서 approval 계열 명령을 거부한다.
 
-### 2. Scope boundary
+- 관련 코드: `src/runtime/guard.ts`, `src/runtime/env.ts`, `src/runtime/intents.ts`, `src/runtime/rules.ts`
+- CLI: `intent approve`, `intent rule approve`, `intent spec approve`, `intent detection resolve`
 
-`Intent.scope`가 glob-ish path pattern으로 관리된다.
+### 3. RunState / Plan / Contract workflow
 
-- `**`
-- `src/foo/**`
-- `src/*.ts`
-- exact path
-- Windows backslash normalization
+Run은 Intent와 분리되어 "이번 agent 실행 상태"를 추적한다.
 
-관련 구현:
+- Run: `src/runtime/runs.ts`, `intent run start/status/list/note/phase/status-set/next/budget/attempt`
+- Plan: `src/runtime/plans.ts`, `intent plan draft/show/list/link`
+- Contract: `src/runtime/contracts.ts`, `intent contract draft/show/list/approve/edit/report`
 
-- `src/runtime/scope.ts`
-- `tests/scope.test.mjs`
+Plan draft와 spec draft/link는 active run에 연결된다. Plan/Contract는 사람 승인 메타데이터를 남기고 승인 뒤 불변이다. 승인된 Contract의 `requiredChecks`만 completion/stop gate의 SSOT로 쓰이며, 승인된 Contract가 없을 때 RunState `requiredEvidenceTypes`가 fallback이다. 조작 초점인 active run과 완료 정책의 근거인 governed run은 분리되며, blocked/paused/passing 상태가 되어도 최신 연결 Run은 완료 판정에서 사라지지 않는다.
 
-최종목표의 `allowedScope`, `forbiddenScope` 중 `allowedScope`에 해당하는 기능은 있다. `forbiddenScope`는 별도 Sprint Contract에는 없고, approved rule의 `forbid-path`로 우회 가능하다.
+### 4. Verification Evidence
 
-### 3. DoD와 Stop gate
+`intent verify <type> -- <command...>`가 실제 명령을 실행하고 결과를 저장한다.
 
-현재 intent는 `dod`, `dodChecked`를 가진다. `feature`/`fix` intent는 learning note가 없으면 완료할 수 없다.
+- 관련 코드: `src/runtime/verification.ts`
+- schema: `VerificationEvidenceSchema`
+- CLI: `intent verify`, `intent verify list`
+- raw logs: `.intent/raw/<type>-results/*.log`
 
-관련 구현:
+저장되는 정보는 evidence id, type, status, command/args, exit code, log path, startedAt/finishedAt이다. 같은 evidence type이 여러 번 실행되면 마지막으로 기록된 결과만 completion과 contract report를 결정하며, 이전 pass 뒤의 최신 fail을 과거 pass로 덮을 수 없다.
 
-- `src/runtime/stop-gate.ts`
-- `src/runtime/intents.ts`
-- `hooks/stop-continue.ts`
+### 5. Observability / Monitor / Detection
 
-최종목표의 Definition of Done 철학과 직접 연결된다. 다만 지금의 DoD는 사람이/AI가 CLI로 체크한 텍스트 항목이고, 실제 테스트/빌드 로그와 자동 연결되지는 않는다.
+trace/span 저장 구조가 있고 일부 작업이 자동 기록된다.
 
-### 4. Human-only approval과 anti-cheat
+- Observability: `src/runtime/observability.ts`
+- Monitor: `src/runtime/monitor.ts`
+- Detection: `src/runtime/detections.ts`
 
-현재 구현은 `.intent/` 직접 편집을 차단하고, AI 환경에서 `approve` 명령을 거부한다.
+자동 기록/탐지되는 것:
 
-관련 구현:
+- pre-write guard가 검사한 edit/apply_patch span
+- `intent command` wrapper와 PostToolUse(Bash)가 기록한 일반 `run_command` span
+- `intent verify`가 실행한 check span
+- failed verification의 deterministic errorSignature
+- required evidence 없이 completion을 시도한 false_success
+- 같은 command+args+exitCode 반복 실패
+- 같은 errorSignature 반복 실패
+- 같은 파일 반복 수정
+- complete/stop/Stop hook에서 monitor detection 자동 생성과 run blocked 전이
 
-- `src/runtime/guard.ts`
-- `src/runtime/env.ts`
-- `hooks/pre-write-guard.ts`
-- `src/cli/index.ts`
+### 6. LLM-Wiki / Rule / Eval feedback
 
-최종목표 문서의 "중요한 판단은 사람이 검토한다"와 맞다.
+Detection Record를 wiki page, rule draft, eval draft로 전환하는 runtime과 CLI가 있다.
 
-### 5. LLM-Wiki 기본 구조
+- Wiki ingest: `intent wiki ingest detection <id>`
+- Rule feedback: `intent rule draft-from-detection`, `agents-candidate`, `ci-candidate`, `impact`, `reflect`
+- Judge: `intent judge bundle`, `record`, `run`
+- Reviewer/Eval: `intent reviewer checklist`, `intent eval draft-from-detection`, `intent eval run`
 
-현재 wiki는 `.intent/wiki/knowledge`와 `.intent/wiki/problems`로 나뉜다.
+hook 안에서는 LLM/네트워크 호출을 하지 않는다. 외부 judge는 `intent judge run <detectionId> -- <command...>`로 hook 밖에서 candidate detection에만 실행한다.
 
-- knowledge: `concept`, `decision`, `spec`, `guide`, `source`, `overview`
-- problem: `failure`, `issue`
-- `index.md`, `log.md`
-- wikilink/backlink
-- lint: orphan, dead link, low confidence, open problem
+## 최근 완료된 Phase 28
 
-관련 구현:
+Phase 28에서 artifact lifecycle과 최종 completion audit를 마쳤다.
 
-- `src/runtime/wiki.ts`
-- `skills/wiki/SKILL.md`
-- `tests/wiki.test.mjs`
+1. Interview/Plan/Contract에 revision과 supersedes lineage를 추가했다.
+2. Approved artifact는 human-only archive 뒤에만 새 draft revision을 만든다.
+3. Contract→Plan→Interview archive 순서를 강제하고 Run pointer/phase를 pause 상태로 되돌린다.
+4. Reconcile이 crash 뒤 archived pointer를 안전하게 제거한다.
+5. Full suite 330/330과 line 89.14%, branch 71.40%, function 88.65% coverage를 통과했다.
+6. 최종목표 matrix를 감사해 필수 구현 gap이 없음을 확인했다.
 
-최종목표 문서의 LLM-Wiki 방향과 상당히 가깝다. 다만 최종목표 문서가 제안하는 `raw/`, `runs/`, `verification/`, `observability/`, `evals/` 계층은 아직 없다.
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 28과 `docs/phase/phase-28-artifact-lifecycle-final-audit.md`를 본다.
 
-### 6. Failure -> wiki + rule candidate
+## 이전 완료 Phase 27
 
-`intent postmortem`은 failure page를 만들고, 필요한 경우 `Rule` draft를 만든다.
+Phase 27에서 2차 의미 판정·Judge 비용 정책과 completion의 마지막 contract 우회를 닫았다.
 
-관련 구현:
+1. candidate thrashing의 stable semantic text와 external embedding vector cache를 추가했다.
+2. Cosine similarity threshold를 통과한 후보만 Judge queue에 넣는다.
+3. Embedding candidate/input/vector dimension과 Judge candidate/per-input/batch-input budget을 config로 제한한다.
+4. 동일 Judge bundle digest와 adapter key 결과를 재사용한다.
+5. Judge가 `thrashing/false_success/none`, 근거, confidence, suggested action을 저장할 수 있다.
+6. Feature/fix completion은 approved matching Contract와 verify phase를 요구한다.
+7. 전체 approved artifact/evidence completion chain의 CLI 회귀 테스트를 추가했다.
 
-- `src/runtime/postmortem.ts`
-- `src/runtime/rules.ts`
-- `src/cli/index.ts`
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 27과 `docs/phase/phase-27-semantic-judge-completion-closure.md`를 본다.
 
-최종목표의 "실패 기록의 규칙화"와 방향이 정확히 맞다. 현재는 수동 postmortem 중심이고, Detection Record 기반 자동 전환은 아직 없다.
+## 이전 완료 Phase 26
 
-### 7. Handoff
+Phase 26에서 partial multi-record update의 복구 경로를 추가했다.
 
-PreCompact 시점에 handoff를 작성하고 SessionStart에서 이전 handoff와 wiki index를 주입한다.
+1. sequential ID 정렬을 numeric suffix 기준으로 바꿔 1000+ 순서를 보장한다.
+2. Run index를 validated RunState에서 계산하는 derived cache로 명시했다.
+3. `intent reconcile` dry-run과 `--apply` CLI를 추가했다.
+4. Interview/Plan/Contract/Run의 비어 있는 backlink만 idempotent하게 채운다.
+5. 기존 lineage 값이 충돌하면 전체 apply를 거부한다.
+6. corrupt Run index와 partial lineage를 한 번에 복구한 뒤 두 번째 실행이 no-op인 회귀 테스트를 추가했다.
 
-관련 구현:
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 26과 `docs/phase/phase-26-lineage-reconciliation.md`를 본다.
 
-- `src/runtime/handoff.ts`
-- `src/runtime/memory.ts`
-- `hooks/pre-compact.ts`
-- `hooks/session-start.ts`
+## 이전 완료 Phase 25
 
-최종목표 문서의 "대화와 개발 과정이 일회성으로 사라지지 않게 한다"는 목적에 대응한다. 다만 RunState 기반 resume은 아니다.
+Phase 25에서 verification evidence를 실제 scoped content에 결박했다.
 
-## 부분적으로 있음
+1. deterministic file manifest와 SHA-256 aggregate digest schema를 추가했다.
+2. approved Contract scope를 우선하고 없으면 Intent scope를 사용한다.
+3. `.intent`, `.git`, `node_modules`는 state/환경 오염을 피하기 위해 제외한다.
+4. `intent verify`가 command 종료 직후 provenance를 evidence에 저장한다.
+5. completion은 current digest 불일치와 provenance 없는 legacy required evidence를 stale로 처리한다.
+6. hook span 없이 직접 파일을 수정해도 completion context가 evidence를 무효화하는 end-to-end 테스트를 추가했다.
 
-### 1. Interview
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 25와 `docs/phase/phase-25-verification-content-provenance.md`를 본다.
 
-최종목표는 Interview Summary를 저장하고 Plan/RunState의 근거로 쓰자고 한다. 현재는 `skills/interview/SKILL.md`와 `intent spec draft/approve`가 있다.
+## 이전 완료 Phase 24
 
-차이:
+Phase 24에서 governance state 손상과 sequential record 충돌 경계를 강화했다.
 
-- 현재: interview 결과를 wiki spec으로 남기는 흐름
-- 목표: 별도 `Interview Summary`가 Plan과 RunState에 연결됨
+1. Rule/Run/Plan/Interview/Contract/Detection/Eval loader가 schema-invalid record를 fail-closed로 보고한다.
+2. write/Stop hook이 corrupt Rule/Run state를 명시적으로 차단한다.
+3. approved invalid regex rule은 승인 시 거부되고, 이미 저장돼 있으면 write를 fail-closed로 차단한다.
+4. ID는 record 수가 아니라 가장 큰 numeric suffix 다음으로 할당한다.
+5. 999 이후 ID도 loader가 인식한다.
+6. 새 record는 atomic exclusive publish를 사용하고 동시 충돌 시 재할당한다.
+7. 8개 동시 Intent creator가 손실 없이 고유 record를 만드는 회귀 테스트를 추가했다.
 
-추천:
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 24와 `docs/phase/phase-24-state-integrity-concurrent-create.md`를 본다.
 
-- `InterviewSummarySchema`를 별도 JSON으로 만들기보다, 초기에는 wiki spec을 authoritative interview artifact로 사용한다.
-- `RunState.interviewId`나 `RunState.specSlug`로 연결한다.
+## 이전 완료 Phase 23
 
-### 2. Plan
+Phase 23에서 승인 artifact와 실제 write 사이의 실행 전제를 게이트로 연결했다.
 
-현재는 Plan이라는 별도 artifact가 없다. `intent draft`의 `what`, `why`, `scope`, `dod`가 축약된 계획 역할을 한다.
+1. feature/fix Run은 `plan` phase에서 시작한다.
+2. linked Interview가 있으면 승인 후에만 `interview -> plan`으로 전이한다.
+3. `plan -> contract`는 같은 Run/Intent의 approved Plan을 요구한다.
+4. `contract -> act`는 같은 Run/Intent의 approved Contract를 요구한다.
+5. feature/fix의 비사소 write는 active Run이 `act`/`verify`이고 approved Contract가 연결된 경우에만 허용한다.
+6. tidy/chore는 이 계약 전제를 선택적으로 유지한다.
 
-차이:
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 23과 `docs/phase/phase-23-execution-precondition.md`를 본다.
 
-- 현재: 의도 선언 중심
-- 목표: 작업 목표, 문제 정의, 범위, 수정 금지 영역, 테스트 전략, 검증 명령, 남은 위험까지 명시
+## 이전 완료 Phase 22
 
-추천:
+Phase 22에서 governance integrity의 남은 우회 세 가지를 닫았다.
 
-- `Plan`을 intent에 직접 합치지 말고 별도 `plans/*.json` 또는 wiki spec section으로 둔다.
-- 최소 MVP에서는 `RunState.plan`을 inline object로 시작해도 된다.
+1. Contract 승인은 같은 Run/Intent의 approved linked Plan을 요구한다.
+2. Interview lineage가 있으면 approved Interview와 Plan reference 일치도 검증한다.
+3. required pass 이후 성공 edit span이 있으면 evidence를 stale로 판정한다.
+4. malformed/schema-invalid Intent state를 더 이상 건너뛰지 않는다.
+5. 손상/유실된 linked Contract는 write/Stop hook에서 fail-closed다.
+6. atomic JSON 임시 파일 이름을 process/UUID별로 분리했다.
 
-### 3. Sprint Contract
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 22와 `docs/phase/phase-22-governance-integrity-hardening.md`를 본다.
 
-현재는 `Intent` + `Rule` + `DoD`가 Sprint Contract 일부 역할을 한다.
+## 이전 완료 Phase 21
 
-부족한 필드:
+Phase 21에서 구조 후보와 최종 판정을 분리하고 detector feedback을 실제 재생 가능하게 했다.
 
-- `allowedScope`
-- `forbiddenScope`
-- `architectureBoundaries`
-- `requiredChecks`
-- `definitionOfDone`
-- `rubric`
-- `stopConditions`
-- `requiresUserDecision`
+1. edit old-text anchor를 line bucket `regionKey`로 기록한다.
+2. 동일 region 3회 수정과 edit/failed-command 반복 sequence를 후보로 찾는다.
+3. 같은 파일의 서로 다른 영역은 region detection에서 분리한다.
+4. candidate thrashing은 Run/complete를 hard block하지 않고 confirmed만 차단한다.
+5. Detection-derived thrashing eval은 관련 span snapshot을 재생한다.
+6. Detection resolve가 Wiki problem page를 자동 생성/갱신한다.
 
-추천:
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 21과 `docs/phase/phase-21-structural-semantic-monitor-feedback.md`를 본다.
 
-- Contract는 `Intent`를 대체하지 않는다.
-- `SprintContract.intentId`로 연결하고, `allowedScope` 기본값은 `Intent.scope`에서 가져온다.
-- `requiredChecks`는 Test Matrix와 연결한다.
+## 이전 완료 Phase 20
 
-### 4. Test Matrix
+Phase 20에서 일반 shell command 관측을 Run trace와 Monitor에 연결했다.
 
-현재 테스트 실행 자체는 프로젝트 개발자가 `npm.cmd test`로 수행하지만, Harness 상태에 저장되지 않는다.
+1. command/args/cwd/output/exit code를 저장하는 `commands.ts` runtime을 추가했다.
+2. `intent command -- <command...>` wrapper가 raw log와 `run_command` span을 남긴다.
+3. Codex/Claude PostToolUse(Bash) hook이 실행 결과를 재실행 없이 기록한다.
+4. failed command의 deterministic error signature를 저장한다.
+5. 일반 command 실패도 repeated command/error signature detection 입력이 된다.
+6. upstream hook이 놓치는 unified/streaming shell은 wrapper를 쓰도록 경계를 명시했다.
 
-차이:
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 20과 `docs/phase/phase-20-general-command-tracing.md`를 본다.
 
-- 현재: 테스트는 수동 실행 결과이며 완료 gate에 연결되지 않음
-- 목표: 작업 유형별 required/optional matrix를 Plan/RunState에 저장
+## 이전 완료 Phase 19
 
-추천:
+Phase 19에서 Interview를 first-class artifact로 만들었다.
 
-- `TestMatrixSchema`를 `staticCheck`, `unitTest`, `integrationTest`, `e2eTest`, `lint`, `build` 정도로 시작한다.
-- 첫 구현에서는 각 check를 `required | optional | skipped`로 제한한다.
+1. 목표·맥락·제약·scope·성공/실패·검증·비목표·가정·질문을 schema로 저장한다.
+2. `.intent/interviews/INTERVIEW-*.json` CRUD와 setup path를 추가했다.
+3. `intent interview draft/show/list/link/approve` CLI를 추가했다.
+4. 승인된 Interview 본문을 동결하고 downstream lineage만 append-only로 허용한다.
+5. `run start --interview`, `spec draft --interview`, `plan draft`가 lineage를 자동 전파한다.
+6. SessionStart와 handoff active Run에 Interview/Spec/Plan/Contract lineage를 노출한다.
 
-### 5. Rule Candidate
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 19와 `docs/phase/phase-19-structured-interview-lineage.md`를 본다.
 
-현재 `rules/*.json`은 draft/approved를 지원한다. `postmortem`에서 draft rule을 만들 수 있다.
+## 이전 완료 Phase 18
 
-차이:
+Phase 18에서 승인 artifact와 Run terminal 상태의 경계를 강화했다.
 
-- 현재: 사람이 명시적으로 postmortem/rule draft를 만든다.
-- 목표: Detection Record에서 Rule Candidate가 자동 생성된다.
+1. Plan/Contract 승인자와 승인 시각을 schema-validated state로 저장한다.
+2. 승인되거나 archived된 Plan/Contract 내용 변경을 runtime에서 거부한다.
+3. Draft Contract는 scope/completion policy를 바꾸지 않는다.
+4. 승인된 Contract는 forbiddenScope뿐 아니라 allowedScope 밖 변경도 막는다.
+5. Run phase는 순방향과 `verify -> act` 재작업만 허용한다.
+6. `done/passing`은 성공한 completion evaluator만 설정한다.
 
-추천:
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 18과 `docs/phase/phase-18-approval-lifecycle-run-fsm.md`를 본다.
 
-- 기존 `Rule`을 유지한다.
-- Detection 기반으로 만들어진 rule에는 `sourceDetectionId`를 추가하는 방향이 좋다.
+## 이전 완료 Phase 17
 
-## 없음
+Phase 17에서 completion integrity의 P0 우회를 닫았다.
 
-### 1. RunState
+1. active run과 governed run 조회를 분리했다.
+2. feature/fix 완료에는 동일 Intent에 연결된 governed run을 요구한다.
+3. run이 blocked/paused/passing 상태가 되어도 completion context에서 사라지지 않게 했다.
+4. required evidence와 contract report에 latest-result-wins 규칙을 적용했다.
+5. CLI complete/stop-check와 Stop hook이 같은 completion evaluator를 사용하게 했다.
+6. run start가 Intent type에서 required evidence를 파생하도록 했다.
 
-최종목표의 핵심인 RunState가 없다.
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 17과 `docs/phase/phase-17-governed-completion-integrity.md`를 본다.
 
-현재 `StateSchema`는 다음 수준이다.
+## 이전 완료 Phase 16
 
-```ts
-{
-  version: 1,
-  activeIntentId: string | null
-}
-```
+Phase 16에서 이전 추천 1-6은 구현 완료됐다.
 
-부족한 것:
+1. Completion/Stop path와 monitor/detection 자동 연결.
+2. 외부 Judge command adapter.
+3. Approved rule impact report.
+4. Monitor의 반복 파일 수정 탐지.
+5. Spec/Plan 자동 run 연결.
+6. AGENTS/CI candidate와 reflection 추적.
 
-- `runId`
-- `phase`
-- `status`
-- `planId`
-- `interviewId`
-- `sprintContractId`
-- `budget`
-- `definitionOfDone`
-- `testMatrix`
-- `completionGate`
-- `verificationEvidence`
-- `observability`
-- `detectionRecords`
-- `lineage`
-- `nextAction`
+상세 ledger는 `docs/final-goal-phase-feature-spec.md`의 Phase 16과 `docs/phase/phase-16-automation-loop-closure.md`를 본다.
 
-이 차이가 최종목표와 현재 구현 사이의 가장 큰 구조적 차이다.
+## 실제 남은 작업
 
-### 2. Verification Evidence
+### 1. AGENTS/CI 자동 patch 적용 (선택)
 
-현재 완료 판정은 DoD text check와 learning note에 의존한다. 실제 명령 실행 로그를 Harness가 저장하거나 판정하지 않는다.
+현재는 AGENTS/CI 후보 출력과 reflection 상태 기록까지 제공한다. 실제 파일 자동 patch 적용은 사람이 명시적으로 선택해야 할 별도 기능으로 남겨뒀다.
 
-없는 것:
+초기 구현 후보:
 
-- 검증 명령 실행 wrapper
-- exit code 저장
-- stdout/stderr log 저장
-- logPath 저장
-- evidence type 분류
-- required check 충족 여부 판정
-- 실패 후 재검증 여부 확인
+- `intent rule apply-agents-candidate <ruleId>`
+- `intent rule apply-ci-candidate <ruleId>`
+- dry-run diff와 human approval gate
 
-최종목표의 `false_success` 감지를 위해 가장 먼저 필요하다.
+## 문서 간 역할
 
-### 3. Raw evidence storage
+### `hyohyeon-harness-최종목표.md`
 
-현재 `.intent/wiki`는 정리된 지식 중심이고, 원본 evidence 저장소가 없다.
+상위 SSOT다. 코드와 나머지 문서는 이 문서를 향해야 한다.
 
-목표 문서가 요구하는 raw 계층:
+### `docs/final-goal-phase-feature-spec.md`
 
-- conversations
-- agent-logs
-- traces
-- spans
-- test-results
-- build-results
-- lint-results
-- typecheck-results
-- git-diffs
-- errors
-- sources
+구현 ledger다. Phase 1-28과 hardening 항목의 상태와 verification evidence를 기록한다.
 
-현재 `src/runtime/wiki.ts` 주석에는 "No raw/ layer"라고 되어 있다. 이는 현재 설계와 목표 문서가 명확히 다른 지점이다.
+### `README.md`
 
-추천:
+사람용 입구다. 설치, workflow, 주요 CLI, 현재 상태만 짧게 보여준다.
 
-- 루트 `raw/`가 아니라 `.intent/raw/`로 둔다.
-- `.intent/` 아래를 CLI-only state로 유지한다.
+### `AGENT.md`
 
-### 4. Observability Evidence
+저장소 운영 기준 문서다. invariants, layout, build/test, hook architecture, security, anti-patterns를 둔다.
 
-현재 hook은 write 시점의 gate로 동작하지만, trace/span을 축적하지 않는다.
+### `AGENTS.md`
 
-없는 것:
+Codex/Claude/기타 agent가 빠르게 읽는 quick-reference view다.
 
-- trace id
-- span id
-- edit_file span
-- run_command span
-- run_test span
-- startedAt/endedAt
-- status
-- errorSignature
-- logPath
-- span count
+## 다음 phase 후보
 
-최종목표의 "행동을 증명하는 데이터" 계층은 아직 없다.
-
-### 5. Monitor
-
-현재는 thrashing 또는 false_success 감지가 없다.
-
-없는 탐지:
-
-- 같은 파일 반복 수정 횟수
-- 같은 명령 반복 실패
-- 같은 error signature 반복
-- 같은 테스트 실패 반복
-- 성공 선언 이후 검증 명령 존재 여부
-- Test Matrix 충족 여부
-- E2E required인데 E2E 누락 여부
-
-### 6. Detection Record
-
-현재 failure는 wiki page나 postmortem으로 남길 수 있지만, 구조화된 Detection Record가 없다.
-
-없는 것:
-
-- `detectionId`
-- `type: thrashing | false_success`
-- `runId`
-- structural gate result
-- semantic judgement
-- evidence summary
-- related trace/span ids
-- nextAction
-- suggested rule candidate
-
-### 7. LLM Judge
-
-현재 hook/runtime은 deterministic 원칙을 따른다. LLM Judge는 없다.
-
-이것은 단순 미구현이라기보다 설계상 조심할 부분이다. 현재 원칙상 hook 안에서 LLM을 호출하면 안 된다. 따라서 LLM Judge는 blocking hook이 아니라 별도 command 또는 reviewer workflow로 붙이는 것이 맞다.
-
-추천:
-
-- `intent monitor`는 deterministic structural gate만 수행
-- `intent judge <detectionId>`는 선택적 LLM Judge로 분리
-- 초기 버전에서는 LLM Judge 없이 Detection Record까지만 구현
-
-### 8. Reviewer / Eval 연동
-
-현재는 reviewer agent나 eval case 저장 구조가 없다.
-
-없는 것:
-
-- reviewer checklist artifact
-- eval case schema
-- detection -> eval case 변환
-- AGENTS.md candidate patch generation
-- CI/reviewer/hook 반영 워크플로
-
-## 설계가 다른 부분
-
-### 1. 프로젝트 이름
-
-목표 문서 제목은 `hyoheyon-harness`이고, 현재 파일명/프로젝트 경로는 `hyohyeon-harness`다. 철자를 통일해야 한다.
-
-추천:
-
-- 문서와 패키지명을 `hyohyeon-harness`로 통일한다.
-- 단, npm package name은 현재 `intent-harness`라서 별도 product name 정책이 필요하다.
-
-### 2. 상태 위치
-
-목표 문서는 루트에 `raw/`, `wiki/`, `schema/`, `runs/`를 제안한다. 현재 프로젝트는 `.intent/` 아래에 상태를 모은다.
-
-현재 원칙:
-
-- `.intent/`는 CLI-only state
-- AI 직접 편집 차단
-- wiki도 `.intent/wiki` 아래
-
-추천:
-
-- 최종목표의 구조를 그대로 루트에 만들지 말고 `.intent/` 아래로 흡수한다.
-
-예상 구조:
-
-```text
-.intent/
-  intents/
-  runs/
-  contracts/
-  plans/
-  detections/
-  raw/
-    test-results/
-    build-results/
-    typecheck-results/
-    lint-results/
-    traces/
-    spans/
-    errors/
-    git-diffs/
-  wiki/
-    knowledge/
-    problems/
-  rules/
-  handoff/
-```
-
-### 3. `Intent`와 `Run`의 책임
-
-현재 `Intent`는 변경 의도와 scope approval이다. 최종목표의 `RunState`는 실행 상태다.
-
-섞으면 위험하다.
-
-- Intent는 사람이 승인한 "무엇/왜/범위"다.
-- Run은 Agent가 수행하는 "이번 실행의 상태/증거/다음 행동"이다.
-
-추천 관계:
-
-```text
-Spec -> Intent -> SprintContract -> RunState -> Evidence -> Detection -> Wiki/Rule
-```
-
-### 4. Wiki raw layer
-
-현재 wiki 설계는 "No raw/ layer"다. 최종목표는 raw source를 source of truth로 요구한다.
-
-이 차이는 최종목표를 따르려면 바뀌어야 한다.
-
-추천:
-
-- wiki 자체에는 raw를 넣지 않는다.
-- `.intent/raw`를 새로 만들고, wiki frontmatter 또는 본문에서 raw source path/hash를 참조한다.
-
-### 5. Hook deterministic 원칙과 LLM Judge
-
-현재 AGENT 원칙은 hook deterministic, LLM/network call 금지다. 최종목표의 LLM Judge는 이 원칙과 충돌할 수 있다.
-
-추천:
-
-- blocking hook에는 deterministic 검사만 둔다.
-- LLM Judge는 수동/비동기/후처리 command로 둔다.
-- Detection Record에는 `judgeStatus: not_run | skipped | completed`를 둔다.
-
-## 부족한 기능을 단계별로 나눈 구현 후보
-
-### Phase A: RunState MVP
-
-목표 문서의 1단계에 해당한다.
-
-추가할 것:
-
-- `RunStateSchema`
-- `RunStatusSchema`
-- `RunPhaseSchema`
-- `.intent/runs/run-*.json`
-- `.intent/runs/latest-runs.json`
-- CLI:
-  - `intent run start <intentId> "<objective>"`
-  - `intent run status`
-  - `intent run note "<text>"`
-  - `intent run pause|resume`
-
-기존과 연결:
-
-- `StateSchema.activeIntentId` 옆에 `activeRunId` 추가 가능
-- 혹은 별도 `runs/latest-runs.json`만 사용
-
-### Phase B: Verification Evidence MVP
-
-목표 문서의 2단계에 해당한다. 최우선 구현 후보.
-
-추가할 것:
-
-- `VerificationEvidenceSchema`
-- `.intent/raw/test-results`
-- `.intent/raw/typecheck-results`
-- `.intent/raw/build-results`
-- CLI:
-  - `intent verify typecheck -- npm.cmd run typecheck`
-  - `intent verify unit_test -- npm.cmd test`
-  - `intent verify lint -- <command>`
-  - `intent verify list`
-
-동작:
-
-- command 실행
-- stdout/stderr를 log file로 저장
-- exitCode/status/createdAt/logPath를 active run에 append
-- required evidence가 없으면 complete 차단
-
-주의:
-
-- Windows에서 `npm.ps1` 이슈가 있으므로 examples는 `npm.cmd`를 고려한다.
-
-### Phase C: Test Matrix와 Completion Gate
-
-추가할 것:
-
-- `TestMatrixSchema`
-- `CompletionGateSchema`
-- `RunState.testMatrix`
-- `evaluateRunCompletion(run)` 순수 함수
-
-동작:
-
-- required check별 evidence 존재 여부 확인
-- required evidence가 failed면 complete 불가
-- evidence 없으면 `false_success_candidate`
-
-### Phase D: Observability MVP
-
-목표 문서의 3단계에 해당한다.
-
-추가할 것:
-
-- `TraceSchema`
-- `SpanSchema`
-- `.intent/raw/traces`
-- `.intent/raw/spans`
-- edit/apply_patch hook에서 span append
-- verify command에서 run_command/run_test span append
-
-초기 span 종류:
-
-- `edit_file`
-- `apply_patch`
-- `run_command`
-- `run_check`
-- `write_handoff`
-
-### Phase E: Detection MVP
-
-목표 문서의 4단계에 해당한다.
-
-추가할 것:
-
-- `DetectionRecordSchema`
-- `.intent/detections/*.json`
-- `intent monitor`
-
-초기 감지:
-
-- 같은 command가 같은 exitCode로 3회 이상 실패
-- 같은 error signature가 3회 이상 반복
-- required evidence 없이 complete 시도
-- failed evidence 이후 passed evidence 없이 complete 시도
-
-### Phase F: Wiki ingest 자동화
-
-목표 문서의 5단계에 해당한다.
-
-추가할 것:
-
-- `intent wiki ingest detection <id>`
-- detection -> failure page 생성
-- related evidence/log path 링크
-- optional rule draft 생성
-
-기존 `postmortem.ts`를 확장하면 된다.
-
-### Phase G: LLM Judge / Reviewer / Eval
-
-가장 뒤로 미루는 것이 좋다.
-
-이유:
-
-- 현재 hook deterministic 원칙과 충돌 가능
-- 비용 통제 필요
-- 구조 evidence가 먼저 있어야 judge 품질이 나온다
-
-초기 구현 방향:
-
-- Detection Record의 애매한 케이스만 대상으로 함
-- hook 안에서는 실행하지 않음
-- judge 결과도 evidence로 저장
-
-## 우선순위 판단
-
-가장 먼저 해야 할 것은 `RunState + Verification Evidence`다.
-
-이유:
-
-1. 최종목표의 핵심인 "완료는 Agent의 말이 아니라 증거로 판단"을 바로 구현한다.
-2. false_success 감지의 기반이 된다.
-3. Observability와 thrashing monitor도 evidence 없이는 의미가 약하다.
-4. 현재 intent/DoD/stop-gate와 자연스럽게 연결된다.
-
-권장 첫 intent:
-
-```text
-what: RunState와 verification evidence MVP를 추가한다.
-why: 완료 판단을 self-report가 아니라 실행된 검증 증거에 연결하기 위해.
-scope:
-  - src/runtime/schemas.ts
-  - src/state/paths.ts
-  - src/runtime/runs.ts
-  - src/runtime/verification.ts
-  - src/runtime/stop-gate.ts
-  - src/cli/index.ts
-  - tests/run*.test.mjs
-  - tests/verification*.test.mjs
-dod:
-  - RunState schema와 CRUD 테스트가 통과한다.
-  - verify command가 명령 결과를 logPath와 evidence로 저장한다.
-  - required evidence가 없으면 completion gate가 실패한다.
-  - npm.cmd run typecheck와 npm.cmd test가 통과한다.
-```
-
-## 결론
-
-현재 프로젝트는 최종목표의 "철학"은 이미 꽤 잘 반영하고 있다. 특히 `Intent-First`, scope gate, human-only approval, wiki, postmortem, rule candidate는 최종목표와 방향이 같다.
-
-하지만 최종목표가 요구하는 "Agent 작업 실행 단위 관리"는 아직 없다. 현재는 변경 전/종료 시점의 gate는 있지만, 실행 중에 무엇을 했고 어떤 증거가 남았고 왜 완료라고 볼 수 있는지를 저장하는 계층이 비어 있다.
-
-따라서 다음 진화의 핵심은 다음 한 문장으로 요약된다.
-
-```text
-Intent는 변경 허가를 관리하고, RunState는 실행과 증거를 관리하게 분리한다.
-```
-
-그 위에 Verification Evidence, Observability Evidence, Detection Record, LLM Judge를 단계적으로 쌓는 것이 최종목표 문서와 현재 코드베이스를 가장 자연스럽게 연결하는 길이다.
+필수 구현 phase는 완료됐다. 이후 작업은 실제 운영 피드백에서 생긴 Detection/Rule/Eval을 반영하거나, 사용자가 명시적으로 선택한 AGENTS/CI patch 기능을 별도 intent로 진행한다.

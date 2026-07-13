@@ -8,7 +8,12 @@ import {
   draftEvalCaseFromDetection,
   findEvalCase,
   loadEvalCases,
+  runEvalCase,
+  updateEvalCase,
 } from '../dist/src/runtime/evals.js'
+import { detectRepeatedCommandFailures } from '../dist/src/runtime/monitor.js'
+import { appendSpanToRun } from '../dist/src/runtime/observability.js'
+import { createRun } from '../dist/src/runtime/runs.js'
 import {
   EvalCaseSchema,
   EvalCaseStatusSchema,
@@ -88,6 +93,11 @@ test('draftEvalCaseFromDetection creates a false_success eval draft', () => {
   assert.equal(existsSync(paths(root).evalCaseFile(evalCase.evalId)), true)
   assert.equal(findEvalCase(root, evalCase.evalId)?.evalId, evalCase.evalId)
   assert.deepEqual(loadEvalCases(root).map((item) => item.evalId), ['EVAL-001'])
+
+  const run = runEvalCase(root, evalCase.evalId)
+  assert.equal(run.status, 'passed')
+  assert.match(run.reason, /source detection matches/)
+  assert.equal(findEvalCase(root, evalCase.evalId)?.lastRun?.status, 'passed')
 })
 
 test('draftEvalCaseFromDetection creates a thrashing eval draft', () => {
@@ -111,4 +121,33 @@ test('draftEvalCaseFromDetection creates a thrashing eval draft', () => {
   assert.equal(evalCase.expected.count, 3)
   assert.equal(evalCase.expected.errorSignature, 'stable failure')
   assert.deepEqual(evalCase.tags, ['detection', 'thrashing'])
+})
+
+test('thrashing eval replays span fixtures instead of trusting the source detection', () => {
+  const root = tempRoot()
+  const run = createRun(root, { objective: 'replay detector input' })
+  for (let index = 0; index < 3; index++) {
+    appendSpanToRun(root, run.runId, {
+      kind: 'run_command',
+      name: 'command npm test',
+      status: 'error',
+      attributes: { command: 'npm test', args: [], exitCode: 1, errorSignature: 'stable failure' },
+    })
+  }
+  const detection = detectRepeatedCommandFailures(root, run.runId)[0]
+  const evalCase = draftEvalCaseFromDetection(root, detection.detectionId)
+
+  assert.equal(evalCase.input.detector, 'Repeated command failure')
+  assert.equal(evalCase.input.spans.length, 3)
+  const passed = runEvalCase(root, evalCase.evalId)
+  assert.equal(passed.status, 'passed')
+  assert.match(passed.reason, /replayed span fixture/)
+
+  updateEvalCase(root, evalCase.evalId, (current) => ({
+    ...current,
+    input: { ...current.input, spans: current.input.spans.slice(0, 2) },
+  }))
+  const failed = runEvalCase(root, evalCase.evalId)
+  assert.equal(failed.status, 'failed')
+  assert.match(failed.reason, /did not reproduce/)
 })

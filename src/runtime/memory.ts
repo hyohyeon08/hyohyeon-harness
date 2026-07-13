@@ -43,6 +43,13 @@ export function formatSessionContext(parts: SessionContextParts): string {
     const intent = run.intentId ? ` (${run.intentId})` : ''
     lines.push('  active run:')
     lines.push(`    ${run.runId} [${run.status}/${run.phase}] ${run.objective}${intent}`)
+    const lineage = [
+      run.interviewId ? `interview=${run.interviewId}` : null,
+      run.specSlug ? `spec=${run.specSlug}` : null,
+      run.planId ? `plan=${run.planId}` : null,
+      run.contractId ? `contract=${run.contractId}` : null,
+    ].filter((value): value is string => value !== null)
+    if (lineage.length > 0) lines.push(`    lineage: ${lineage.join(' ')}`)
     if (run.nextAction) lines.push(`    next: ${run.nextAction}`)
     const recentNotes = run.notes.slice(-3)
     if (recentNotes.length > 0) {

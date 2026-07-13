@@ -35,21 +35,28 @@ description: 추상적 목표를 구현 전에 깊은 인터뷰로 구체화해,
 
 한 번에 한 묶음씩. 모호하면 명료해질 때까지 다시 묻는다 (추측 금지).
 
-## 산출물: 공유 이해 문서(spec) → 위키 + 사람 승인
+## 산출물: InterviewSummary → 공유 이해 문서(spec) → 사람 승인
 
-대화가 휘발되면 가치가 없다. 합의된 이해를 spec 으로 남긴다:
+대화가 휘발되면 가치가 없다. 먼저 합의된 목표·맥락·제약·성공/실패 기준·검증·비목표·가정·열린 질문을 구조화된 InterviewSummary로 남긴다:
 
 ```bash
-intent spec draft "주문 취소 흐름"
+intent interview draft "주문 취소 흐름" \
+  --goal "..." --why "..." \
+  --context "..." --constraint "..." \
+  --allow "src/orders/**" --forbid "src/payments/**" \
+  --success "..." --failure "..." --verify "..." \
+  --option "..." --non-goal "..." --assumption "..." --question "..."
+intent interview approve INTERVIEW-001
+intent spec draft "주문 취소 흐름" --interview INTERVIEW-001
 intent wiki append spec-주문-취소-흐름 "## 목표\n..."
 intent wiki append spec-주문-취소-흐름 "## 가정(확정)\n- ...\n## 명시적 비목표\n- ...\n## 경계 예시\n- ..."
 ```
 
 그리고 **멈춘다**:
 
-> "spec 을 위키에 정리했습니다. 읽어보시고 제 이해가 맞으면 `intent spec approve spec-주문-취소-흐름` 로 승인해 주세요."
+> "InterviewSummary와 spec을 정리했습니다. 구조화된 요약을 먼저 확인해 `intent interview approve INTERVIEW-001`, 이어서 spec이 맞으면 `intent spec approve spec-주문-취소-흐름`을 실행해 주세요."
 
-승인은 **사람만** 한다 (Claude Code/Codex AI 셸에선 거부됨). 승인된 spec 은 위키에 남아 다음 세션과 intent skill이 참조한다 — 지식이 복리로 쌓인다.
+승인은 **사람만** 한다 (Claude Code/Codex AI 셸에선 거부됨). 승인된 Interview 본문은 불변이고, 이후 Intent/Spec/Plan/Run 참조만 append-only로 연결된다. 승인된 spec은 위키에 남아 다음 세션과 intent skill이 참조한다 — 지식이 복리로 쌓인다.
 
 ## 다음 단계
 spec 이 승인되면 `/intent` 로 넘어가 실제 의도를 선언한다. spec = 공유 이해, intent = 이번에 짤 작은 증분.

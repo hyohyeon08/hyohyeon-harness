@@ -31,6 +31,7 @@ const run = (over) => ({
   phase: 'act',
   status: 'active',
   intentId: 'INT-001',
+  interviewId: 'INTERVIEW-001',
   specSlug: null,
   planId: null,
   contractId: null,
@@ -82,6 +83,7 @@ test('active run is rendered as a separate handoff section', () => {
   const md = composeHandoff({ ...base, activeRun: run() })
   assert.match(md, /## Active Run/)
   assert.match(md, /RUN-001 \[active\/act\] Wire handoff context \(INT-001\)/)
+  assert.match(md, /lineage: interview=INTERVIEW-001/)
   assert.match(md, /next: Add verification schema/)
   assert.match(md, /Use activeRun\(root\) in writeHandoff/)
 })

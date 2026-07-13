@@ -17,7 +17,7 @@ export function composeSpecStatus(status: 'draft' | 'approved', by?: string, dat
     : `> status: 🚧 draft (awaiting human approval — review then \`intent spec approve <slug>\`)`
 }
 
-function specExists(root: string, slug: string): boolean {
+export function specExists(root: string, slug: string): boolean {
   return listArticles(root).some((a) => a.slug === slug)
 }
 

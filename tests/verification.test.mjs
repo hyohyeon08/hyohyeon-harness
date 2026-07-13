@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { existsSync, mkdtempSync, readFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createRun, findRun } from '../dist/src/runtime/runs.js'
@@ -13,6 +13,8 @@ import {
 import { listSpans } from '../dist/src/runtime/observability.js'
 import { extractErrorSignature, runVerification } from '../dist/src/runtime/verification.js'
 import { paths } from '../dist/src/state/paths.js'
+import { createRunContentFingerprint } from '../dist/src/runtime/provenance.js'
+import { staleRequiredEvidenceTypes } from '../dist/src/runtime/completion.js'
 
 function tempRoot() {
   return mkdtempSync(join(tmpdir(), 'intent-verification-'))
@@ -49,6 +51,7 @@ test('VerificationEvidenceSchema stores structured command evidence and defaults
   assert.equal(evidence.command, 'npm.cmd')
   assert.deepEqual(evidence.args, [])
   assert.equal(evidence.exitCode, 0)
+  assert.equal(evidence.provenance, null)
 })
 
 test('RunStateSchema defaults verification evidence fields', () => {
@@ -133,7 +136,9 @@ test('extractErrorSignature falls back to a TAP failure headline', () => {
 
 test('runVerification records passed command output and appends evidence to the run', () => {
   const root = tempRoot()
-  const run = createRun(root, { objective: 'Record passing evidence' })
+  mkdirSync(join(root, 'src'), { recursive: true })
+  writeFileSync(join(root, 'src', 'app.ts'), 'export const value = 1\n', 'utf8')
+  const run = createRun(root, { objective: 'Record passing evidence', requiredEvidenceTypes: ['unit_test'] })
 
   const evidence = runVerification(root, {
     runId: run.runId,
@@ -149,6 +154,8 @@ test('runVerification records passed command output and appends evidence to the 
   assert.deepEqual(evidence.args, ['-e', "process.stdout.write('pass-output')"])
   assert.match(evidence.logPath, /^\.intent\/raw\/unit_test-results\/RUN-001-/)
   assert.equal(existsSync(join(root, evidence.logPath)), true)
+  assert.equal(evidence.provenance?.algorithm, 'sha256')
+  assert.deepEqual(evidence.provenance?.files.map((file) => file.path), ['src/app.ts'])
   const log = readFileSync(join(root, evidence.logPath), 'utf8')
   assert.equal(log.includes(`cwd: ${root}`), true)
   assert.match(log, /pass-output/)
@@ -156,6 +163,10 @@ test('runVerification records passed command output and appends evidence to the 
   const stored = findRun(root, run.runId)
   assert.equal(stored?.evidence.length, 1)
   assert.equal(stored?.evidence[0].logPath, evidence.logPath)
+
+  writeFileSync(join(root, 'src', 'app.ts'), 'export const value = 2\n', 'utf8')
+  const current = createRunContentFingerprint(root, stored)
+  assert.deepEqual(staleRequiredEvidenceTypes(stored, null, [], current.digest), ['unit_test'])
 })
 
 test('runVerification records failed command output and keeps the failure evidence', () => {

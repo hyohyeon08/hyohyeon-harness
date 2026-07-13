@@ -24,6 +24,18 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"{{INTENT_ROOT}}/dist/hooks/post-command.js\"",
+            "statusMessage": "Recording command trace"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [

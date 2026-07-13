@@ -3,20 +3,58 @@
  * termination while any approved intent is not yet completable. Silent-fail.
  */
 import { readStdinJson } from './_stdin.js'
-import { evaluateStopGate } from '../src/runtime/stop-gate.js'
-import { loadIntents } from '../src/runtime/intents.js'
+import { evaluateCompletionAttempt } from '../src/runtime/completion.js'
+import { IntentStateError, loadIntents } from '../src/runtime/intents.js'
+import { ContractStateError } from '../src/runtime/contracts.js'
+import { RunStateError } from '../src/runtime/runs.js'
+import { ProvenanceError } from '../src/runtime/provenance.js'
 import { rootOf, isIntentProject } from './_env.js'
 
 async function main(): Promise<void> {
   const payload = await readStdinJson()
   const root = rootOf(payload)
   if (!isIntentProject(root)) return
-  const decision = evaluateStopGate(loadIntents(root))
-  if (decision.block) {
+  let intents
+  try {
+    intents = loadIntents(root)
+  } catch (error) {
+    if (!(error instanceof IntentStateError)) throw error
+    process.stdout.write(JSON.stringify({
+      decision: 'block',
+      reason: `[intent state] ${error.message}. Repair the state before stopping.`,
+    }))
+    return
+  }
+  let attempt
+  try {
+    attempt = evaluateCompletionAttempt(root, intents)
+  } catch (error) {
+    if (error instanceof ProvenanceError) {
+      process.stdout.write(JSON.stringify({
+        decision: 'block',
+        reason: `[provenance] ${error.message}. Repair the filesystem state before stopping.`,
+      }))
+      return
+    }
+    if (error instanceof RunStateError) {
+      process.stdout.write(JSON.stringify({
+        decision: 'block',
+        reason: `[run state] ${error.message}. Repair the state before stopping.`,
+      }))
+      return
+    }
+    if (!(error instanceof ContractStateError)) throw error
+    process.stdout.write(JSON.stringify({
+      decision: 'block',
+      reason: `[contract state] ${error.message}. Repair the state before stopping.`,
+    }))
+    return
+  }
+  if (attempt.block) {
     process.stdout.write(
       JSON.stringify({
         decision: 'block',
-        reason: '[intent] unfinished work:\n' + decision.reasons.map((r) => `  - ${r}`).join('\n'),
+        reason: '[intent] unfinished work:\n' + attempt.reasons.map((reason) => `  - ${reason}`).join('\n'),
       }),
     )
   }

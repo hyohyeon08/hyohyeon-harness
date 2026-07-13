@@ -9,6 +9,10 @@ import {
   detectFalseSuccessOnCompletionAttempt,
   detectRepeatedCommandFailures,
   detectRepeatedErrorSignatures,
+  detectRepeatedEditRegions,
+  detectRepeatedFileEdits,
+  detectRepeatedToolSequence,
+  blockRunForDetections,
 } from '../dist/src/runtime/monitor.js'
 import { createRun } from '../dist/src/runtime/runs.js'
 import { missingRequiredEvidenceTypes } from '../dist/src/runtime/stop-gate.js'
@@ -70,6 +74,35 @@ function run(over = {}) {
   }
 }
 
+function contract(over = {}) {
+  return {
+    contractId: 'CONTRACT-001',
+    runId: 'RUN-001',
+    intentId: 'INT-001',
+    status: 'draft',
+    allowedScope: ['**'],
+    forbiddenScope: [],
+    architectureBoundaries: [],
+    testMatrix: {
+      typecheck: 'optional',
+      build: 'optional',
+      lint: 'optional',
+      unit_test: 'optional',
+      integration_test: 'skipped',
+      e2e_test: 'skipped',
+      custom: 'skipped',
+    },
+    requiredChecks: ['typecheck', 'unit_test'],
+    definitionOfDone: [],
+    rubric: {},
+    stopConditions: [],
+    requiresUserDecision: [],
+    createdAt: 't',
+    updatedAt: 't',
+    ...over,
+  }
+}
+
 test('missingRequiredEvidenceTypes lists required checks without evidence', () => {
   const missing = missingRequiredEvidenceTypes(
     run({
@@ -120,6 +153,20 @@ test('detectFalseSuccessOnCompletionAttempt ignores satisfied evidence and unrel
   assert.equal(satisfied, null)
   assert.equal(unrelated, null)
   assert.deepEqual(loadDetections(root), [])
+})
+
+test('detectFalseSuccessOnCompletionAttempt uses matching contract requiredChecks', () => {
+  const root = tempRoot()
+
+  const detection = detectFalseSuccessOnCompletionAttempt(
+    root,
+    intent(),
+    run({ evidence: [evidence({ type: 'typecheck' })] }),
+    contract(),
+  )
+
+  assert.equal(detection?.type, 'false_success')
+  assert.deepEqual(detection?.attributes.missingEvidenceTypes, ['unit_test'])
 })
 
 test('detectRepeatedCommandFailures writes a thrashing candidate for three identical command failures', () => {
@@ -234,4 +281,119 @@ test('detectRepeatedErrorSignatures ignores blank signatures and below-threshold
 
   assert.deepEqual(detectRepeatedErrorSignatures(root, active.runId), [])
   assert.deepEqual(loadDetections(root), [])
+})
+
+test('detectRepeatedFileEdits writes a thrashing candidate for repeated edits to the same file', () => {
+  const root = tempRoot()
+  const active = createRun(root, { objective: 'Find repeated file edits' })
+  for (const kind of ['apply_patch', 'edit', 'apply_patch', 'edit']) {
+    appendSpanToRun(root, active.runId, {
+      kind,
+      name: `pre-write ${kind}`,
+      status: 'ok',
+      attributes: { path: 'src/runtime/monitor.ts' },
+    })
+  }
+
+  const detections = detectRepeatedFileEdits(root, active.runId)
+
+  assert.equal(detections.length, 1)
+  assert.equal(detections[0].type, 'thrashing')
+  assert.equal(detections[0].title, 'Repeated file edits')
+  assert.equal(detections[0].attributes.path, 'src/runtime/monitor.ts')
+  assert.equal(detections[0].attributes.count, 4)
+  assert.deepEqual(detections[0].attributes.spanIds, ['SPAN-001', 'SPAN-002', 'SPAN-003', 'SPAN-004'])
+})
+
+test('general run_command failures feed repeated command and signature detection', () => {
+  const root = tempRoot()
+  const run = createRun(root, { objective: 'trace general failures', intentId: 'INT-001' })
+  for (let index = 0; index < 3; index++) {
+    appendSpanToRun(root, run.runId, {
+      kind: 'run_command',
+      name: 'command npm test',
+      status: 'error',
+      attributes: {
+        command: 'npm test',
+        args: [],
+        exitCode: 1,
+        errorSignature: 'same general failure',
+      },
+    })
+  }
+
+  assert.equal(detectRepeatedCommandFailures(root, run.runId).length, 1)
+  assert.equal(detectRepeatedErrorSignatures(root, run.runId).length, 1)
+})
+
+test('detectRepeatedEditRegions distinguishes the same file by line bucket', () => {
+  const root = tempRoot()
+  const run = createRun(root, { objective: 'trace edit regions' })
+  for (const regionKey of ['src/app.ts:1', 'src/app.ts:1', 'src/app.ts:4', 'src/app.ts:1']) {
+    appendSpanToRun(root, run.runId, {
+      kind: 'apply_patch',
+      name: 'pre-write apply_patch',
+      status: 'ok',
+      attributes: { path: 'src/app.ts', regionKey },
+    })
+  }
+
+  const detections = detectRepeatedEditRegions(root, run.runId)
+
+  assert.equal(detections.length, 1)
+  assert.equal(detections[0].title, 'Repeated edit region')
+  assert.equal(detections[0].attributes.regionKey, 'src/app.ts:1')
+  assert.equal(detections[0].attributes.count, 3)
+})
+
+test('detectRepeatedToolSequence finds repeated edit-failed-command cycles', () => {
+  const root = tempRoot()
+  const run = createRun(root, { objective: 'trace tool sequence' })
+  for (let index = 0; index < 3; index++) {
+    appendSpanToRun(root, run.runId, {
+      kind: 'edit',
+      name: 'pre-write Edit',
+      status: 'ok',
+      attributes: { path: 'src/app.ts', regionKey: 'src/app.ts:1' },
+    })
+    appendSpanToRun(root, run.runId, {
+      kind: 'run_command',
+      name: 'command npm test',
+      status: 'error',
+      attributes: { command: 'npm test', args: [], exitCode: 1 },
+    })
+  }
+
+  const detections = detectRepeatedToolSequence(root, run.runId)
+
+  assert.equal(detections.length, 1)
+  assert.equal(detections[0].title, 'Repeated tool sequence')
+  assert.deepEqual(detections[0].attributes.pattern, ['edit:ok', 'run_command:error'])
+  assert.equal(detections[0].attributes.repetitions, 3)
+})
+
+test('candidate detections do not hard-block a run until confirmed', () => {
+  const root = tempRoot()
+  const run = createRun(root, { objective: 'separate candidate and verdict' })
+  const candidate = {
+    detectionId: 'DET-001',
+    type: 'thrashing',
+    result: 'candidate',
+    runId: run.runId,
+    intentId: null,
+    title: 'Candidate only',
+    summary: 'Needs semantic judgement.',
+    evidenceRefs: [],
+    attributes: {},
+    judge: { status: 'not_run', judgement: null, confidence: null, classification: null, suggestedAction: null, inputDigest: null, adapterKey: null, updatedAt: null },
+    embedding: null,
+    resolution: null,
+    createdAt: 't',
+    updatedAt: 't',
+    resolvedAt: null,
+  }
+
+  assert.equal(blockRunForDetections(root, run.runId, [candidate]), null)
+  const blocked = blockRunForDetections(root, run.runId, [{ ...candidate, result: 'confirmed' }])
+  assert.equal(blocked.status, 'blocked')
 })

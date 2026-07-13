@@ -1,7 +1,7 @@
 # CLAUDE.md — intent (Claude Code 진입점)
 
 > **이 파일은 얇다 — 의도적으로.**
-> dohyun과 달리 `@AGENT.md`로 본문을 auto-import 하지 않는다. 그건 이 하네스가 싸우는 **컨텍스트 부패**이고, 우리의 standing 규칙은 *텍스트가 아니라 게이트*에 있기 때문이다. 전체 참조는 [AGENT.md](AGENT.md)를 **필요할 때 읽는다**.
+> dohyun과 달리 `@AGENT.md`로 본문을 auto-import 하지 않는다. 그건 이 하네스가 싸우는 **컨텍스트 부패**이고, 우리의 standing 규칙은 *텍스트가 아니라 게이트*에 있기 때문이다. 상위 제품 비전은 [hyohyeon-harness-최종목표.md](hyohyeon-harness-최종목표.md), 운영 규칙은 [AGENT.md](AGENT.md)를 **필요할 때 읽는다**.
 > 핵심 규칙은 hook이 강제하므로, 너는 외워둘 필요가 없다 — 게이트가 막으면 그 reason을 따른다.
 
 ---
@@ -34,7 +34,7 @@
 | `[intent gate] … outside the scope` | 의도 scope를 넓히거나(사람 승인) 새 의도를 만든다 — 몰래 다른 파일 건드리지 않는다 |
 | `[intent rule] RULE-… forbids …` | 승인된 금지 규칙이다. 우회하지 말고 다른 방법을 찾거나 사람에게 묻는다 |
 | `[intent guard] .intent/ is human-only` | 상태 파일을 직접 편집하지 마라. **`intent` CLI**를 쓴다 |
-| Stop: `DoD incomplete` / `learning note` | DoD를 끝내고, behavior면 `intent learn`을 남긴다 |
+| Stop: `DoD incomplete` / `learning note` / `required evidence` | DoD를 끝내고, behavior면 `intent learn`을 남기며, 필요한 검증은 `intent verify`로 증거를 남긴다 |
 
 ## D. Claude Code 고유 사항
 
@@ -60,4 +60,4 @@ stderr의 `[intent …]` 메시지는 하네스 runtime이 보낸 것이다. 무
 
 ---
 
-> 더 깊은 규칙·근거가 필요하면 [AGENT.md](AGENT.md)를 읽는다. 본 파일과 AGENT.md가 충돌하면 **AGENT.md가 우선**이다.
+> 더 깊은 제품 방향은 [hyohyeon-harness-최종목표.md](hyohyeon-harness-최종목표.md), 운영 규칙은 [AGENT.md](AGENT.md)를 읽는다. 충돌하면 **최종목표 문서가 제품 방향에서 우선**이고, 저장소 작업 규칙은 **AGENT.md가 우선**이다.

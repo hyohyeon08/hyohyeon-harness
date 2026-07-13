@@ -29,6 +29,10 @@ function readRun(project) {
   return JSON.parse(readFileSync(join(project, '.intent', 'runs', 'RUN-001.json'), 'utf8'))
 }
 
+function readDetection(project) {
+  return JSON.parse(readFileSync(join(project, '.intent', 'detections', 'DET-001.json'), 'utf8'))
+}
+
 function writeRun(project, run) {
   writeFileSync(join(project, '.intent', 'runs', 'RUN-001.json'), JSON.stringify(run, null, 2) + '\n', 'utf8')
 }
@@ -118,11 +122,78 @@ test('intent complete checks active run required evidence', () => {
   const blocked = cli(project, ['complete', 'INT-001'])
   assert.equal(blocked.status, 1)
   assert.match(blocked.stderr, /required evidence missing: unit_test/)
+  assert.equal(readRun(project).status, 'blocked')
+  assert.equal(readDetection(project).type, 'false_success')
+  assert.deepEqual(readDetection(project).attributes.missingEvidenceTypes, ['unit_test'])
 
+  const blockedAgain = cli(project, ['complete', 'INT-001'])
+  assert.equal(blockedAgain.status, 1)
+  assert.match(blockedAgain.stderr, /required evidence missing: unit_test/)
+
+  writeRun(project, { ...readRun(project), status: 'active' })
   const verify = cli(project, ['verify', 'unit_test', '--', process.execPath, '-e', "process.exit(0)"])
   assert.equal(verify.status, 0, verify.stderr)
 
   const completed = cli(project, ['complete', 'INT-001'])
   assert.equal(completed.status, 0, completed.stderr)
   assert.match(completed.stdout, /completed INT-001/)
+  assert.equal(readRun(project).phase, 'done')
+  assert.equal(readRun(project).status, 'passing')
+})
+
+test('intent complete checks active contract requiredChecks', () => {
+  const project = setupProject()
+  approveDraftIntent(project)
+  assert.equal(cli(project, ['contract', 'draft']).status, 0)
+
+  const blocked = cli(project, ['complete', 'INT-001'])
+  assert.equal(blocked.status, 1)
+  assert.match(blocked.stderr, /required evidence missing: typecheck/)
+  assert.equal(readRun(project).status, 'blocked')
+  assert.equal(readDetection(project).type, 'false_success')
+  assert.deepEqual(readDetection(project).attributes.missingEvidenceTypes, ['typecheck'])
+
+  const blockedAgain = cli(project, ['complete', 'INT-001'])
+  assert.equal(blockedAgain.status, 1)
+  assert.match(blockedAgain.stderr, /required evidence missing: typecheck/)
+
+  writeRun(project, { ...readRun(project), status: 'active' })
+  const verify = cli(project, ['verify', 'typecheck', '--', process.execPath, '-e', "process.exit(0)"])
+  assert.equal(verify.status, 0, verify.stderr)
+
+  const completed = cli(project, ['complete', 'INT-001'])
+  assert.equal(completed.status, 0, completed.stderr)
+  assert.match(completed.stdout, /completed INT-001/)
+})
+
+test('intent stop-check records false_success detection for missing active contract evidence', () => {
+  const project = setupProject()
+  approveDraftIntent(project)
+  assert.equal(cli(project, ['contract', 'draft']).status, 0)
+
+  const result = cli(project, ['stop-check'])
+
+  assert.equal(result.status, 1)
+  assert.match(result.stderr, /required evidence missing: typecheck/)
+  assert.equal(readRun(project).status, 'blocked')
+  const detection = readDetection(project)
+  assert.equal(detection.type, 'false_success')
+  assert.deepEqual(detection.attributes.missingEvidenceTypes, ['typecheck'])
+
+  const blockedAgain = cli(project, ['stop-check'])
+  assert.equal(blockedAgain.status, 1)
+  assert.match(blockedAgain.stderr, /required evidence missing: typecheck/)
+})
+
+test('intent complete rejects a latest failure even after an earlier pass', () => {
+  const project = setupProject()
+  approveDraftIntent(project)
+  writeRun(project, { ...readRun(project), requiredEvidenceTypes: ['unit_test'] })
+
+  assert.equal(cli(project, ['verify', 'unit_test', '--', process.execPath, '-e', 'process.exit(0)']).status, 0)
+  assert.equal(cli(project, ['verify', 'unit_test', '--', process.execPath, '-e', 'process.exit(7)']).status, 7)
+
+  const completed = cli(project, ['complete', 'INT-001'])
+  assert.equal(completed.status, 1)
+  assert.match(completed.stderr, /required evidence failed: unit_test/)
 })

@@ -1506,6 +1506,1778 @@ next_action: 이 기능을 시작하거나 이어받을 때 바로 할 일
 - unblock_condition: null
 - next_action: null
 
+## Phase 8: Goal-aligned workflow
+
+목표: `hyohyeon-harness-최종목표.md`의 `Interview -> Plan -> Sprint Contract -> RunState` 흐름을 실제 state와 CLI로 연결한다.
+
+Phase 1-7은 기반 데이터 레이어를 만든 MVP다. Phase 8부터는 최종목표 문서가 요구하는 운영 흐름을 묶는다.
+
+### FG-08-01 Plan schema and paths
+
+- status: `passing`
+- phase: Phase 8
+- objective: Plan artifact의 schema와 `.intent/plans` 경로를 추가한다.
+- why: 최종목표의 Plan은 작업 목표, 문제 정의, 범위, 금지 영역, 테스트 전략, 검증 명령, 완료 조건, 남은 위험을 보존해야 한다.
+- scope:
+  - `src/runtime/schemas.ts`
+  - `src/state/paths.ts`
+  - `tests/plan.test.mjs`
+- dependencies:
+  - FG-01-01
+  - FG-03-01
+- session_boundary: schema, default object, path helper, 단위 테스트까지만 포함한다. CLI는 다음 기능에서 한다.
+- implementation_notes:
+  - `RunState.planId`와 연결 가능한 `PLAN-001` 형식을 사용한다.
+  - Plan은 Intent를 대체하지 않는다. Intent는 승인된 무엇/왜/범위, Plan은 실행 전략이다.
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  - command: `npm run typecheck`
+    exit_code: 0
+    log_path: terminal output
+    verified_at: `2026-07-09T00:18:08Z`
+  - command: `npm test`
+    exit_code: 0
+    log_path: terminal output, 223 tests passed
+    verified_at: `2026-07-09T00:18:08Z`
+- active_work:
+  current_focus: `Plan schema and paths`
+  touched_files:
+    - `src/runtime/schemas.ts`
+    - `src/state/paths.ts`
+    - `tests/plan.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `PlanStatusSchema`, `PlanVerificationCommandSchema`, `PlanSchema`, `.intent/plans`, `PLAN-001` persistence tests were added and the full suite passed.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-08-02 Plan runtime and CLI`를 시작한다.
+
+### FG-08-02 Plan runtime and CLI
+
+- status: `passing`
+- phase: Phase 8
+- objective: Plan을 생성, 조회, 목록화하고 active run에 연결하는 CLI를 추가한다.
+- why: Interview/spec 이후 구현 계획을 RunState의 근거로 남기기 위해.
+- scope:
+  - `src/runtime/plans.ts`
+  - `src/cli/index.ts`
+  - `tests/plan-cli.test.mjs`
+- dependencies:
+  - FG-08-01
+- session_boundary: `intent plan draft/show/list/link`까지만 구현한다. 자동 plan 생성은 포함하지 않는다.
+- implementation_notes:
+  - `intent plan draft "<title>" --scope ... --forbid ... --check ...` 형태를 검토한다.
+  - `intent plan link <planId> [runId]`는 RunState의 `planId`를 갱신한다.
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  - command: `npm run typecheck`
+    exit_code: 0
+    log_path: terminal output
+    verified_at: `2026-07-09T00:18:08Z`
+  - command: `npm test`
+    exit_code: 0
+    log_path: terminal output, 223 tests passed
+    verified_at: `2026-07-09T00:18:08Z`
+- active_work:
+  current_focus: `Plan runtime and CLI`
+  touched_files:
+    - `src/runtime/plans.ts`
+    - `src/cli/index.ts`
+    - `tests/plan-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `intent plan draft/show/list/link` creates plan artifacts, prints strategy fields, and links plans to active runs.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-09-01 Run phase transition CLI`를 시작한다.
+
+## Phase 9: Execution loop and monitor CLI
+
+목표: 실행 중 상태 전이와 반복 실패 탐지를 사용자가 명령으로 실행할 수 있게 한다.
+
+### FG-09-01 Run phase transition CLI
+
+- status: `passing`
+- phase: Phase 9
+- objective: RunState의 phase/status/nextAction을 명시적으로 갱신하는 CLI를 추가한다.
+- why: 최종목표의 Execution Loop는 Agent가 지금 interview/plan/contract/act/verify 중 어디에 있는지 추적해야 한다.
+- scope:
+  - `src/runtime/runs.ts`
+  - `src/cli/index.ts`
+  - `tests/run-cli.test.mjs`
+- dependencies:
+  - FG-01-03
+- session_boundary: phase/status/nextAction 갱신만 포함한다. budget 정책은 별도 기능으로 둔다.
+- implementation_notes:
+  - 허용 phase/status 값은 기존 zod enum을 사용한다.
+  - 잘못된 전이는 처음에는 경고 없이 schema validation만 적용한다.
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  - command: `npm run typecheck`
+    exit_code: 0
+    log_path: terminal output
+    verified_at: `2026-07-09T00:18:08Z`
+  - command: `npm test`
+    exit_code: 0
+    log_path: terminal output, 223 tests passed
+    verified_at: `2026-07-09T00:18:08Z`
+- active_work:
+  current_focus: `Run phase/status/nextAction CLI`
+  touched_files:
+    - `src/cli/index.ts`
+    - `tests/run-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `intent run phase`, `intent run status-set`, and `intent run next` update active or specified runs through existing RunState validation.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-09-02 Monitor CLI`를 시작한다.
+
+### FG-09-02 Monitor CLI
+
+- status: `passing`
+- phase: Phase 9
+- objective: 기존 monitor runtime을 호출하는 `intent monitor` CLI를 추가한다.
+- why: 현재 repeated failure와 false_success 탐지는 runtime에만 있고 운영자가 직접 실행할 표면이 없다.
+- scope:
+  - `src/runtime/monitor.ts`
+  - `src/cli/index.ts`
+  - `tests/monitor-cli.test.mjs`
+- dependencies:
+  - FG-05-03
+  - FG-05-04
+  - FG-05-05
+- session_boundary: `intent monitor active`와 `intent monitor run <runId>`만 구현한다.
+- implementation_notes:
+  - 동일 detection이 반복 생성되지 않도록 idempotency 정책을 함께 정의한다.
+  - LLM Judge는 포함하지 않는다.
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  - command: `npm run typecheck`
+    exit_code: 0
+    log_path: terminal output
+    verified_at: `2026-07-09T00:18:08Z`
+  - command: `npm test`
+    exit_code: 0
+    log_path: terminal output, 223 tests passed
+    verified_at: `2026-07-09T00:18:08Z`
+- active_work:
+  current_focus: `Monitor CLI`
+  touched_files:
+    - `src/runtime/monitor.ts`
+    - `src/cli/index.ts`
+    - `tests/monitor-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `intent monitor active` and `intent monitor run <runId>` call deterministic repeated failure detectors and do not duplicate existing matching detections.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-10-01 Contract requiredChecks completion gate`를 시작한다.
+
+## Phase 10: Contract-centered completion gate
+
+목표: SprintContract가 완료 기준의 중심이 되도록 Stop/complete gate와 reviewer 기준을 통일한다.
+
+### FG-10-01 Contract requiredChecks completion gate
+
+- status: `passing`
+- phase: Phase 10
+- objective: active run의 contract `requiredChecks`가 complete/stop gate에서 평가되게 한다.
+- why: 최종목표에서 Sprint Contract는 작업의 완료 기준이다. 현재는 RunState의 `requiredEvidenceTypes`만 completion gate에 직접 연결되어 있다.
+- scope:
+  - `src/runtime/stop-gate.ts`
+  - `src/runtime/contracts.ts`
+  - `src/runtime/intents.ts`
+  - `src/cli/index.ts`
+  - `tests/stop-gate.test.mjs`
+  - `tests/verify-cli.test.mjs`
+- dependencies:
+  - FG-03-02
+  - FG-02-04
+- session_boundary: contract requiredChecks 평가만 포함한다. contract approve/edit lifecycle은 별도 기능으로 둔다.
+- implementation_notes:
+  - RunState에 checks를 복사하기보다, active run의 `contractId`를 따라가 contract를 읽는 방식이 SSOT에 가깝다.
+  - 기존 `requiredEvidenceTypes`는 contract가 없을 때의 fallback으로 유지한다.
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  - command: `npm run typecheck`
+    exit_code: 0
+    log_path: terminal output
+    verified_at: `2026-07-09T00:18:08Z`
+  - command: `npm test`
+    exit_code: 0
+    log_path: terminal output, 223 tests passed
+    verified_at: `2026-07-09T00:18:08Z`
+- active_work:
+  current_focus: `Contract requiredChecks completion gate`
+  touched_files:
+    - `src/runtime/stop-gate.ts`
+    - `src/runtime/intents.ts`
+    - `src/cli/index.ts`
+    - `tests/stop-gate.test.mjs`
+    - `tests/verify-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `complete` and `stop-check` now evaluate active contract `requiredChecks`; run-level `requiredEvidenceTypes` remains the fallback only when no matching contract is present.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-11-01 Judge/reviewer/eval read-only CLI`를 시작한다.
+
+## Phase 11: Judge, reviewer, and eval CLI
+
+목표: Phase 7에서 만든 runtime을 사용자 workflow로 노출한다.
+
+### FG-11-01 Judge/reviewer/eval read-only CLI
+
+- status: `passing`
+- phase: Phase 11
+- objective: `judge`, `reviewer`, `eval` runtime을 read-only 또는 draft 생성 CLI로 노출한다.
+- why: 최종목표의 Reviewer/Eval/Judge 흐름은 현재 runtime 함수로만 존재한다.
+- scope:
+  - `src/cli/index.ts`
+  - `src/runtime/judge.ts`
+  - `src/runtime/reviewer.ts`
+  - `src/runtime/evals.ts`
+  - `tests/judge-cli.test.mjs`
+  - `tests/reviewer-cli.test.mjs`
+  - `tests/eval-cli.test.mjs`
+- dependencies:
+  - FG-07-01
+  - FG-07-02
+  - FG-07-04
+- session_boundary: `intent judge bundle`, `intent reviewer checklist`, `intent eval draft-from-detection`만 구현한다. 외부 LLM 호출과 eval runner는 포함하지 않는다.
+- implementation_notes:
+  - hook 안에서 LLM 호출을 하지 않는 deterministic 원칙을 유지한다.
+  - CLI 출력은 파일 저장보다 stdout 우선으로 시작한다.
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-09T11:35:23+09:00`
+- active_work:
+  current_focus: `Judge/reviewer/eval read-only CLI`
+  touched_files:
+    - `src/cli/index.ts`
+    - `tests/judge-cli.test.mjs`
+    - `tests/reviewer-cli.test.mjs`
+    - `tests/eval-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `intent judge bundle`, `intent reviewer checklist`, `intent eval draft-from-detection` CLI가 추가되었고 전체 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-12-01 Detection ingest and rule draft CLI`를 시작한다.
+
+## Phase 12: Rule feedback loop
+
+목표: Detection이 wiki, rule, eval, AGENTS candidate로 환류되는 흐름을 만든다.
+
+### FG-12-01 Detection ingest and rule draft CLI
+
+- status: `passing`
+- phase: Phase 12
+- objective: detection을 wiki page와 rule draft로 전환하는 CLI를 추가한다.
+- why: 최종목표는 실패 기록이 단순 로그가 아니라 재발 방지 규칙으로 전환되는 구조를 요구한다.
+- scope:
+  - `src/cli/index.ts`
+  - `src/runtime/detections.ts`
+  - `src/runtime/rules.ts`
+  - `tests/detection-cli.test.mjs`
+  - `tests/wiki.test.mjs`
+- dependencies:
+  - FG-06-01
+  - FG-06-02
+- session_boundary: `intent wiki ingest detection <id>`와 `intent rule draft-from-detection <id> ...`만 구현한다.
+- implementation_notes:
+  - rule approval은 계속 human-only로 유지한다.
+  - AGENTS.md patch generation은 다음 기능으로 둔다.
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-09T11:35:23+09:00`
+- active_work:
+  current_focus: `Detection ingest and rule draft CLI`
+  touched_files:
+    - `src/cli/index.ts`
+    - `tests/feedback-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `intent wiki ingest detection <id>`와 `intent rule draft-from-detection <id> ...`가 추가되었고 전체 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-13-01 Execution loop budget and blocked policy`를 시작한다.
+
+## Phase 13: Execution loop blocked policy
+
+목표: 반복 실패와 예산 초과가 RunState의 blocked 전이와 nextAction으로 남게 한다.
+
+### FG-13-01 Execution loop budget and blocked policy
+
+- status: `passing`
+- phase: Phase 13
+- objective: run attempt budget, attempt 기록 CLI, monitor detection 기반 blocked 전이 정책을 추가한다.
+- why: 최종목표의 Execution Loop는 실패를 계속 반복하기보다 명시적으로 멈추고 다음 판단을 남겨야 한다.
+- scope:
+  - `src/runtime/schemas.ts`
+  - `src/runtime/runs.ts`
+  - `src/cli/index.ts`
+  - `tests/run-state.test.mjs`
+  - `tests/run-cli.test.mjs`
+  - `tests/monitor-cli.test.mjs`
+- dependencies:
+  - FG-09-01
+  - FG-09-02
+- session_boundary: budget/attempt와 monitor blocked 전이만 포함한다. 일반 shell command tracing은 포함하지 않는다.
+- implementation_notes:
+  - `RunState.budget`은 `{ maxAttempts, attemptsUsed }`로 기본 3회다.
+  - `intent run budget <maxAttempts> [runId]`, `intent run attempt ["note"] [runId]`를 제공한다.
+  - monitor가 detection을 만들면 run을 `blocked`로 바꾸고 `nextAction`을 기록한다.
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-09T11:35:23+09:00`
+- active_work:
+  current_focus: `Execution loop budget and blocked policy`
+  touched_files:
+    - `src/runtime/schemas.ts`
+    - `src/runtime/runs.ts`
+    - `src/cli/index.ts`
+    - `tests/run-state.test.mjs`
+    - `tests/run-cli.test.mjs`
+    - `tests/monitor-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: run budget/attempt CLI와 monitor blocked 전이 테스트가 추가되었고 전체 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-14-01 Contract lifecycle, rubric, and report CLI`를 시작한다.
+
+## Phase 14: Contract lifecycle and report
+
+목표: SprintContract가 승인, 보강, 리포트 가능한 완료 기준 artifact가 되게 한다.
+
+### FG-14-01 Contract lifecycle, rubric, and report CLI
+
+- status: `passing`
+- phase: Phase 14
+- objective: contract approve/edit/report CLI와 rubric, stopConditions, requiresUserDecision 필드를 추가한다.
+- why: Contract가 단순 생성물이 아니라 사람이 승인하고 실행 중 판단 기준으로 확인하는 SSOT가 되어야 한다.
+- scope:
+  - `src/runtime/schemas.ts`
+  - `src/runtime/contracts.ts`
+  - `src/cli/index.ts`
+  - `tests/contracts.test.mjs`
+  - `tests/contract-cli.test.mjs`
+- dependencies:
+  - FG-10-01
+- session_boundary: contract lifecycle과 requiredChecks report만 포함한다. Reviewer 자동 승인이나 CI 연동은 포함하지 않는다.
+- implementation_notes:
+  - contract approval은 human-only CLI로 유지한다.
+  - report는 contract `requiredChecks`를 linked run evidence와 비교해 `passed`, `failed`, `missing`으로 보여준다.
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-09T11:35:23+09:00`
+- active_work:
+  current_focus: `Contract lifecycle, rubric, and report CLI`
+  touched_files:
+    - `src/runtime/schemas.ts`
+    - `src/runtime/contracts.ts`
+    - `src/cli/index.ts`
+    - `tests/contracts.test.mjs`
+    - `tests/contract-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: contract approve/edit/report CLI와 rubric/stop/user-decision 필드가 추가되었고 전체 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-15-01 Judge/eval/rule follow-up persistence`를 시작한다.
+
+## Phase 15: Judge, eval, and rule follow-up persistence
+
+목표: 판정과 회귀 케이스, AGENTS 후보가 Detection/Rule/Eval artifact에 남도록 한다.
+
+### FG-15-01 Judge/eval/rule follow-up persistence
+
+- status: `passing`
+- phase: Phase 15
+- objective: judge result 저장, eval runner, rule AGENTS candidate 출력 CLI를 추가한다.
+- why: 최종목표의 feedback loop는 탐지를 사람이 판단하고, 회귀 eval과 운영 문서 후보로 남기는 흐름까지 포함한다.
+- scope:
+  - `src/runtime/schemas.ts`
+  - `src/runtime/detections.ts`
+  - `src/runtime/evals.ts`
+  - `src/runtime/rules.ts`
+  - `src/cli/index.ts`
+  - `tests/detection.test.mjs`
+  - `tests/judge-cli.test.mjs`
+  - `tests/evals.test.mjs`
+  - `tests/eval-cli.test.mjs`
+  - `tests/rules.test.mjs`
+  - `tests/feedback-cli.test.mjs`
+- dependencies:
+  - FG-11-01
+  - FG-12-01
+- session_boundary: deterministic 저장/runner/candidate 출력만 포함한다. 외부 LLM judge adapter와 AGENTS.md 자동 편집은 포함하지 않는다.
+- implementation_notes:
+  - `intent judge record <detectionId> <pass|fail|uncertain> "<judgement>" [--confidence N]`
+  - `intent eval run [evalId]`
+  - `intent rule agents-candidate <ruleId>`
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-09T11:35:23+09:00`
+- active_work:
+  current_focus: `Judge/eval/rule follow-up persistence`
+  touched_files:
+    - `src/runtime/schemas.ts`
+    - `src/runtime/detections.ts`
+    - `src/runtime/evals.ts`
+    - `src/runtime/rules.ts`
+    - `src/cli/index.ts`
+    - `tests/detection.test.mjs`
+    - `tests/judge-cli.test.mjs`
+    - `tests/evals.test.mjs`
+    - `tests/eval-cli.test.mjs`
+    - `tests/rules.test.mjs`
+    - `tests/feedback-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: judge result persists on detections, eval runner stores `lastRun`, rule AGENTS candidate output is available, and the full suite passed at Phase 15 closure.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-16-01 Completion/Stop monitor automation`를 시작한다.
+
+## Phase 16: Automation loop closure
+
+목표: Phase 15까지의 수동 운영 루프를 complete/stop, judge adapter, rule impact, monitor 확장, spec/plan 연결, AGENTS/CI 반영 추적으로 닫는다.
+
+### FG-16-01 Completion/Stop monitor automation
+
+- status: `passing`
+- phase: Phase 16
+- objective: `intent complete`, `intent stop-check`, Stop hook에서 completion/monitor detection을 자동 생성하고 run을 blocked로 전환한다.
+- why: 운영자가 별도로 `intent monitor`를 실행하지 않아도 false_success와 thrashing 후보가 남아야 한다.
+- scope:
+  - `src/runtime/monitor.ts`
+  - `src/cli/index.ts`
+  - `hooks/stop-continue.ts`
+  - `tests/verify-cli.test.mjs`
+  - `tests/codex-hooks.test.mjs`
+- dependencies:
+  - FG-13-01
+  - FG-15-01
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-09T11:53:33+09:00`
+- active_work:
+  current_focus: `Completion/Stop monitor automation`
+  touched_files:
+    - `src/runtime/monitor.ts`
+    - `src/cli/index.ts`
+    - `hooks/stop-continue.ts`
+    - `tests/verify-cli.test.mjs`
+    - `tests/codex-hooks.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `complete`, `stop-check`, Stop hook now create false_success detections from required evidence gaps and block runs; repeated monitor detections also block completion.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-16-02 External Judge adapter CLI`를 시작한다.
+
+### FG-16-02 External Judge adapter CLI
+
+- status: `passing`
+- phase: Phase 16
+- objective: 외부 judge command adapter를 추가해 `JudgeInputBundle`을 stdin으로 넘기고 JSON 판정을 `DetectionRecord.judge`에 저장한다.
+- why: LLM Judge는 hook 밖에서 후보 detection에 대해서만 실행되어야 한다.
+- scope:
+  - `src/runtime/judge-adapter.ts`
+  - `src/cli/index.ts`
+  - `tests/judge-cli.test.mjs`
+- dependencies:
+  - FG-15-01
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-09T11:53:33+09:00`
+- active_work:
+  current_focus: `External Judge adapter CLI`
+  touched_files:
+    - `src/runtime/judge-adapter.ts`
+    - `src/cli/index.ts`
+    - `tests/judge-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `intent judge run <detectionId> -- <command...>` passes the bundle over stdin and records pass/fail/uncertain JSON output.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-16-03 Approved rule impact report`를 시작한다.
+
+### FG-16-03 Approved rule impact report
+
+- status: `passing`
+- phase: Phase 16
+- objective: approved/draft rule의 hook enforcement와 AGENTS/CI reflection 상태를 report로 확인한다.
+- why: rule이 draft로 남았는지, hook에서 강제되는지, 운영 문서/CI에 반영됐는지 추적해야 한다.
+- scope:
+  - `src/runtime/schemas.ts`
+  - `src/runtime/rules.ts`
+  - `src/cli/index.ts`
+  - `tests/rules.test.mjs`
+  - `tests/feedback-cli.test.mjs`
+- dependencies:
+  - FG-15-01
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-09T11:53:33+09:00`
+- active_work:
+  current_focus: `Approved rule impact report`
+  touched_files:
+    - `src/runtime/schemas.ts`
+    - `src/runtime/rules.ts`
+    - `src/cli/index.ts`
+    - `tests/rules.test.mjs`
+    - `tests/feedback-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `intent rule impact <ruleId>` reports hook enforcement and reflection state.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-16-04 Monitor repeated file edits`를 시작한다.
+
+### FG-16-04 Monitor repeated file edits
+
+- status: `passing`
+- phase: Phase 16
+- objective: edit/apply_patch spans에서 같은 파일 반복 수정 thrashing 후보를 탐지한다.
+- why: 반복 명령 실패 외에도 같은 파일을 계속 고치는 패턴은 실행 루프의 thrashing 신호다.
+- scope:
+  - `src/runtime/monitor.ts`
+  - `tests/monitor.test.mjs`
+- dependencies:
+  - FG-05-03
+  - FG-04-03
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-09T11:53:33+09:00`
+- active_work:
+  current_focus: `Monitor repeated file edits`
+  touched_files:
+    - `src/runtime/monitor.ts`
+    - `tests/monitor.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `detectRepeatedFileEdits` creates deterministic thrashing detections from repeated edit/apply_patch spans.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-16-05 Spec/Plan automatic run linking`를 시작한다.
+
+### FG-16-05 Spec/Plan automatic run linking
+
+- status: `passing`
+- phase: Phase 16
+- objective: spec draft/link와 plan draft가 active run의 `specSlug`/`planId`/`runId`를 자동 연결한다.
+- why: Interview Summary -> Plan -> RunState 연결을 수동 후처리 없이 보존하기 위해.
+- scope:
+  - `src/runtime/spec.ts`
+  - `src/cli/index.ts`
+  - `tests/spec-cli.test.mjs`
+  - `tests/plan-cli.test.mjs`
+- dependencies:
+  - FG-08-02
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-09T11:53:33+09:00`
+- active_work:
+  current_focus: `Spec/Plan automatic run linking`
+  touched_files:
+    - `src/runtime/spec.ts`
+    - `src/cli/index.ts`
+    - `tests/spec-cli.test.mjs`
+    - `tests/plan-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `intent spec draft` links the active run, `intent spec link` links explicit runs, and `intent plan draft` auto-links to the active run.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-16-06 Rule AGENTS/CI reflection loop`를 시작한다.
+
+### FG-16-06 Rule AGENTS/CI reflection loop
+
+- status: `passing`
+- phase: Phase 16
+- objective: rule AGENTS/CI candidate 출력과 reflection 상태 기록을 추가한다.
+- why: 실패 -> rule -> AGENTS/CI 반영이 후보 출력으로 끝나지 않고 추적 가능한 loop가 되어야 한다.
+- scope:
+  - `src/runtime/schemas.ts`
+  - `src/runtime/rules.ts`
+  - `src/cli/index.ts`
+  - `tests/rules.test.mjs`
+  - `tests/feedback-cli.test.mjs`
+- dependencies:
+  - FG-16-03
+- verification_commands:
+  - `npm.cmd run typecheck`
+  - `npm.cmd test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-09T11:53:33+09:00`
+- active_work:
+  current_focus: `Rule AGENTS/CI reflection loop`
+  touched_files:
+    - `src/runtime/schemas.ts`
+    - `src/runtime/rules.ts`
+    - `src/cli/index.ts`
+    - `tests/rules.test.mjs`
+    - `tests/feedback-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `intent rule ci-candidate`, `intent rule reflect`, and `intent rule impact` close the manual reflection loop; 249 tests passed.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: 다음 큰 축은 structured InterviewSummary artifact, plan approval lifecycle, general shell command tracing, semantic monitor 중 하나를 별도 intent로 쪼개는 것이다.
+
+## Phase 17: Governed completion integrity
+
+목표: 완료 판정이 active run의 유무나 과거 통과 evidence에 의해 우회되지 않도록, Intent별 governed run과 최신 evidence를 기준으로 CLI와 Stop hook을 통합한다.
+
+### FG-17-01 Governed completion and latest evidence
+
+- status: `passing`
+- phase: Phase 17
+- objective: feature/fix completion에 동일 Intent의 최신 governed run을 요구하고, required evidence와 contract report를 각 유형의 최신 결과로 판정한다.
+- why: blocked 전이로 active run이 사라진 뒤 두 번째 완료 시도가 통과하거나, 과거 pass 뒤의 최신 fail이 무시되는 완료 우회를 막아야 한다.
+- scope:
+  - `src/runtime/runs.ts`
+  - `src/runtime/stop-gate.ts`
+  - `src/runtime/completion.ts`
+  - `src/runtime/contracts.ts`
+  - `src/cli/index.ts`
+  - `hooks/stop-continue.ts`
+  - `tests/runs.test.mjs`
+  - `tests/stop-gate.test.mjs`
+  - `tests/run-cli.test.mjs`
+  - `tests/verify-cli.test.mjs`
+  - `tests/contract-cli.test.mjs`
+  - `tests/codex-hooks.test.mjs`
+- dependencies:
+  - FG-10-01
+  - FG-16-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Governed completion and latest evidence`
+  touched_files:
+    - `src/runtime/runs.ts`
+    - `src/runtime/stop-gate.ts`
+    - `src/runtime/completion.ts`
+    - `src/runtime/contracts.ts`
+    - `src/cli/index.ts`
+    - `hooks/stop-continue.ts`
+    - `tests/runs.test.mjs`
+    - `tests/stop-gate.test.mjs`
+    - `tests/run-cli.test.mjs`
+    - `tests/verify-cli.test.mjs`
+    - `tests/contract-cli.test.mjs`
+    - `tests/codex-hooks.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: active run과 governed run이 분리됐고 blocked/paused/passing Run도 완료 판정에 남는다. 각 evidence type의 최신 결과가 completion과 contract report를 결정하며 전체 258개 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: Plan/Contract approval lifecycle과 Run phase transition을 강화한다.
+
+## Phase 18: Approval lifecycle and Run FSM
+
+목표: 승인 전후 artifact의 의미를 분리하고, 승인된 실행 계약과 completion gate만이 실제 scope 정책과 Run terminal 상태를 바꾸게 한다.
+
+### FG-18-01 Plan/Contract approval integrity
+
+- status: `passing`
+- phase: Phase 18
+- objective: Plan/Contract 승인 메타데이터와 승인 후 불변성을 추가하고 approved Contract만 scope/completion policy에 적용한다.
+- why: draft가 승인 없이 실행 정책을 바꾸거나 승인된 계약이 사후 수정되면 사람 승인이 이해의 증거가 될 수 없다.
+- scope:
+  - `src/runtime/schemas.ts`
+  - `src/runtime/plans.ts`
+  - `src/runtime/contracts.ts`
+  - `src/runtime/stop-gate.ts`
+  - `src/runtime/completion.ts`
+  - `src/cli/index.ts`
+  - `hooks/pre-write-guard.ts`
+  - `tests/plan.test.mjs`
+  - `tests/plan-cli.test.mjs`
+  - `tests/contracts.test.mjs`
+  - `tests/contract-cli.test.mjs`
+  - `tests/stop-gate.test.mjs`
+  - `tests/codex-hooks.test.mjs`
+- dependencies:
+  - FG-14-01
+  - FG-17-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Plan/Contract approval integrity`
+  touched_files:
+    - `src/runtime/schemas.ts`
+    - `src/runtime/plans.ts`
+    - `src/runtime/contracts.ts`
+    - `src/runtime/stop-gate.ts`
+    - `src/runtime/completion.ts`
+    - `src/cli/index.ts`
+    - `hooks/pre-write-guard.ts`
+    - `tests/plan.test.mjs`
+    - `tests/plan-cli.test.mjs`
+    - `tests/contracts.test.mjs`
+    - `tests/contract-cli.test.mjs`
+    - `tests/stop-gate.test.mjs`
+    - `tests/codex-hooks.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: Plan/Contract는 사람 승인자와 시각을 저장하고 승인 후 불변이다. Draft Contract는 강제되지 않으며 approved Contract만 allowed/forbidden scope와 completion checks에 적용된다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-18-02 Run phase FSM and completion terminal`을 시작한다.
+
+### FG-18-02 Run phase FSM and completion terminal
+
+- status: `passing`
+- phase: Phase 18
+- objective: Run phase 전이를 명시적 FSM으로 제한하고 `done/passing` terminal 상태를 completion evaluator 뒤에서만 설정한다.
+- why: 임의 `run phase done`이 완료 증거 없이 terminal 상태를 만들면 governed completion 정책과 Run 기록이 서로 모순된다.
+- scope:
+  - `src/runtime/runs.ts`
+  - `src/cli/index.ts`
+  - `tests/runs.test.mjs`
+  - `tests/run-cli.test.mjs`
+  - `tests/verify-cli.test.mjs`
+- dependencies:
+  - FG-09-01
+  - FG-17-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Run phase FSM and completion terminal`
+  touched_files:
+    - `src/runtime/runs.ts`
+    - `src/cli/index.ts`
+    - `tests/runs.test.mjs`
+    - `tests/run-cli.test.mjs`
+    - `tests/verify-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: 순방향 phase와 `verify -> act` 재작업만 허용되고 direct done은 거부된다. 성공한 complete는 governed Run을 `passing/done`으로 정규화하며 전체 268개 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: structured InterviewSummary artifact와 spec/plan/run lineage를 구현한다.
+
+## Phase 19: Structured InterviewSummary and lineage
+
+목표: Interview 결과를 schema-validated first-class artifact로 보존하고 User Goal에서 Spec/Plan/Run까지의 근거 사슬을 자동 연결한다.
+
+### FG-19-01 Structured InterviewSummary artifact
+
+- status: `passing`
+- phase: Phase 19
+- objective: Interview의 목표·맥락·제약·성공/실패 기준·검증·비목표·가정·질문을 JSON artifact와 CLI로 보존한다.
+- why: 위키 spec만으로는 Interview 원본 구조와 승인 상태를 기계적으로 검증하거나 downstream lineage의 시작점을 식별할 수 없다.
+- scope:
+  - `src/runtime/schemas.ts`
+  - `src/runtime/interviews.ts`
+  - `src/state/paths.ts`
+  - `src/cli/index.ts`
+  - `tests/interviews.test.mjs`
+  - `tests/interview-cli.test.mjs`
+- dependencies:
+  - FG-16-05
+  - FG-18-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Structured InterviewSummary artifact`
+  touched_files:
+    - `src/runtime/schemas.ts`
+    - `src/runtime/interviews.ts`
+    - `src/state/paths.ts`
+    - `src/cli/index.ts`
+    - `tests/interviews.test.mjs`
+    - `tests/interview-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `intent interview draft/show/list/link/approve`가 structured summary를 저장하고, 사람 승인 뒤 본문은 불변이며 downstream 참조만 append-only로 갱신된다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-19-02 Interview-to-Run lineage propagation`을 시작한다.
+
+### FG-19-02 Interview-to-Run lineage propagation
+
+- status: `passing`
+- phase: Phase 19
+- objective: Interview 참조를 RunState와 Plan에 저장하고 Spec/Plan 생성 및 session context에 자동 전파한다.
+- why: artifact가 존재해도 다음 단계가 그 근거를 참조하지 않으면 context compaction과 새 세션에서 목표 출처가 다시 끊긴다.
+- scope:
+  - `src/runtime/schemas.ts`
+  - `src/runtime/runs.ts`
+  - `src/runtime/plans.ts`
+  - `src/runtime/memory.ts`
+  - `src/runtime/handoff.ts`
+  - `src/cli/index.ts`
+  - `skills/interview/SKILL.md`
+  - `tests/interview-cli.test.mjs`
+  - `tests/run-state.test.mjs`
+  - `tests/plan.test.mjs`
+  - `tests/memory.test.mjs`
+  - `tests/handoff.test.mjs`
+- dependencies:
+  - FG-19-01
+  - FG-16-05
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Interview-to-Run lineage propagation`
+  touched_files:
+    - `src/runtime/runs.ts`
+    - `src/runtime/plans.ts`
+    - `src/runtime/memory.ts`
+    - `src/runtime/handoff.ts`
+    - `src/cli/index.ts`
+    - `skills/interview/SKILL.md`
+    - `tests/interview-cli.test.mjs`
+    - `tests/run-state.test.mjs`
+    - `tests/plan.test.mjs`
+    - `tests/memory.test.mjs`
+    - `tests/handoff.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `run start --interview`, `spec draft --interview`, `plan draft`가 Interview -> Intent/Spec/Plan/Run lineage를 자동 보존하고 SessionStart/handoff에 노출한다. 전체 276개 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: general shell command tracing을 Run observability에 연결한다.
+
+## Phase 20: General command tracing
+
+목표: `intent verify` 밖의 일반 shell command를 raw log와 Run span으로 보존하고 반복 실패 monitor의 입력으로 연결한다.
+
+### FG-20-01 Command wrapper and observed command runtime
+
+- status: `passing`
+- phase: Phase 20
+- objective: 실행 또는 관측된 일반 command의 cwd/output/exit code/log/error signature를 `run_command` span으로 저장한다.
+- why: verification 명령만 추적하면 구현 중 실패·재시도·도구 행동의 대부분이 observability에서 사라진다.
+- scope:
+  - `src/runtime/commands.ts`
+  - `src/state/paths.ts`
+  - `src/cli/index.ts`
+  - `tests/commands.test.mjs`
+  - `tests/command-cli.test.mjs`
+- dependencies:
+  - FG-04-02
+  - FG-04-05
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `General command wrapper and runtime`
+  touched_files:
+    - `src/runtime/commands.ts`
+    - `src/state/paths.ts`
+    - `src/cli/index.ts`
+    - `tests/commands.test.mjs`
+    - `tests/command-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: `intent command -- <command...>`가 stdout/stderr와 wrapped exit code를 전달하면서 raw log와 `run_command` span을 저장한다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-20-02 PostToolUse command hook and monitor input`을 시작한다.
+
+### FG-20-02 PostToolUse command hook and monitor input
+
+- status: `passing`
+- phase: Phase 20
+- objective: 지원되는 Agent Bash 결과를 PostToolUse에서 관측하고 일반 command 실패를 repeated command/error signature detection에 포함한다.
+- why: agent가 wrapper를 명시적으로 선택하지 않아도 가능한 command 실행은 자동 관측되어야 하며, 같은 실패 반복은 verify 여부와 무관하게 thrashing 신호다.
+- scope:
+  - `hooks/post-command.ts`
+  - `.codex/hooks.template.json`
+  - `.claude/settings.template.json`
+  - `src/runtime/monitor.ts`
+  - `tests/codex-hooks.test.mjs`
+  - `tests/install.test.mjs`
+  - `tests/monitor.test.mjs`
+- dependencies:
+  - FG-20-01
+  - FG-05-03
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `PostToolUse command hook and monitor input`
+  touched_files:
+    - `hooks/post-command.ts`
+    - `.codex/hooks.template.json`
+    - `.claude/settings.template.json`
+    - `src/runtime/monitor.ts`
+    - `tests/codex-hooks.test.mjs`
+    - `tests/install.test.mjs`
+    - `tests/monitor.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: PostToolUse(Bash)가 supported command output을 재실행 없이 기록하고 `run_command` 실패가 monitor detection에 포함된다. upstream Codex hook 문서상 unified/streaming shell interception은 불완전하므로 wrapper가 완전한 fallback이며 전체 283개 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: 동일 파일 영역과 tool sequence 기반 semantic/structural monitor를 확장한다.
+
+## Phase 21: Structural semantic monitor and feedback
+
+목표: 동일 파일이라는 거친 신호를 edit region과 tool sequence로 정밀화하고, candidate 판정·regression eval·Wiki feedback의 의미를 일관되게 만든다.
+
+### FG-21-01 Edit region and tool sequence candidates
+
+- status: `passing`
+- phase: Phase 21
+- objective: pre-write edit를 line bucket region으로 기록하고 반복 region/실패 tool sequence를 thrashing candidate로 탐지한다.
+- why: 같은 파일을 여러 영역에서 정상적으로 수정하는 행동과 같은 위치·실패 루프를 반복하는 행동을 구분해야 한다.
+- scope:
+  - `src/runtime/edit-region.ts`
+  - `hooks/pre-write-guard.ts`
+  - `src/runtime/monitor.ts`
+  - `tests/edit-region.test.mjs`
+  - `tests/monitor.test.mjs`
+  - `tests/codex-hooks.test.mjs`
+- dependencies:
+  - FG-16-04
+  - FG-20-02
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Edit region and tool sequence candidates`
+  touched_files:
+    - `src/runtime/edit-region.ts`
+    - `hooks/pre-write-guard.ts`
+    - `src/runtime/monitor.ts`
+    - `tests/edit-region.test.mjs`
+    - `tests/monitor.test.mjs`
+    - `tests/codex-hooks.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: exact old-text anchor가 20-line bucket regionKey로 기록되고 동일 region 3회 및 edit/error tool cycle 3회가 candidate detection을 만든다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-21-02 Candidate verdict separation`을 시작한다.
+
+### FG-21-02 Candidate verdict separation
+
+- status: `passing`
+- phase: Phase 21
+- objective: 구조 gate의 candidate와 confirmed verdict를 분리해 candidate만으로 Run/complete를 hard block하지 않는다.
+- why: 최종목표는 1차 구조 게이트를 후보 추출 단계로 정의한다. 같은 파일/도구 반복만으로 실패를 확정하면 정상적인 TDD 루프가 오탐으로 중단된다.
+- scope:
+  - `src/runtime/monitor.ts`
+  - `src/runtime/completion.ts`
+  - `tests/monitor.test.mjs`
+  - `tests/monitor-cli.test.mjs`
+- dependencies:
+  - FG-21-01
+  - FG-16-02
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Candidate verdict separation`
+  touched_files:
+    - `src/runtime/monitor.ts`
+    - `src/runtime/completion.ts`
+    - `tests/monitor.test.mjs`
+    - `tests/monitor-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: thrashing candidate는 기록/리뷰 대상으로 남고 confirmed detection만 blocked 전이를 만든다. 객관적인 missing evidence completion gate와 false_success 차단은 유지된다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-21-03 Span replay eval and resolve-to-Wiki feedback`을 시작한다.
+
+### FG-21-03 Span replay eval and resolve-to-Wiki feedback
+
+- status: `passing`
+- phase: Phase 21
+- objective: thrashing eval이 source detection을 자기 비교하지 않고 span fixture를 재생하며, resolve 결과를 Wiki에 자동 반영한다.
+- why: regression eval은 detector의 입력-출력 행동을 검증해야 하고 사람 판정은 다음 세션의 지식으로 자동 보존되어야 한다.
+- scope:
+  - `src/runtime/evals.ts`
+  - `src/cli/index.ts`
+  - `tests/evals.test.mjs`
+  - `tests/eval-cli.test.mjs`
+  - `tests/detection-cli.test.mjs`
+- dependencies:
+  - FG-21-01
+  - FG-15-02
+  - FG-06-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Span replay eval and resolve-to-Wiki feedback`
+  touched_files:
+    - `src/runtime/evals.ts`
+    - `src/cli/index.ts`
+    - `tests/evals.test.mjs`
+    - `tests/eval-cli.test.mjs`
+    - `tests/detection-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: thrashing eval은 detection evidence span snapshot을 재생해 3개 fixture에서 통과하고 2개로 축소하면 실패한다. detection resolve는 Wiki problem page를 자동 갱신하며 전체 289개 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: cross-artifact approval gate와 evidence freshness/state hardening을 최종목표 기준으로 감사한다.
+
+## Phase 22: Governance integrity hardening
+
+목표: 승인 artifact 사슬, evidence freshness, governance state 손상에서 completion/scope policy가 우회되지 않게 한다.
+
+### FG-22-01 Approved Plan to Contract lineage gate
+
+- status: `passing`
+- phase: Phase 22
+- objective: Contract 승인 시 같은 Run/Intent의 approved Plan과 선택적 Interview lineage를 검증한다.
+- why: Contract를 먼저 승인하거나 다른 Run/Intent의 Plan을 연결하면 사람 승인의 실행 전략과 실제 계약이 분리된다.
+- scope:
+  - `src/runtime/contracts.ts`
+  - `tests/contracts.test.mjs`
+  - `tests/contract-cli.test.mjs`
+- dependencies:
+  - FG-18-01
+  - FG-19-02
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Approved Plan to Contract lineage gate`
+  touched_files:
+    - `src/runtime/contracts.ts`
+    - `tests/contracts.test.mjs`
+    - `tests/contract-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: Contract approval rejects missing/draft/mismatched Plan lineage and validates approved Interview linkage when present.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-22-02 Post-edit evidence freshness`를 시작한다.
+
+### FG-22-02 Post-edit evidence freshness
+
+- status: `passing`
+- phase: Phase 22
+- objective: required pass evidence 이후 successful edit/apply_patch span이 있으면 completion에서 stale로 거부한다.
+- why: 최신 결과 우선만으로는 검증 뒤 코드를 바꾼 다음 이전 pass를 재사용하는 우회를 막지 못한다.
+- scope:
+  - `src/runtime/completion.ts`
+  - `src/runtime/stop-gate.ts`
+  - `tests/completion.test.mjs`
+  - `tests/stop-gate.test.mjs`
+- dependencies:
+  - FG-17-01
+  - FG-04-03
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Post-edit evidence freshness`
+  touched_files:
+    - `src/runtime/completion.ts`
+    - `src/runtime/stop-gate.ts`
+    - `tests/completion.test.mjs`
+    - `tests/stop-gate.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: required pass보다 최신인 successful edit span이 있으면 `required evidence stale after later edit`로 complete/Stop이 차단된다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-22-03 Governance state fail-closed and atomic temp isolation`을 시작한다.
+
+### FG-22-03 Governance state fail-closed and atomic temp isolation
+
+- status: `passing`
+- phase: Phase 22
+- objective: 손상된 Intent/linked Contract를 write/Stop에서 차단하고 atomic JSON temp 이름 충돌을 제거한다.
+- why: schema-invalid governance record가 조용히 사라지면 승인·scope·completion policy가 fail-open되고, 고정 `.tmp`는 동시 writer가 서로 덮을 수 있다.
+- scope:
+  - `src/runtime/intents.ts`
+  - `src/runtime/contracts.ts`
+  - `src/utils/json.ts`
+  - `hooks/pre-write-guard.ts`
+  - `hooks/stop-continue.ts`
+  - `tests/state-integrity.test.mjs`
+  - `tests/codex-hooks.test.mjs`
+- dependencies:
+  - FG-22-01
+  - FG-17-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+  - `node --experimental-test-coverage --test tests/*.test.mjs`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`; coverage command
+  exit_code: `0`; `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Governance state fail-closed and atomic temp isolation`
+  touched_files:
+    - `src/runtime/intents.ts`
+    - `src/runtime/contracts.ts`
+    - `src/utils/json.ts`
+    - `hooks/pre-write-guard.ts`
+    - `hooks/stop-continue.ts`
+    - `tests/state-integrity.test.mjs`
+    - `tests/codex-hooks.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+    - `node --experimental-test-coverage --test tests/*.test.mjs`
+  last_observation: malformed/schema-invalid Intent와 손상/유실 linked Contract는 write/Stop에서 fail-closed다. atomic temp는 PID+UUID로 분리되며 296개 테스트, line 88.39%, function 89.96% coverage가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: feature/fix execution precondition과 broader state hardening을 계속 감사한다.
+
+## Phase 23: Execution precondition
+
+목표: 승인된 artifact 사슬과 실제 feature/fix write를 동일한 Run phase와 Contract에 묶는다.
+
+### FG-23-01 Artifact-aware Run phase prerequisites
+
+- status: `passing`
+- phase: Phase 23
+- objective: Interview/Plan/Contract 승인 상태를 Run phase 전이의 deterministic precondition으로 강제한다.
+- why: 승인 artifact가 있어도 phase 전이가 이를 확인하지 않으면 agent가 계약 이전에 act로 진입할 수 있다.
+- scope:
+  - `src/runtime/execution-governance.ts`
+  - `src/cli/index.ts`
+  - `tests/execution-governance.test.mjs`
+  - `tests/run-cli.test.mjs`
+- dependencies:
+  - FG-18-01
+  - FG-19-02
+  - FG-22-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Artifact-aware Run phase prerequisites`
+  touched_files:
+    - `src/runtime/execution-governance.ts`
+    - `src/cli/index.ts`
+    - `tests/execution-governance.test.mjs`
+    - `tests/run-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: feature/fix Run은 plan에서 시작하고, linked Interview/Plan/Contract 승인이 다음 phase 전이 전에 검증된다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-23-02 Feature/fix write execution gate`를 시작한다.
+
+### FG-23-02 Feature/fix write execution gate
+
+- status: `passing`
+- phase: Phase 23
+- objective: feature/fix의 비사소 write에 같은 Intent의 active act/verify Run과 approved Contract를 요구한다.
+- why: completion과 Contract 승인이 강해도 실제 write 시점이 계약 밖이면 승인 전 코드 변경 우회가 남는다.
+- scope:
+  - `src/runtime/execution-governance.ts`
+  - `hooks/pre-write-guard.ts`
+  - `tests/execution-governance.test.mjs`
+  - `tests/codex-hooks.test.mjs`
+- dependencies:
+  - FG-23-01
+  - FG-22-03
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output, 300 tests passed
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Feature/fix write execution gate`
+  touched_files:
+    - `src/runtime/execution-governance.ts`
+    - `hooks/pre-write-guard.ts`
+    - `tests/execution-governance.test.mjs`
+    - `tests/codex-hooks.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: feature/fix non-trivial write는 active Run의 act/verify phase와 approved matching Contract가 모두 있을 때만 허용되며 tidy/chore는 contract-optional이다. 전체 300개 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: broader governance state corruption/concurrency hardening을 감사한다.
+
+## Phase 24: State integrity and concurrent create
+
+목표: governance record 손상이나 동시 생성 충돌이 정책을 약화시키거나 기존 state를 덮어쓰지 못하게 한다.
+
+### FG-24-01 Strict governance artifact loaders
+
+- status: `passing`
+- phase: Phase 24
+- objective: 주요 artifact collection이 malformed/schema-invalid record를 조용히 제거하지 않게 한다.
+- why: invalid Rule/Run이 사라지면 write/Stop이 이전 상태로 fallback해 승인 정책을 우회할 수 있다.
+- scope:
+  - `src/runtime/rules.ts`
+  - `src/runtime/runs.ts`
+  - `src/runtime/plans.ts`
+  - `src/runtime/interviews.ts`
+  - `src/runtime/contracts.ts`
+  - `src/runtime/detections.ts`
+  - `src/runtime/evals.ts`
+  - `hooks/pre-write-guard.ts`
+  - `hooks/stop-continue.ts`
+  - `tests/state-integrity.test.mjs`
+  - `tests/codex-hooks.test.mjs`
+- dependencies:
+  - FG-22-03
+  - FG-23-02
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Strict governance artifact loaders`
+  touched_files:
+    - runtime state modules
+    - `hooks/pre-write-guard.ts`
+    - `hooks/stop-continue.ts`
+    - `tests/state-integrity.test.mjs`
+    - `tests/codex-hooks.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: Rule/Run corruption은 write/Stop에서 차단되고 모든 주요 artifact loader가 invalid record를 명시적 state error로 보고한다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-24-02 Collision-safe sequential record creation`을 시작한다.
+
+### FG-24-02 Collision-safe sequential record creation
+
+- status: `passing`
+- phase: Phase 24
+- objective: 삭제된 번호와 동시 creator가 기존 record를 덮어쓰지 않게 한다.
+- why: `record count + 1`과 overwrite rename은 hole 또는 race에서 이미 존재하는 governance state를 교체할 수 있다.
+- scope:
+  - `src/utils/id.ts`
+  - `src/utils/json.ts`
+  - primary artifact create functions
+  - `tests/id.test.mjs`
+- dependencies:
+  - FG-24-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+  - `npm run build && node --test tests/id.test.mjs`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`; targeted concurrent create test
+  exit_code: `0`; `0`; `0`
+  log_path: terminal output, 309 tests passed
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Collision-safe sequential record creation`
+  touched_files:
+    - `src/utils/id.ts`
+    - `src/utils/json.ts`
+    - artifact create modules
+    - `tests/id.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+    - `npm run build && node --test tests/id.test.mjs`
+  last_observation: max-suffix allocation, 3+ digit loader support, atomic exclusive hard-link publish, collision retry가 적용됐고 8개 동시 Intent creator가 고유 record를 손실 없이 생성한다. 전체 309개 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: scoped content fingerprint provenance를 verification evidence에 연결한다.
+
+## Phase 25: Verification content provenance
+
+목표: required verification evidence를 timestamp뿐 아니라 실제 승인 scope content digest에 결박한다.
+
+### FG-25-01 Scoped content fingerprint capture
+
+- status: `passing`
+- phase: Phase 25
+- objective: verification 종료 직후 approved Contract/Intent scope의 deterministic SHA-256 manifest를 evidence에 저장한다.
+- why: hook span 시간만으로는 hook을 거치지 않은 direct filesystem write와 파일 삭제/추가를 증명하지 못한다.
+- scope:
+  - `src/runtime/schemas.ts`
+  - `src/runtime/provenance.ts`
+  - `src/runtime/verification.ts`
+  - `tests/provenance.test.mjs`
+  - `tests/verification.test.mjs`
+- dependencies:
+  - FG-22-02
+  - FG-24-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Scoped content fingerprint capture`
+  touched_files:
+    - `src/runtime/schemas.ts`
+    - `src/runtime/provenance.ts`
+    - `src/runtime/verification.ts`
+    - `tests/provenance.test.mjs`
+    - `tests/verification.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: manifest는 path/size/file SHA-256와 aggregate digest를 포함하고 Contract scope를 Intent scope보다 우선한다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-25-02 Completion digest revalidation`을 시작한다.
+
+### FG-25-02 Completion digest revalidation
+
+- status: `passing`
+- phase: Phase 25
+- objective: completion/Stop에서 current scoped digest와 latest required evidence provenance를 비교한다.
+- why: 검증 후 direct write를 이전 pass로 완료할 수 있으면 evidence가 실제 checkout을 증명하지 못한다.
+- scope:
+  - `src/runtime/completion.ts`
+  - `hooks/stop-continue.ts`
+  - `tests/completion.test.mjs`
+  - `tests/provenance.test.mjs`
+- dependencies:
+  - FG-25-01
+  - FG-17-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+  - `npm run build && node --test tests/provenance.test.mjs`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`; targeted provenance test
+  exit_code: `0`; `0`; `0`
+  log_path: terminal output, 314 tests passed
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Completion digest revalidation`
+  touched_files:
+    - `src/runtime/completion.ts`
+    - `hooks/stop-continue.ts`
+    - `tests/completion.test.mjs`
+    - `tests/provenance.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+    - `npm run build && node --test tests/provenance.test.mjs`
+  last_observation: current digest가 다르거나 provenance가 없는 legacy required pass는 stale이며, unobserved direct write end-to-end 회귀가 통과한다. 전체 314개 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: multi-record lineage/index reconciliation과 recovery를 구현한다.
+
+## Phase 26: Lineage reconciliation
+
+목표: crash로 일부만 반영된 Run index와 cross-artifact backlink를 안전하고 반복 가능하게 복구한다.
+
+### FG-26-01 Derived Run index rebuild
+
+- status: `passing`
+- phase: Phase 26
+- objective: Run index를 validated Run records에서 재구축 가능한 cache로 만든다.
+- why: Run record publish와 index 갱신 사이에 종료되거나 index가 손상돼도 active/recent context를 복구할 수 있어야 한다.
+- scope:
+  - `src/runtime/runs.ts`
+  - `src/utils/id.ts`
+  - `tests/id.test.mjs`
+  - `tests/reconcile.test.mjs`
+- dependencies:
+  - FG-24-02
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Derived Run index rebuild`
+  touched_files:
+    - `src/runtime/runs.ts`
+    - `src/utils/id.ts`
+    - `tests/id.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: index는 updatedAt/숫자 ID 순서로 재구축되며 1000+ sequential IDs도 numeric order를 유지한다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-26-02 Cross-artifact reconciliation CLI`를 시작한다.
+
+### FG-26-02 Cross-artifact reconciliation CLI
+
+- status: `passing`
+- phase: Phase 26
+- objective: missing backlink와 corrupt derived index를 dry-run/apply로 idempotent하게 복구한다.
+- why: Interview/Plan/Contract/Run을 순차 기록하는 도중 종료되면 canonical record는 남아도 반대편 reference가 비어 있을 수 있다.
+- scope:
+  - `src/runtime/reconcile.ts`
+  - `src/cli/index.ts`
+  - `tests/reconcile.test.mjs`
+  - `tests/reconcile-cli.test.mjs`
+- dependencies:
+  - FG-26-01
+  - FG-19-02
+  - FG-22-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output, 318 tests passed
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Cross-artifact reconciliation CLI`
+  touched_files:
+    - `src/runtime/reconcile.ts`
+    - `src/cli/index.ts`
+    - `tests/reconcile.test.mjs`
+    - `tests/reconcile-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: dry-run은 planned repair/conflict를 보고하고, apply는 conflict가 없을 때만 missing backlink와 index를 복구한다. 재실행은 no-op이며 전체 318개 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: bounded semantic similarity/Judge 대상·비용 정책을 구현한다.
+
+## Phase 27: Semantic Judge and completion closure
+
+목표: 2차 의미 판정 비용을 제한하고 feature/fix completion이 승인 execution chain을 끝까지 우회하지 못하게 한다.
+
+### FG-27-01 Cached embedding similarity and bounded Judge queue
+
+- status: `passing`
+- phase: Phase 27
+- objective: candidate thrashing에만 cached embedding/cosine similarity를 적용하고 Judge 호출량을 제한한다.
+- why: 모든 로그를 LLM에 보내면 비용·컨텍스트가 폭증하고 deterministic hook 원칙을 깨뜨린다.
+- scope:
+  - `src/runtime/judge-policy.ts`
+  - `src/runtime/similarity.ts`
+  - `src/runtime/judge.ts`
+  - `src/runtime/judge-adapter.ts`
+  - `src/runtime/schemas.ts`
+  - `src/cli/index.ts`
+  - `tests/judge-policy.test.mjs`
+  - `tests/judge-cli.test.mjs`
+- dependencies:
+  - FG-21-01
+  - FG-15-01
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Cached embedding similarity and bounded Judge queue`
+  touched_files:
+    - Judge/Detection schema and runtime
+    - CLI and tests
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: semantic vectors는 model/input digest로 캐시되고 cosine threshold, candidate/input/dimension/batch budgets를 통과한 후보만 Judge batch에 들어간다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-27-02 Behavior completion chain closure`를 시작한다.
+
+### FG-27-02 Behavior completion chain closure
+
+- status: `passing`
+- phase: Phase 27
+- objective: feature/fix complete/Stop에 approved matching Contract와 verify phase를 요구한다.
+- why: write가 없거나 hook을 우회한 Run이 fallback evidence만으로 승인 artifact chain 없이 완료될 수 있었다.
+- scope:
+  - `src/runtime/stop-gate.ts`
+  - `tests/stop-gate.test.mjs`
+  - `tests/run-cli.test.mjs`
+- dependencies:
+  - FG-23-02
+  - FG-25-02
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output, 324 tests passed
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Behavior completion chain closure`
+  touched_files:
+    - `src/runtime/stop-gate.ts`
+    - `tests/stop-gate.test.mjs`
+    - `tests/run-cli.test.mjs`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: approved Intent→Plan→Contract→act→verify→fresh evidence→complete 전체 CLI chain이 통과하고 Contract/verify 없는 feature/fix completion은 차단된다. 전체 324개 테스트가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: artifact revision/archive lifecycle을 마감 감사한다.
+
+## Phase 28: Artifact lifecycle and final audit
+
+목표: Approved artifact 변경을 revision lifecycle로 완성하고 최종목표 필수 gap을 종결한다.
+
+### FG-28-01 Interview/Plan/Contract revision lifecycle
+
+- status: `passing`
+- phase: Phase 28
+- objective: human archive 뒤 supersedes lineage를 가진 새 draft revision을 생성한다.
+- why: approved content를 수정하지 않는다는 원칙만으로는 변경 필요 시 안전한 다음 revision 경로가 없다.
+- scope:
+  - `src/runtime/schemas.ts`
+  - `src/runtime/interviews.ts`
+  - `src/runtime/plans.ts`
+  - `src/runtime/contracts.ts`
+  - `src/runtime/reconcile.ts`
+  - `src/cli/index.ts`
+  - artifact runtime/CLI tests
+- dependencies:
+  - FG-18-01
+  - FG-26-02
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+- passing_evidence:
+  command: `npm run typecheck`; `npm test`
+  exit_code: `0`; `0`
+  log_path: terminal output
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Interview/Plan/Contract revision lifecycle`
+  touched_files:
+    - artifact schemas/runtimes/CLI/tests
+    - `src/runtime/reconcile.ts`
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+  last_observation: approved artifact는 human archive 뒤 r+1 draft로 복제되고 supersedes reference를 남긴다. Archive는 Run pointer를 비우고 phase를 되돌린다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: `FG-28-02 Final-goal completion audit`를 수행한다.
+
+### FG-28-02 Final-goal completion audit
+
+- status: `passing`
+- phase: Phase 28
+- objective: 최종목표 matrix, full tests, coverage, docs consistency를 감사한다.
+- why: 개별 phase passing만으로 전체 workflow의 연결과 문서 상태를 증명할 수 없다.
+- scope:
+  - root docs
+  - gap analysis/ledger
+  - full test suite and coverage
+- dependencies:
+  - FG-28-01
+  - FG-27-02
+- verification_commands:
+  - `npm run typecheck`
+  - `npm test`
+  - `node --experimental-test-coverage --test tests/*.test.mjs`
+  - `git diff --check`
+  - `npm_config_cache=/tmp/hyohyeon-harness-npm-cache npm pack --dry-run`
+- passing_evidence:
+  command: typecheck; full tests; coverage; diff check; package dry-run
+  exit_code: `0`; `0`; `0`; `0`; `0`
+  log_path: terminal output, 330 tests passed, line 89.14%, branch 71.40%, function 88.65%
+  verified_at: `2026-07-10`
+- active_work:
+  current_focus: `Final-goal completion audit`
+  touched_files:
+    - `README.md`
+    - `AGENT.md`
+    - `AGENTS.md`
+    - `hyohyeon-harness-최종목표.md`
+    - final goal docs
+  attempted_commands:
+    - `npm run typecheck`
+    - `npm test`
+    - coverage command
+    - `git diff --check`
+    - package dry-run with an isolated cache
+  last_observation: 필수 workflow gap은 닫혔다. Upstream hook 밖 shell wrapper와 human-selected AGENTS/CI patch는 명시된 제품 경계이며 전체 330 tests와 coverage audit가 통과했다.
+- blocked_reason: null
+- unblock_condition: null
+- next_action: 실제 운영 Detection/Rule/Eval 피드백을 다음 독립 intent로 처리한다.
+
 ## Phase dependency map
 
 ```text
@@ -1517,9 +3289,30 @@ Phase 0
         -> Phase 5 Monitor / Detection
           -> Phase 6 Wiki ingest / Rule candidate
             -> Phase 7 Reviewer / Eval / LLM Judge
+              -> Phase 8 Goal-aligned workflow
+                -> Phase 9 Execution loop / Monitor CLI
+                  -> Phase 10 Contract-centered completion gate
+                    -> Phase 11 Judge / Reviewer / Eval CLI
+                      -> Phase 12 Rule feedback loop
+                        -> Phase 13 Execution loop blocked policy
+                          -> Phase 14 Contract lifecycle and report
+                            -> Phase 15 Judge / Eval / Rule follow-up persistence
+                              -> Phase 16 Automation loop closure
+                                -> Phase 17 Governed completion integrity
+                                  -> Phase 18 Approval lifecycle and Run FSM
+                                    -> Phase 19 Structured InterviewSummary and lineage
+                                      -> Phase 20 General command tracing
+                                        -> Phase 21 Structural semantic monitor and feedback
+                                          -> Phase 22 Governance integrity hardening
+                                            -> Phase 23 Execution precondition
+                                              -> Phase 24 State integrity and concurrent create
+                                                -> Phase 25 Verification content provenance
+                                                  -> Phase 26 Lineage reconciliation
+                                                    -> Phase 27 Semantic Judge and completion closure
+                                                      -> Phase 28 Artifact lifecycle and final audit
 ```
 
-Phase 3과 Phase 4는 Phase 2 이후 일부 병렬 진행이 가능하다. 다만 Phase 5는 Phase 2와 Phase 4의 evidence가 있어야 의미가 있다.
+Phase 3과 Phase 4는 Phase 2 이후 일부 병렬 진행이 가능하다. Phase 8 이후는 `hyohyeon-harness-최종목표.md`를 기준으로 MVP 기능을 운영 workflow로 묶는 후속 phase다.
 
 ## 다음 작업 선택 기준
 
@@ -1587,52 +3380,42 @@ phase 완료 기록에는 최소한 다음을 포함한다.
 - `docs/phase/phase-7-detection-to-eval-case.md`
 - `docs/phase/phase-hardening-immutable-scratch-update-cleanup.md`
 - `docs/phase/phase-hardening-windows-command-guidance.md`
+- `docs/phase/phase-8-plan-artifact-and-cli.md`
+- `docs/phase/phase-9-run-transition-and-monitor-cli.md`
+- `docs/phase/phase-10-contract-required-checks-gate.md`
+- `docs/phase/phase-11-judge-reviewer-eval-cli.md`
+- `docs/phase/phase-12-detection-feedback-cli.md`
+- `docs/phase/phase-13-execution-loop-policy.md`
+- `docs/phase/phase-14-contract-lifecycle-report.md`
+- `docs/phase/phase-15-judge-eval-rule-followups.md`
+- `docs/phase/phase-16-automation-loop-closure.md`
+- `docs/phase/phase-17-governed-completion-integrity.md`
+- `docs/phase/phase-18-approval-lifecycle-run-fsm.md`
+- `docs/phase/phase-19-structured-interview-lineage.md`
+- `docs/phase/phase-20-general-command-tracing.md`
+- `docs/phase/phase-21-structural-semantic-monitor-feedback.md`
+- `docs/phase/phase-22-governance-integrity-hardening.md`
+- `docs/phase/phase-23-execution-precondition.md`
+- `docs/phase/phase-24-state-integrity-concurrent-create.md`
+- `docs/phase/phase-25-verification-content-provenance.md`
+- `docs/phase/phase-26-lineage-reconciliation.md`
+- `docs/phase/phase-27-semantic-judge-completion-closure.md`
+- `docs/phase/phase-28-artifact-lifecycle-final-audit.md`
 
 ## 현재 추천 시작점
 
-구현할 다음 기능 항목은 없다. `docs/final-goal-phase-feature-spec.md`의 정규 phase와 hardening backlog는 모두 passing이다.
+필수 구현 phase는 완료됐다.
 
 이유:
 
-- `FG-01-01`에서 RunState schema와 `.intent/runs` 경로가 검증 완료되었다.
-- `FG-01-02`에서 CLI와 hook이 사용할 검증된 runtime CRUD가 추가되었다.
-- `FG-01-03`에서 사용자가 RunState를 직접 시작, 조회, 기록할 수 있는 `intent run` 명령이 추가되었다.
-- `FG-01-04`에서 새 세션이 active run의 objective, status, nextAction, 최근 note를 즉시 볼 수 있게 SessionStart memory가 확장되었다.
-- `FG-01-05`에서 압축 직전 handoff에도 active run 상태, 다음 행동, 최근 note가 남도록 확장되었다.
-- `FG-02-01`에서 VerificationEvidence schema, RunState evidence 필드, `.intent/raw/<type>-results` 경로 helper가 추가되었다.
-- `FG-02-02`에서 실제 검증 명령을 실행해 stdout/stderr raw log와 exit code를 RunState evidence에 연결하는 runtime이 추가되었다.
-- `FG-02-03`에서 Agent와 사용자가 동일하게 사용할 수 있는 `intent verify <type> -- <command...>` CLI와 `intent verify list`가 추가되었다.
-- `FG-02-04`에서 active run의 `requiredEvidenceTypes`가 completion/stop gate에 연결되어 필수 검증 evidence가 없거나 실패하면 완료를 막는다.
-- `FG-02-05`에서 새 프로젝트 setup 때 runs/raw 관련 디렉터리가 준비되도록 했다.
-- Phase 2는 모두 passing이다.
-- `FG-03-01`에서 작업 유형별 TestMatrix schema와 intent type 기반 default matrix 함수가 추가되었다.
-- `FG-03-02`에서 Run의 평가 기준과 allowed/forbidden scope, required checks, DoD를 보존하는 SprintContract schema/runtime이 추가되었다.
-- `FG-03-03`에서 사람이 contract를 생성/조회/목록화할 수 있는 `intent contract draft/show/list` CLI가 추가되었다.
-- `FG-03-04`에서 active run에 연결된 contract의 `forbiddenScope`가 pre-write guard에 연결되어 문서상 금지 범위를 실제 변경 gate로 강제한다.
-- Phase 3은 모두 passing이다.
-- `FG-04-01`에서 Trace/Span schema와 raw observability trace/span paths가 추가되었다.
-- `FG-04-02`에서 active run에 span을 append하고 조회하는 writer runtime이 추가되었다.
-- `FG-04-03`에서 pre-write guard가 검사한 edit/apply_patch 변경을 failure-safe span으로 남기도록 연결되었다.
-- `FG-04-04`에서 `intent verify`가 passed/failed command를 run_check span으로 남기도록 연결되었다.
-- `FG-04-05`에서 stderr/TAP 기반 deterministic error signature 추출과 failed span attribute 연결이 추가되었다.
-- Phase 4는 모두 passing이다.
-- `FG-05-01`에서 DetectionRecord schema와 `.intent/detections` 경로가 추가되었다.
-- `FG-05-02`에서 completion attempt 컨텍스트의 missing required evidence를 false_success candidate로 저장하는 structural monitor가 추가되었다.
-- `FG-05-03`에서 같은 command+args+exitCode가 3회 반복 실패하면 thrashing candidate를 만드는 monitor가 추가되었다.
-- `FG-05-04`에서 command가 달라도 같은 errorSignature가 3회 반복되면 thrashing candidate를 만드는 monitor가 추가되었다.
-- `FG-05-05`에서 detection list/show/resolve CLI가 추가되었고 resolve는 human-only로 제한되었다.
-- Phase 5는 모두 passing이다.
-- `FG-06-01`에서 Detection Record를 failure/issue wiki page로 변환하는 runtime이 추가되었다.
-- `FG-06-02`에서 rule draft가 sourceDetectionId를 보존하도록 schema/runtime이 확장되었다.
-- `FG-06-03`에서 wiki lint가 아직 wiki로 ingest되지 않은 detection id를 보고하도록 확장되었다.
-- Phase 6은 모두 passing이다.
-- `FG-07-01`에서 detection, evidence, trace/span 정보를 LLM Judge에 넘길 deterministic bundle로 묶는 runtime이 추가되었다.
-- `FG-07-02`에서 RunState, SprintContract, evidence, detection 정보를 사람이 읽을 수 있는 reviewer checklist로 변환하는 runtime이 추가되었다.
-- `FG-07-03`에서 반복 실패를 미래 회귀 검증에 쓸 eval case schema/path 기반이 추가되었다.
-- `FG-07-04`에서 Detection Record 하나를 eval draft 하나로 변환하는 runtime이 추가되었다.
-- Phase 7은 모두 passing이다.
-- `FG-H-01`에서 handoff scratch update의 배열 mutation을 immutable update로 정리했다.
-- `FG-H-02`에서 Windows PowerShell의 `npm.cmd` 사용 guidance를 README/AGENT/docs에 문서화했다.
-- 모든 정규 phase와 hardening backlog가 passing이다.
+- `hyohyeon-harness-최종목표.md`가 상위 SSOT다.
+- Phase 8-28에서 Plan, Execution Loop, Contract, Judge/Reviewer/Eval CLI, Detection feedback, 자동 loop closure, governed completion, 승인 artifact revision lifecycle, Run FSM, Structured InterviewSummary lineage, 일반 command tracing, structural+embedding semantic monitor, governance integrity, execution precondition, state/concurrent-create hardening, content provenance, lineage reconciliation, completion chain closure, final audit가 passing 상태가 됐다.
+- feature/fix write와 act 전이는 approved artifact 사슬을 요구한다.
+- 최종목표의 필수 구현 gap은 없다.
 
-그 다음 기능 항목은 없다.
+시작 방법:
+
+1. 실제 운영에서 새 Detection/Rule/Eval feedback이 생기면 별도 intent로 처리한다.
+2. 새 FG 항목을 이 ledger에 추가하고 `active`로 바꾼다.
+3. deterministic hook 원칙을 깨지 않는지 먼저 설계한다.
+4. `npm run typecheck`, `npm test`가 통과하면 `passing_evidence`를 채운다.

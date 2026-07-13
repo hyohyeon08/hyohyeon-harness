@@ -1,15 +1,25 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { paths } from '../state/paths.js'
-import { readJson, writeJsonAtomic } from '../utils/json.js'
+import { readJson, writeJsonAtomic, writeJsonAtomicNew } from '../utils/json.js'
+import { compareSequentialIds, nextSequentialId } from '../utils/id.js'
 import { composeDetectionWikiBody, detectionWikiSlug } from './postmortem.js'
 import {
   DetectionRecordSchema,
   type DetectionRecord,
   type DetectionResult,
   type DetectionType,
+  type JudgeStatus,
+  type JudgeClassification,
 } from './schemas.js'
 import { appendArticle, listArticles, newArticle, type Status, type WikiType } from './wiki.js'
+
+export class DetectionStateError extends Error {
+  constructor(file: string, detail: string) {
+    super(`invalid detection state ${file}: ${detail}`)
+    this.name = 'DetectionStateError'
+  }
+}
 
 export interface CreateDetectionArgs {
   type: DetectionType
@@ -25,7 +35,7 @@ export interface CreateDetectionArgs {
 }
 
 function isDetectionFile(name: string): boolean {
-  return /^DET-\d{3}\.json$/.test(name)
+  return /^DET-\d{3,}\.json$/.test(name)
 }
 
 function detectionFile(root: string, detectionId: string): string {
@@ -33,7 +43,7 @@ function detectionFile(root: string, detectionId: string): string {
 }
 
 function nextDetectionId(root: string): string {
-  return `DET-${String(loadDetections(root).length + 1).padStart(3, '0')}`
+  return nextSequentialId('DET', loadDetections(root).map((detection) => detection.detectionId))
 }
 
 function refreshedTimestamp(previous: string): string {
@@ -48,36 +58,56 @@ export function loadDetections(root: string): DetectionRecord[] {
   const out: DetectionRecord[] = []
   for (const file of readdirSync(dir)) {
     if (!isDetectionFile(file)) continue
-    const parsed = DetectionRecordSchema.safeParse(readJson(join(dir, file)))
-    if (parsed.success) out.push(parsed.data)
+    let raw: unknown
+    try {
+      raw = readJson(join(dir, file))
+    } catch (error) {
+      throw new DetectionStateError(file, (error as Error).message)
+    }
+    const parsed = DetectionRecordSchema.safeParse(raw)
+    if (!parsed.success) {
+      throw new DetectionStateError(file, parsed.error.issues.map((issue) => issue.message).join('; '))
+    }
+    out.push(parsed.data)
   }
-  return out.sort((a, b) => a.detectionId.localeCompare(b.detectionId))
+  return out.sort((a, b) => compareSequentialIds(a.detectionId, b.detectionId))
 }
 
 export function findDetection(root: string, detectionId: string): DetectionRecord | null {
-  const parsed = DetectionRecordSchema.safeParse(readJson(detectionFile(root, detectionId)))
-  return parsed.success ? parsed.data : null
+  let raw: unknown
+  try {
+    raw = readJson(detectionFile(root, detectionId))
+  } catch (error) {
+    throw new DetectionStateError(`${detectionId}.json`, (error as Error).message)
+  }
+  if (raw === null) return null
+  const parsed = DetectionRecordSchema.safeParse(raw)
+  if (!parsed.success) {
+    throw new DetectionStateError(`${detectionId}.json`, parsed.error.issues.map((issue) => issue.message).join('; '))
+  }
+  return parsed.data
 }
 
 export function createDetection(root: string, args: CreateDetectionArgs): DetectionRecord {
-  const now = new Date().toISOString()
-  const detection = DetectionRecordSchema.parse({
-    detectionId: nextDetectionId(root),
-    type: args.type,
-    result: args.result ?? 'candidate',
-    runId: args.runId ?? null,
-    intentId: args.intentId ?? null,
-    title: args.title,
-    summary: args.summary,
-    evidenceRefs: args.evidenceRefs ?? [],
-    attributes: args.attributes ?? {},
-    resolution: args.resolution ?? null,
-    createdAt: now,
-    updatedAt: now,
-    resolvedAt: args.resolvedAt ?? null,
-  })
-  writeJsonAtomic(paths(root).detectionFile(detection.detectionId), detection)
-  return detection
+  for (;;) {
+    const now = new Date().toISOString()
+    const detection = DetectionRecordSchema.parse({
+      detectionId: nextDetectionId(root),
+      type: args.type,
+      result: args.result ?? 'candidate',
+      runId: args.runId ?? null,
+      intentId: args.intentId ?? null,
+      title: args.title,
+      summary: args.summary,
+      evidenceRefs: args.evidenceRefs ?? [],
+      attributes: args.attributes ?? {},
+      resolution: args.resolution ?? null,
+      createdAt: now,
+      updatedAt: now,
+      resolvedAt: args.resolvedAt ?? null,
+    })
+    if (writeJsonAtomicNew(paths(root).detectionFile(detection.detectionId), detection)) return detection
+  }
 }
 
 export function updateDetection(
@@ -107,6 +137,37 @@ export function resolveDetection(
     result,
     resolution,
     resolvedAt,
+  }))
+}
+
+export function recordJudgeResult(
+  root: string,
+  detectionId: string,
+  args: {
+    status: Exclude<JudgeStatus, 'not_run'>
+    judgement: string
+    confidence?: number | null
+    classification?: JudgeClassification | null
+    suggestedAction?: string | null
+    inputDigest?: string | null
+    adapterKey?: string | null
+  },
+): DetectionRecord {
+  if (args.confidence !== undefined && args.confidence !== null && (args.confidence < 0 || args.confidence > 1)) {
+    throw new Error('judge confidence must be between 0 and 1')
+  }
+  return updateDetection(root, detectionId, (detection) => ({
+    ...detection,
+    judge: {
+      status: args.status,
+      judgement: args.judgement,
+      confidence: args.confidence ?? null,
+      classification: args.classification ?? null,
+      suggestedAction: args.suggestedAction ?? null,
+      inputDigest: args.inputDigest ?? null,
+      adapterKey: args.adapterKey ?? null,
+      updatedAt: new Date().toISOString(),
+    },
   }))
 }
 

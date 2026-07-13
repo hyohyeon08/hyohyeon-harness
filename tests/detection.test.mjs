@@ -38,6 +38,17 @@ test('DetectionRecordSchema stores candidate evidence and defaults optional fiel
   })
 
   assert.equal(detection.result, 'candidate')
+  assert.deepEqual(detection.judge, {
+    status: 'not_run',
+    judgement: null,
+    confidence: null,
+    classification: null,
+    suggestedAction: null,
+    inputDigest: null,
+    adapterKey: null,
+    updatedAt: null,
+  })
+  assert.equal(detection.embedding, null)
   assert.equal(detection.resolution, null)
   assert.equal(detection.resolvedAt, null)
   assert.deepEqual(detection.evidenceRefs, [

@@ -3,7 +3,9 @@
 > **AI 코딩 하네스 — 이해하지 못한 코드는 들어올 수 없다.**
 > _Understand before you ship._
 
-`intent`는 개인용 AI 코딩 하네스다. AI가 코드를 짜기 **전에 의도(무엇을·왜)를 선언**하게 하고, 사람이 그것을 승인한 뒤에야 자율적으로 진행하게 한다. 승인된 의도 = 작업의 스코프 경계이자 **사람이 그 변경을 이해했다는 증거**다. 그리고 의도·결정·학습·실패는 세션을 넘어 영속한다.
+`intent`는 `hyohyeon-harness`의 CLI다. `hyohyeon-harness`는 개인용 Agent Harness이고, 상위 요구사항은 [hyohyeon-harness-최종목표.md](hyohyeon-harness-최종목표.md)가 기준이다.
+
+현재 CLI는 AI가 코드를 짜기 **전에 의도(무엇을·왜)를 선언**하게 하고, 사람이 그것을 승인한 뒤에야 자율적으로 진행하게 한다. 승인된 의도 = 작업의 스코프 경계이자 **사람이 그 변경을 이해했다는 증거**다. 그리고 의도·실행 상태·검증 증거·관측 데이터·탐지 기록·결정·학습·실패는 세션을 넘어 영속한다.
 
 ## 철학 — 세 기둥
 
@@ -19,9 +21,11 @@
 
 ```
 게이트 레이어 — "이해 못 한·범위 밖·미검증 코드를 막는다"
-  intent-gate · triviality · scope · stop-gate · guard · rules
+  intent-gate · triviality · scope · stop-gate · guard · rules · contract
 지식 레이어 — "지식과 컨텍스트를 잃지 않는다"
   wiki(LLM Wiki: 정보/문제 2영역) · handoff(인수인계) · postmortem(실패→규칙) · spec(GAP)
+실행 증거 레이어 — "Agent 작업을 관찰 가능하게 만든다"
+  run · verification evidence · observability trace/span · detection · reviewer/eval
 ```
 
 ## 설치
@@ -29,7 +33,7 @@
 ```bash
 npm install
 npm run build
-npm test          # 200 tests
+npm test          # 330 tests
 ```
 
 Windows PowerShell에서 `npm.ps1` 실행 정책 오류가 나면 npm 스크립트는 `npm.cmd`로 실행한다.
@@ -57,12 +61,16 @@ hook은 `.intent/` 없는 프로젝트에선 no-op이라, 전역/공유 hook 등
 Claude Code에서는 `/intent` 형태로, Codex에서는 `$intent` 형태로 repo skill을 명시 호출한다. 자연어 요청과 skill description이 맞으면 자동 선택될 수도 있다.
 
 ```
-/interview  →  /intent  →  코딩  →  dod check / learn  →  complete
-(GAP 줄이기)  (의도 선언)  (게이트가 안내)   (이해 검증)        (완료)
-   │             │                                            │
-   spec→위키     사람 승인                                   실패 시 /postmortem → 위키 + 규칙
-                                          컨텍스트 80% → PreCompact → 핸드오프 → 다음 세션
+/interview → /intent → 사람 승인 → run start → 코딩 → intent verify
+   │                                    │                    │
+   spec→위키                         Plan/Contract      dod check / learn
+                                                            │
+                                                        complete
+                                                            │
+                                         실패 시 /postmortem → 위키 + 규칙
 ```
+
+feature/fix의 `run start`는 완료 증거를 소유하는 governed Run을 만든다. `active`는 현재 조작 초점일 뿐이며, governed Run은 `blocked`/`paused`/`passing` 상태에서도 complete/Stop 판정에 계속 사용된다. Required evidence는 type별 최신 결과만 유효하므로 이후 실패가 이전 성공을 무효화한다.
 
 ## 명령
 
@@ -73,12 +81,21 @@ Claude Code에서는 `/intent` 형태로, Codex에서는 `$intent` 형태로 rep
 | `intent approve <id>` | 의도 승인 (**사람만**) |
 | `intent dod <id>` / `check <id> "<항목>"` | DoD 조회 / 체크 |
 | `intent learn <id> "<배운 것>"` / `complete <id>` | 학습 기록 / 완료 |
-| `intent run start <intentId> "<목표>"` / `status` / `list` / `note "<텍스트>"` | Agent 실행 단위 추적 |
+| `intent run start <intentId> "<목표>"` / `status` / `list` / `note` / `phase` / `status-set` / `next` / `budget` / `attempt` | Agent 실행 단위와 governed completion context 추적 |
+| `intent interview draft\|show\|list\|link\|approve\|archive\|revise` | 구조화된 InterviewSummary, append-only lineage, revision lifecycle |
+| `intent plan draft\|show\|list\|link\|approve\|archive\|revise` | Plan 생성·연결·사람 승인·archive·새 draft revision |
+| `intent verify <type> -- <command...>` / `list` | 검증 명령 실행·raw log·Run evidence 저장. Required type별 최신 결과가 completion에 사용됨 |
+| `intent command -- <command...>` | 일반 shell command 실행·exit code·raw log·`run_command` span 저장 |
+| `intent reconcile [--apply]` | derived Run index와 cross-artifact missing backlink dry-run/복구. 충돌은 자동 수정하지 않음 |
+| `intent contract draft [runId]` / `show` / `list` / `approve` / `archive` / `revise` / `edit` / `report` | Sprint Contract 승인·revision·리포트. Archive 시 Run pause |
+| `intent monitor active\|run <runId>` | 반복 실패·동일 edit region·tool sequence 후보 생성. candidate는 기록만, confirmed만 blocked 전이 |
+| `intent detection list\|show\|resolve` | thrashing/false_success 후보 조회·판정 |
+| `intent judge policy\|semantic\|queue\|batch\|bundle\|record\|run` / `reviewer checklist` / `eval draft-from-detection\|run` | Cached embedding similarity, bounded Judge adapter, 리뷰 체크리스트, eval |
 | `intent wiki new <slug> "<제목>" --type <T> [--status]` | 위키 글 (type이 정보/문제 영역 결정) |
-| `intent wiki list\|show\|index\|log\|lint\|resolve <slug>` | 목록·조회·인덱스·로그·건강점검·이슈 해결 |
-| `intent rule draft <kind> <pattern> "<이유>"` / `approve <id>` | 게이트 규칙 (승인 **사람만**) |
+| `intent wiki list\|show\|index\|log\|lint\|resolve <slug>` / `ingest detection <id>` | 목록·조회·인덱스·로그·건강점검·이슈 해결·detection ingest |
+| `intent rule draft` / `draft-from-detection` / `agents-candidate` / `ci-candidate` / `impact` / `reflect` / `approve` | 게이트 규칙, AGENTS/CI 후보, 반영 추적 (승인 **사람만**) |
 | `intent postmortem "<제목>" --cause --prevent [--rule …]` | 실패 기록 → 위키 + 규칙 분기 |
-| `intent spec draft "<제목>"` / `approve <slug>` | 공유 이해 문서 (승인 **사람만**) |
+| `intent spec draft "<제목>"` / `link <slug> [runId]` / `approve <slug>` | 공유 이해 문서와 Run 연결 (승인 **사람만**) |
 | `intent handoff [note <kind> "<텍스트>"]` | 인수인계 생성 / 작업 중 노트 |
 | `intent stop-check` | Stop 게이트 점검 (hook이 사용) |
 
@@ -86,11 +103,13 @@ Claude Code에서는 `/intent` 형태로, Codex에서는 `$intent` 형태로 rep
 
 | 시점 | 막는 것 |
 |---|---|
-| Edit/Write 직전 | ① `.intent/` 직접 편집 ② 승인된 forbid 규칙 ③ 승인된 의도 없는 비사소 변경 ④ 의도 스코프 밖 변경 |
-| 세션 종료 | DoD 미완 / behavior 의도의 학습 노트 미작성 |
+| Edit/Write 직전 | ① `.intent/` 직접 편집 ② 승인된 forbid 규칙 ③ 승인된 active contract의 allowed/forbidden scope ④ 승인된 의도 없는 비사소 변경 ⑤ 의도 스코프 밖 변경 ⑥ feature/fix의 act/verify phase·approved Contract 부재 |
+| 세션 종료 | DoD 미완 / behavior 학습 노트·governed Run 부재 / latest required evidence missing·failed |
 | 승인 명령 | Claude/Codex AI 셸에서 `approve` 거부 — 사람 셸에서만 |
 
 **사소한 변경**(≤5줄·주석/포맷)은 게이트를 통과한다 — 마찰 최소화.
+
+`blocked`는 completion 책임을 제거하지 않는다. 원인을 해결하고 required check를 다시 통과해야 하며, complete/Stop을 반복해도 같은 governed Run이 평가된다.
 
 ## 구조
 
@@ -98,9 +117,9 @@ Claude Code에서는 `/intent` 형태로, Codex에서는 `$intent` 형태로 rep
 src/runtime/   게이트·지식 로직 (순수 함수, 테스트 가능)
 src/cli/       intent CLI
 src/state/     .intent/ 경로
-hooks/         session-start · pre-write-guard · stop-continue · pre-compact
+hooks/         session-start · pre-write-guard · post-command · stop-continue · pre-compact
 skills/        intent · interview · wiki · postmortem (SKILL.md)
-.intent/       런타임 상태 (intents · rules · wiki/{knowledge,problems} · handoff · decisions · learnings)
+.intent/       런타임 상태 (intents · runs · contracts · raw · detections · evals · rules · wiki · handoff)
 ```
 
 ## 문서
@@ -108,9 +127,12 @@ skills/        intent · interview · wiki · postmortem (SKILL.md)
 - [AGENT.md](AGENT.md) — 사람·에이전트용 **단일 진실 원천(SSOT)**: invariants, 레이아웃, 빌드/테스트, 규약, anti-patterns
 - [CLAUDE.md](CLAUDE.md) — Claude Code 어댑터 (얇음, 의도적으로 AGENT.md를 auto-import 안 함)
 - [AGENTS.md](AGENTS.md) — 크로스툴 quick reference
+- [hyohyeon-harness-최종목표.md](hyohyeon-harness-최종목표.md) — 상위 제품 비전과 최종 요구사항
+- [docs/final-goal-gap-analysis.md](docs/final-goal-gap-analysis.md) — 최종목표 대비 현재 구현률과 남은 gap
+- [docs/final-goal-phase-feature-spec.md](docs/final-goal-phase-feature-spec.md) — phase별 구현 ledger와 다음 작업
 
 ## 상태
 
-v1(게이트) + v2(지식) 완성. Claude Code와 Codex 어댑터 지원. 200/200 테스트 통과. breathe in/out 호흡 게이트는 v3 후보.
+최종목표 기준 Phase 1-28 핵심 workflow와 hardening이 구현되어 있고 330/330 테스트가 통과한다. 필수 구현 gap은 닫혔으며, upstream hook 밖 shell은 wrapper를 쓰고 AGENTS/CI 자동 patch는 사람 선택 기능으로 유지한다.
 
 MIT License.

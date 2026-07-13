@@ -9,9 +9,18 @@ function projectRoot() {
   return mkdtempSync(join(tmpdir(), 'intent-contract-cli-'))
 }
 
-function cli(project, args) {
+function humanEnv() {
+  const env = { ...process.env }
+  delete env.CLAUDECODE
+  delete env.CODEX_THREAD_ID
+  delete env.CODEX_SHELL
+  delete env.CODEX_INTERNAL_ORIGINATOR_OVERRIDE
+  return env
+}
+
+function cli(project, args, env = humanEnv()) {
   const bin = join(process.cwd(), 'dist', 'src', 'cli', 'index.js')
-  return spawnSync(process.execPath, [bin, ...args], { cwd: project, encoding: 'utf8' })
+  return spawnSync(process.execPath, [bin, ...args], { cwd: project, encoding: 'utf8', env })
 }
 
 function setupProject() {
@@ -34,6 +43,8 @@ function setupProject() {
     0,
   )
   assert.equal(cli(project, ['run', 'start', 'INT-001', 'Wire contract CLI']).status, 0)
+  assert.equal(cli(project, ['plan', 'draft', 'Contract execution plan']).status, 0)
+  assert.equal(cli(project, ['plan', 'approve', 'PLAN-001']).status, 0)
   return project
 }
 
@@ -71,6 +82,117 @@ test('intent contract show prints scope, required checks, and definition of done
   assert.match(result.stdout, /allowed scope:\s+- src\/\*\*\s+- tests\/\*\*/)
   assert.match(result.stdout, /required checks:\s+- typecheck\s+- unit_test/)
   assert.match(result.stdout, /definition of done:\s+- typecheck passes\s+- tests pass/)
+})
+
+test('intent contract approve marks the contract approved from a human shell', () => {
+  const project = setupProject()
+  assert.equal(cli(project, ['contract', 'draft']).status, 0)
+
+  const result = cli(project, ['contract', 'approve', 'CONTRACT-001'])
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stdout, /approved CONTRACT-001/)
+  const contract = readJson(project, ['.intent', 'contracts', 'CONTRACT-001.json'])
+  assert.equal(contract.status, 'approved')
+  assert.equal(contract.approvedBy, 'human')
+  assert.match(contract.approvedAt, /^\d{4}-\d{2}-\d{2}T/)
+})
+
+test('intent contract archive and revise pauses the Run on a new draft revision', () => {
+  const project = setupProject()
+  assert.equal(cli(project, ['contract', 'draft']).status, 0)
+  assert.equal(cli(project, ['contract', 'approve', 'CONTRACT-001']).status, 0)
+  assert.equal(cli(project, ['contract', 'archive', 'CONTRACT-001']).status, 0)
+  const pausedRun = readJson(project, ['.intent', 'runs', 'RUN-001.json'])
+  assert.equal(pausedRun.contractId, null)
+  assert.equal(pausedRun.phase, 'contract')
+  const revised = cli(project, ['contract', 'revise', 'CONTRACT-001'])
+
+  assert.equal(revised.status, 0, revised.stderr)
+  const record = readJson(project, ['.intent', 'contracts', 'CONTRACT-002.json'])
+  const run = readJson(project, ['.intent', 'runs', 'RUN-001.json'])
+  assert.equal(record.status, 'draft')
+  assert.equal(record.revision, 2)
+  assert.equal(record.supersedesContractId, 'CONTRACT-001')
+  assert.equal(run.contractId, 'CONTRACT-002')
+  assert.equal(run.phase, 'contract')
+})
+
+test('intent contract approve is human-only and approved contracts cannot be edited', () => {
+  const project = setupProject()
+  assert.equal(cli(project, ['contract', 'draft']).status, 0)
+
+  const agentApproval = cli(project, ['contract', 'approve', 'CONTRACT-001'], {
+    ...humanEnv(),
+    CODEX_THREAD_ID: 'agent-thread',
+  })
+  assert.equal(agentApproval.status, 1)
+  assert.match(agentApproval.stderr, /contract approval is human-only/)
+
+  assert.equal(cli(project, ['contract', 'approve', 'CONTRACT-001']).status, 0)
+  const edit = cli(project, ['contract', 'edit', 'CONTRACT-001', '--require', 'build'])
+  assert.equal(edit.status, 1)
+  assert.match(edit.stderr, /approved contract CONTRACT-001 is immutable/)
+})
+
+test('intent contract edit appends lifecycle fields and rubric scores', () => {
+  const project = setupProject()
+  assert.equal(cli(project, ['contract', 'draft']).status, 0)
+
+  const result = cli(project, [
+    'contract',
+    'edit',
+    'CONTRACT-001',
+    '--require',
+    'build',
+    '--forbid',
+    'dist/**',
+    '--boundary',
+    'runtime schemas stay zod-validated',
+    '--stop',
+    'blocked run requires human decision',
+    '--decision',
+    'approve public CLI names',
+    '--rubric',
+    'risk=2',
+    '--rubric',
+    'coverage=3',
+  ])
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stdout, /edited CONTRACT-001/)
+  const contract = readJson(project, ['.intent', 'contracts', 'CONTRACT-001.json'])
+  assert.deepEqual(contract.requiredChecks, ['typecheck', 'unit_test', 'build'])
+  assert.deepEqual(contract.forbiddenScope, ['dist/**'])
+  assert.deepEqual(contract.architectureBoundaries, ['runtime schemas stay zod-validated'])
+  assert.deepEqual(contract.stopConditions, ['blocked run requires human decision'])
+  assert.deepEqual(contract.requiresUserDecision, ['approve public CLI names'])
+  assert.deepEqual(contract.rubric, { risk: 2, coverage: 3 })
+})
+
+test('intent contract report summarizes required check evidence', () => {
+  const project = setupProject()
+  assert.equal(cli(project, ['contract', 'draft']).status, 0)
+  assert.equal(cli(project, ['verify', 'typecheck', '--', process.execPath, '-e', 'process.exit(0)']).status, 0)
+
+  const result = cli(project, ['contract', 'report', 'CONTRACT-001'])
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stdout, /contract report CONTRACT-001 \[draft\]/)
+  assert.match(result.stdout, /typecheck: passed \(VE-001\)/)
+  assert.match(result.stdout, /unit_test: missing/)
+})
+
+test('intent contract report uses the latest result for each required check', () => {
+  const project = setupProject()
+  assert.equal(cli(project, ['contract', 'draft']).status, 0)
+  assert.equal(cli(project, ['verify', 'typecheck', '--', process.execPath, '-e', 'process.exit(0)']).status, 0)
+  assert.equal(cli(project, ['verify', 'typecheck', '--', process.execPath, '-e', 'process.exit(7)']).status, 7)
+
+  const result = cli(project, ['contract', 'report', 'CONTRACT-001'])
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stdout, /typecheck: failed \(VE-002\)/)
 })
 
 test('intent contract list prints contract summaries', () => {

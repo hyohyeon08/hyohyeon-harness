@@ -71,6 +71,8 @@ test('installCodexHooks renders .codex/hooks.json', () => {
   assert.deepEqual(installed.hooks.UserPromptSubmit, ['keep'])
   assert.match(installed.hooks.PreToolUse[0].matcher, /apply_patch/)
   assert.match(installed.hooks.PreToolUse[0].hooks[0].command, /dist\/hooks\/pre-write-guard\.js/)
+  assert.equal(installed.hooks.PostToolUse[0].matcher, 'Bash')
+  assert.match(installed.hooks.PostToolUse[0].hooks[0].command, /dist\/hooks\/post-command\.js/)
 })
 
 test('installCodexSkills copies skills to .agents/skills', () => {

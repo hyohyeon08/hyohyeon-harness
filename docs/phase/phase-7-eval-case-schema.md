@@ -44,12 +44,12 @@ This closes only `FG-07-03 Eval case schema`. The repository now has an eval cas
 
 - Eval cases start as `draft`.
 - `trigger` reuses the existing detection type enum.
-- `input` and `expected` are intentionally flexible records because no eval runner exists yet.
+- `input` and `expected` are intentionally flexible records because no eval runner existed at this phase.
 - Persistence/runtime behavior is deferred to `FG-07-04`.
 
 ## Known Risks
 
-- No runtime loads or writes eval cases yet.
+- At this phase, no runtime loaded or wrote eval cases yet.
 - No CLI displays eval cases yet.
 - Flexible input/expected records may need tightening after the first runner exists.
 

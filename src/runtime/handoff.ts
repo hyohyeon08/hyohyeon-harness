@@ -60,6 +60,13 @@ function activeRunSection(run: RunState | null | undefined): string {
   if (!run) return `## Active Run\n\n— 없음\n`
   const intent = run.intentId ? ` (${run.intentId})` : ''
   const lines = [`- ${run.runId} [${run.status}/${run.phase}] ${run.objective}${intent}`]
+  const lineage = [
+    run.interviewId ? `interview=${run.interviewId}` : null,
+    run.specSlug ? `spec=${run.specSlug}` : null,
+    run.planId ? `plan=${run.planId}` : null,
+    run.contractId ? `contract=${run.contractId}` : null,
+  ].filter((value): value is string => value !== null)
+  if (lineage.length > 0) lines.push(`- lineage: ${lineage.join(' ')}`)
   if (run.nextAction) lines.push(`- next: ${run.nextAction}`)
   for (const note of run.notes.slice(-3)) lines.push(`- note: ${note}`)
   return `## Active Run\n\n${lines.join('\n')}\n`

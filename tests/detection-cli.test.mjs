@@ -90,6 +90,13 @@ test('intent detection resolve updates result and resolution from a human shell'
   assert.equal(detection.result, 'dismissed')
   assert.equal(detection.resolution, 'Known local-only run')
   assert.match(detection.resolvedAt, /^20/)
+  assert.match(result.stdout, /wiki: detection-det-001-completion-attempted-without-required-evidence/)
+  const wiki = readFileSync(
+    join(project, '.intent', 'wiki', 'problems', 'detection-det-001-completion-attempted-without-required-evidence.md'),
+    'utf8',
+  )
+  assert.match(wiki, /status: resolved/)
+  assert.match(wiki, /Known local-only run/)
 })
 
 test('intent detection resolve is human-only', () => {

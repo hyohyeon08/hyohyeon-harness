@@ -1,32 +1,45 @@
 import { readdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { paths } from '../state/paths.js'
-import { readJson, writeJsonAtomic } from '../utils/json.js'
-import { IntentSchema, type Intent, type IntentType, type RunState } from './schemas.js'
+import { readJson, writeJsonAtomic, writeJsonAtomicNew } from '../utils/json.js'
+import { compareSequentialIds, nextSequentialId } from '../utils/id.js'
+import { IntentSchema, type Intent, type IntentType, type RunState, type SprintContract } from './schemas.js'
 import { canComplete } from './stop-gate.js'
+
+export class IntentStateError extends Error {
+  constructor(file: string, detail: string) {
+    super(`invalid intent state ${file}: ${detail}`)
+    this.name = 'IntentStateError'
+  }
+}
 
 function intentFile(root: string, id: string): string {
   return join(paths(root).intentsDir, `${id}.json`)
 }
 
-/** Load all intent records, skipping anything that fails schema validation. */
+/** Load all intent records. Corrupt governance state is a fail-closed error. */
 export function loadIntents(root: string): Intent[] {
   const dir = paths(root).intentsDir
   if (!existsSync(dir)) return []
   const out: Intent[] = []
   for (const f of readdirSync(dir)) {
     if (!f.endsWith('.json')) continue
-    const raw = readJson(join(dir, f))
+    let raw: unknown
+    try {
+      raw = readJson(join(dir, f))
+    } catch (error) {
+      throw new IntentStateError(f, (error as Error).message)
+    }
     const parsed = IntentSchema.safeParse(raw)
-    if (parsed.success) out.push(parsed.data)
+    if (!parsed.success) throw new IntentStateError(f, parsed.error.issues.map((issue) => issue.message).join('; '))
+    out.push(parsed.data)
   }
-  return out.sort((a, b) => a.id.localeCompare(b.id))
+  return out.sort((a, b) => compareSequentialIds(a.id, b.id))
 }
 
 /** Next sequential id: INT-001, INT-002, ... */
 function nextId(root: string): string {
-  const n = loadIntents(root).length + 1
-  return `INT-${String(n).padStart(3, '0')}`
+  return nextSequentialId('INT', loadIntents(root).map((intent) => intent.id))
 }
 
 /**
@@ -37,23 +50,24 @@ export function draftIntent(
   root: string,
   args: { what: string; why: string; type?: IntentType; scope?: string[]; dod?: string[] },
 ): Intent {
-  const now = new Date().toISOString()
-  const intent = IntentSchema.parse({
-    id: nextId(root),
-    what: args.what,
-    why: args.why,
-    type: args.type ?? 'feature',
-    scope: args.scope ?? ['**'],
-    dod: args.dod ?? [],
-    dodChecked: [],
-    status: 'draft',
-    approvedBy: null,
-    learnings: null,
-    createdAt: now,
-    updatedAt: now,
-  })
-  writeJsonAtomic(intentFile(root, intent.id), intent)
-  return intent
+  for (;;) {
+    const now = new Date().toISOString()
+    const intent = IntentSchema.parse({
+      id: nextId(root),
+      what: args.what,
+      why: args.why,
+      type: args.type ?? 'feature',
+      scope: args.scope ?? ['**'],
+      dod: args.dod ?? [],
+      dodChecked: [],
+      status: 'draft',
+      approvedBy: null,
+      learnings: null,
+      createdAt: now,
+      updatedAt: now,
+    })
+    if (writeJsonAtomicNew(intentFile(root, intent.id), intent)) return intent
+  }
 }
 
 /** Load, validate, transform, and atomically write one intent. */
@@ -87,9 +101,9 @@ export function recordLearning(root: string, id: string, note: string): Intent {
 }
 
 /** Transition approved -> done. Throws unless canComplete passes. */
-export function completeIntent(root: string, id: string, run?: RunState | null): Intent {
+export function completeIntent(root: string, id: string, run?: RunState | null, contract?: SprintContract | null): Intent {
   return updateIntent(root, id, (i) => {
-    const c = canComplete(i, run)
+    const c = canComplete(i, run, contract)
     if (!c.ok) throw new Error(`cannot complete ${id}: ${c.reason}`)
     return { ...i, status: 'done' }
   })

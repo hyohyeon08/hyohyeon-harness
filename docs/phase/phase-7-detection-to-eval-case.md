@@ -43,13 +43,13 @@ This closes only `FG-07-04 Detection to eval case`. Detection records can now be
 ## Decisions
 
 - Eval cases remain draft by default.
-- The runtime persists eval JSON but does not run evals.
+- At this phase, the runtime persisted eval JSON but did not run evals yet.
 - Evidence refs preserve the source detection plus original detection refs.
 - Conversion is type-specific for false_success and thrashing expected outcomes.
 
 ## Known Risks
 
-- No CLI command exists for eval case creation or listing.
+- At this phase, no CLI command existed for eval case creation or listing.
 - No deduplication prevents creating multiple eval drafts from the same detection.
 - The expected outcome shape may need tightening once an eval runner exists.
 

@@ -1,7 +1,9 @@
-import { findDetection } from './detections.js'
+import { createHash } from 'node:crypto'
+import { findDetection, loadDetections } from './detections.js'
 import { listSpans } from './observability.js'
 import { findRun } from './runs.js'
 import type { DetectionRecord, RunState, Span, VerificationEvidence } from './schemas.js'
+import { cosineSimilarity } from './similarity.js'
 
 export interface JudgeRunSummary {
   runId: string
@@ -43,6 +45,11 @@ export interface JudgeInputBundle {
     spans: JudgeSpanSummary[]
   }
   evidenceRefs: string[]
+  semantic: {
+    modelKey: string | null
+    maxSimilarity: number | null
+    similarDetectionIds: string[]
+  }
 }
 
 function addUnique(out: string[], value: string): string[] {
@@ -56,9 +63,9 @@ function stringAttribute(value: unknown): string | null {
 function referencedRunId(detection: DetectionRecord): string | null {
   if (detection.runId) return detection.runId
   for (const ref of detection.evidenceRefs) {
-    const runRef = ref.match(/^run:(RUN-\d{3})$/)
+    const runRef = ref.match(/^run:(RUN-\d{3,})$/)
     if (runRef) return runRef[1]
-    const spanRef = ref.match(/^span:(RUN-\d{3}):SPAN-\d{3}$/)
+    const spanRef = ref.match(/^span:(RUN-\d{3,}):SPAN-\d{3,}$/)
     if (spanRef) return spanRef[1]
   }
   return null
@@ -67,8 +74,8 @@ function referencedRunId(detection: DetectionRecord): string | null {
 function referencedEvidenceIds(refs: string[]): Set<string> {
   const ids = new Set<string>()
   for (const ref of refs) {
-    const plain = ref.match(/^(VE-\d{3})$/)
-    const tagged = ref.match(/^evidence:(VE-\d{3})$/)
+    const plain = ref.match(/^(VE-\d{3,})$/)
+    const tagged = ref.match(/^evidence:(VE-\d{3,})$/)
     if (plain) ids.add(plain[1])
     if (tagged) ids.add(tagged[1])
   }
@@ -78,8 +85,8 @@ function referencedEvidenceIds(refs: string[]): Set<string> {
 function referencedSpanIds(refs: string[], runId: string): Set<string> {
   const ids = new Set<string>()
   for (const ref of refs) {
-    const tagged = ref.match(/^span:(RUN-\d{3}):(SPAN-\d{3})$/)
-    const traceFile = ref.match(/^TRACE-RUN-\d{3}-(SPAN-\d{3})$/)
+    const tagged = ref.match(/^span:(RUN-\d{3,}):(SPAN-\d{3,})$/)
+    const traceFile = ref.match(/^TRACE-RUN-\d{3,}-(SPAN-\d{3,})$/)
     if (tagged && tagged[1] === runId) ids.add(tagged[2])
     if (traceFile) ids.add(traceFile[1])
   }
@@ -155,6 +162,17 @@ export function buildJudgeInputBundle(root: string, detectionId: string): JudgeI
   const evidence = run ? selectEvidence(run, detection.evidenceRefs) : []
   const spans = run ? selectSpans(root, run.runId, detection.evidenceRefs) : []
   const spanSummaries = spans.map(summarizeSpan)
+  const semanticPeers = detection.embedding
+    ? loadDetections(root)
+      .filter((candidate) => candidate.detectionId !== detection.detectionId)
+      .filter((candidate) => candidate.embedding?.modelKey === detection.embedding!.modelKey)
+      .filter((candidate) => candidate.embedding?.vector.length === detection.embedding!.vector.length)
+      .map((candidate) => ({
+        detectionId: candidate.detectionId,
+        similarity: cosineSimilarity(detection.embedding!.vector, candidate.embedding!.vector),
+      }))
+      .sort((left, right) => right.similarity - left.similarity)
+    : []
 
   return {
     detection,
@@ -168,5 +186,15 @@ export function buildJudgeInputBundle(root: string, detectionId: string): JudgeI
       spans: spanSummaries,
     },
     evidenceRefs: detection.evidenceRefs,
+    semantic: {
+      modelKey: detection.embedding?.modelKey ?? null,
+      maxSimilarity: semanticPeers[0]?.similarity ?? null,
+      similarDetectionIds: semanticPeers.slice(0, 5).map((peer) => peer.detectionId),
+    },
   }
+}
+
+export function judgeInputDigest(bundle: JudgeInputBundle): string {
+  const { judge: _judge, updatedAt: _updatedAt, resolution: _resolution, resolvedAt: _resolvedAt, ...detection } = bundle.detection
+  return createHash('sha256').update(JSON.stringify({ ...bundle, detection })).digest('hex')
 }

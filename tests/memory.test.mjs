@@ -24,6 +24,7 @@ const run = (over) => ({
   phase: 'act',
   status: 'active',
   intentId: 'INT-001',
+  interviewId: 'INTERVIEW-001',
   specSlug: null,
   planId: null,
   contractId: null,
@@ -69,5 +70,6 @@ test('active run summary is surfaced without full run history', () => {
 
   assert.match(out, /active run:/)
   assert.match(out, /RUN-001 \[active\/act\] Wire SessionStart context/)
+  assert.match(out, /lineage: interview=INTERVIEW-001/)
   assert.match(out, /next: Add active run formatter/)
 })

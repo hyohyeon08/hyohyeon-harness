@@ -7,8 +7,11 @@ import {
   activeRun,
   createRun,
   findRun,
+  latestRunForIntent,
   loadRunIndex,
   loadRuns,
+  markRunComplete,
+  transitionRunPhase,
   updateRun,
 } from '../dist/src/runtime/runs.js'
 import { paths } from '../dist/src/state/paths.js'
@@ -81,4 +84,42 @@ test('activeRun is null after the indexed active run leaves active status', () =
 
   assert.equal(activeRun(root), null)
   assert.equal(loadRunIndex(root).activeRunId, null)
+})
+
+test('latestRunForIntent returns the newest linked run regardless of status', () => {
+  const root = tempRoot()
+  createRun(root, { objective: 'first', intentId: 'INT-001' })
+  const latest = createRun(root, { objective: 'latest', intentId: 'INT-001' })
+  createRun(root, { objective: 'other intent', intentId: 'INT-002' })
+  updateRun(root, latest.runId, (run) => ({ ...run, status: 'blocked' }))
+
+  assert.equal(activeRun(root)?.runId, 'RUN-003')
+  assert.equal(latestRunForIntent(root, 'INT-001')?.runId, latest.runId)
+  assert.equal(latestRunForIntent(root, 'INT-001')?.status, 'blocked')
+  assert.equal(latestRunForIntent(root, 'INT-404'), null)
+})
+
+test('transitionRunPhase enforces the forward loop and allows verify rework', () => {
+  const root = tempRoot()
+  const run = createRun(root, { objective: 'state machine' })
+
+  const verifying = transitionRunPhase(root, run.runId, 'verify')
+  const reworking = transitionRunPhase(root, run.runId, 'act')
+
+  assert.equal(verifying.phase, 'verify')
+  assert.equal(reworking.phase, 'act')
+  assert.throws(() => transitionRunPhase(root, run.runId, 'plan'), /invalid run phase transition: act -> plan/)
+  assert.throws(() => transitionRunPhase(root, run.runId, 'done'), /done is completion-gated/)
+})
+
+test('markRunComplete is the terminal transition', () => {
+  const root = tempRoot()
+  const run = createRun(root, { objective: 'finish state machine' })
+
+  const completed = markRunComplete(root, run.runId)
+
+  assert.equal(completed.phase, 'done')
+  assert.equal(completed.status, 'passing')
+  assert.equal(completed.nextAction, null)
+  assert.equal(activeRun(root), null)
 })
