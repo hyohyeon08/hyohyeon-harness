@@ -197,11 +197,19 @@ async function main(): Promise<void> {
         deny(`[run state] ${error.message}. Repair the state before editing.`)
         return
       }
-      const governedIntent = intents.find((intent) => (
+      const coveringIntents = intents.filter((intent) => (
         intent.status === 'approved' &&
-        matchesScope(edit.path, intent.scope) &&
-        (!run?.intentId || run.intentId === intent.id)
+        matchesScope(edit.path, intent.scope)
       ))
+      const governedIntent = run?.intentId
+        ? coveringIntents.find((intent) => intent.id === run.intentId)
+        : coveringIntents.find((intent) => intent.type === 'feature' || intent.type === 'fix') ?? coveringIntents[0]
+      if (run?.intentId && !governedIntent) {
+        const reason = `[execution governance] active Run ${run.runId} (${run.intentId}) does not govern ${edit.path}`
+        recordEditSpan(root, tool, edit, 'blocked', reason)
+        deny(reason)
+        return
+      }
       if (governedIntent) {
         const execution = checkExecutionGovernance(governedIntent, run, contract)
         if (!execution.allow) {

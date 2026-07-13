@@ -13,7 +13,7 @@ const change = {
 }
 
 const nonTrivial = { ...change, newSymbols: true }
-const trivial = { ...change, addedLines: 2 }
+const trivial = { ...change, addedLines: 2, onlyCommentsOrFormat: true }
 
 function intent(status, scope = ['**'], id = 'INT-001') {
   return {

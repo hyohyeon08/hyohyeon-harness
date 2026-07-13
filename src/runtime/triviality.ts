@@ -29,7 +29,7 @@ export interface TrivialityVerdict {
   reason: string
 }
 
-export function classifyChange(change: Change, maxLines = 5): TrivialityVerdict {
+export function classifyChange(change: Change, _maxLines = 5): TrivialityVerdict {
   if (change.deletesFile) {
     return { triviality: 'non-trivial', reason: 'deletes file' }
   }
@@ -46,8 +46,8 @@ export function classifyChange(change: Change, maxLines = 5): TrivialityVerdict 
     return { triviality: 'trivial', reason: 'comments/formatting only' }
   }
   const churn = change.addedLines + change.removedLines
-  if (churn <= maxLines) {
-    return { triviality: 'trivial', reason: `small change (${churn} <= ${maxLines} lines)` }
+  return {
+    triviality: 'non-trivial',
+    reason: `code change requires intent governance (${churn} changed lines)`,
   }
-  return { triviality: 'non-trivial', reason: `large change (${churn} > ${maxLines} lines)` }
 }

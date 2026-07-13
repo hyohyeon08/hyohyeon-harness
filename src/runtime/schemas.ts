@@ -419,7 +419,7 @@ export const ConfigSchema = z.object({
   version: z.literal(1),
   triviality: z
     .object({
-      /** Changes touching <= maxLines and adding no new symbols/control-flow are trivial. */
+      /** Legacy compatibility only; semantic code changes are never line-count exempt. */
       maxLines: z.number().int().positive().default(5),
     })
     .default({ maxLines: 5 }),

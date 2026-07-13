@@ -390,3 +390,28 @@ test('Codex non-trivial feature write requires approved execution governance', (
   assert.equal(after.status, 0, after.stderr)
   assert.equal(after.stdout, '')
 })
+
+test('Codex write hook blocks an approved Intent that does not match the active Run', () => {
+  const project = setupProject()
+  runCli(project, ['draft', 'Active unrelated feature', 'hold a different active run', '--type', 'feature', '--scope', 'other/**'])
+  approveIntentFixture(project, 'INT-001')
+  runCli(project, ['run', 'start', 'INT-001', 'Unrelated active run'])
+
+  runCli(project, ['draft', 'Target feature', 'must own its execution run', '--type', 'feature', '--scope', 'src/**'])
+  approveIntentFixture(project, 'INT-002')
+
+  const write = runHook('pre-write-guard.js', {
+    cwd: project,
+    tool_name: 'apply_patch',
+    tool_input: {
+      patch: `*** Begin Patch
+*** Add File: src/mismatched-run.ts
++export function mustBeGoverned() {}
+*** End Patch`,
+    },
+  })
+
+  assert.equal(write.status, 0, write.stderr)
+  assert.equal(JSON.parse(write.stdout).decision, 'block')
+  assert.match(JSON.parse(write.stdout).reason, /active Run RUN-001.*does not govern src\/mismatched-run\.ts/)
+})

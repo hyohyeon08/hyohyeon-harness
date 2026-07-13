@@ -12,9 +12,10 @@ const base = {
   isNewFile: false,
 }
 
-test('small one-line edit is trivial', () => {
+test('small one-line code edit is non-trivial', () => {
   const v = classifyChange({ ...base, addedLines: 1, removedLines: 1 })
-  assert.equal(v.triviality, 'trivial')
+  assert.equal(v.triviality, 'non-trivial')
+  assert.match(v.reason, /code change/)
 })
 
 test('comments/formatting only is trivial regardless of size', () => {
@@ -42,7 +43,7 @@ test('large change over maxLines is non-trivial', () => {
   assert.equal(v.triviality, 'non-trivial')
 })
 
-test('maxLines is configurable', () => {
+test('maxLines never exempts a semantic code change', () => {
   const v = classifyChange({ ...base, addedLines: 6 }, 10)
-  assert.equal(v.triviality, 'trivial')
+  assert.equal(v.triviality, 'non-trivial')
 })

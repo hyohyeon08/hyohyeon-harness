@@ -33,7 +33,7 @@
 | 4 | `.intent/`는 **CLI만** 쓴다. 지원되는 Agent 채널의 직접 Edit/Write/apply_patch와 Bash state write는 사전 가드가 차단하고, 승인 명령은 Agent Bash hook과 AI 셸 판정에서 이중 거부된다. | `guard.ts`, `command-guard.ts`, `env.ts` |
 | 5 | 게이트 규칙(`rules/*.json`)은 **사람 승인** 후에만 강제된다. 위키(`wiki/`)는 AI 자율(compile/lint, 승인 불요). | `rules.ts`, `wiki.ts` |
 | 6 | Hook은 deterministic하다 — LLM/네트워크 호출 금지, 실패 시 silent exit 0(세션을 절대 중단 안 함). | `hooks/*` |
-| 7 | 사소한 변경(≤5줄·주석/포맷·새 심볼/제어흐름/새파일 아님)은 게이트를 통과한다 — 마찰 최소화. | `triviality.ts` |
+| 7 | 주석·공백·포맷만 바꾸는 변경은 게이트를 통과한다. 코드 의미 변경은 줄 수와 무관하게 비사소 변경이다. | `triviality.ts` |
 | 8 | Plan/Contract는 draft에서만 수정할 수 있고 사람 승인 시 승인자·시각을 기록한다. 승인된 Contract만 allowed/forbidden scope를 강제하며 Run의 `done` 전이는 completion gate만 수행한다. | `plans.ts`, `contracts.ts`, `runs.ts` |
 | 9 | 승인된 InterviewSummary 본문은 불변이고 downstream Intent/Spec/Plan/Run lineage는 기존 참조를 바꾸지 않는 append-only 갱신만 허용한다. | `interviews.ts` |
 | 10 | 구조 monitor의 `candidate`는 최종 판정이 아니며 Run을 hard block하지 않는다. 사람/판정자가 `confirmed`로 확정한 detection만 실행을 차단한다. | `monitor.ts`, `detections.ts` |

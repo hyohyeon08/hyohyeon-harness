@@ -5,9 +5,9 @@ import { classifyChange } from '../dist/src/runtime/triviality.js'
 
 const edit = (over) => ({ path: 'src/x.ts', newText: '', oldText: '', isNewFile: false, ...over })
 
-test('small value tweak is trivial', () => {
+test('small value tweak still requires intent governance', () => {
   const c = extractChange(edit({ newText: 'port = 4000', oldText: 'port = 3000' }))
-  assert.equal(classifyChange(c).triviality, 'trivial')
+  assert.equal(classifyChange(c).triviality, 'non-trivial')
 })
 
 test('comment-only addition is trivial even if it mentions "if"', () => {
