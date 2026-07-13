@@ -225,6 +225,44 @@ test('Codex PostToolUse Bash hook records an observed run_command span', () => {
   assert.equal(span.attributes.exitCode, 1)
 })
 
+test('Codex PreToolUse Bash hook blocks approval and direct intent-state writes', () => {
+  const project = setupProject()
+  const approval = runHook('pre-command-guard.js', {
+    cwd: project,
+    hook_event_name: 'PreToolUse',
+    tool_name: 'Bash',
+    tool_input: {
+      command: 'env -u CODEX_THREAD_ID -u CODEX_SHELL intent approve INT-001',
+    },
+  })
+
+  assert.equal(approval.status, 0, approval.stderr)
+  assert.equal(JSON.parse(approval.stdout).decision, 'block')
+  assert.match(JSON.parse(approval.stdout).reason, /human-only approval/)
+
+  const directWrite = runHook('pre-command-guard.js', {
+    cwd: project,
+    hook_event_name: 'PreToolUse',
+    tool_name: 'Bash',
+    tool_input: {
+      command: "printf '%s' approved > .intent/intents/INT-001.json",
+    },
+  })
+
+  assert.equal(directWrite.status, 0, directWrite.stderr)
+  assert.equal(JSON.parse(directWrite.stdout).decision, 'block')
+  assert.match(JSON.parse(directWrite.stdout).reason, /protected \.intent state/)
+
+  const readOnly = runHook('pre-command-guard.js', {
+    cwd: project,
+    hook_event_name: 'PreToolUse',
+    tool_name: 'Bash',
+    tool_input: { command: 'intent status' },
+  })
+  assert.equal(readOnly.status, 0, readOnly.stderr)
+  assert.equal(readOnly.stdout, '')
+})
+
 test('Codex write and Stop hooks fail closed on corrupt Intent state', () => {
   const project = setupProject()
   const intentsDir = join(project, '.intent', 'intents')

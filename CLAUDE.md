@@ -48,7 +48,7 @@ stderr의 `[intent …]` 메시지는 하네스 runtime이 보낸 것이다. 무
 - **PreCompact**: 압축 직전 핸드오프가 자동 스냅샷된다. 작업 중 막다른 길/다음 단계는 `intent handoff note <deadend|next|question> "…"`로 미리 적어둬라 — 그래야 인계에 담긴다.
 
 ### D.3 승인은 사람만
-`intent approve` / `rule approve` / `spec approve`는 `CLAUDECODE=1`에서 거부된다. 네가 셸에서 실행하려 하지 마라 — anti-cheat 설계다.
+`intent approve` / `rule approve` / `spec approve`는 Bash 사전 hook과 `CLAUDECODE=1` 판정에서 거부된다. 네가 셸에서 실행하려 하지 마라 — 지원 Agent 채널의 human-confirmation 경계다.
 
 ## E. 위험 작업 가드 (사용자 승인 후만)
 

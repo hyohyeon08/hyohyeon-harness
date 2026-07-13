@@ -13,7 +13,7 @@ Personal AI coding harness. Not a platform, not a framework.
 | Invariants (의도·스코프·DoD·anti-cheat) | [AGENT.md §1.1](AGENT.md) |
 | Repository layout | [AGENT.md §2](AGENT.md) |
 | Build / test / verification | [AGENT.md §4](AGENT.md) |
-| Hook architecture (5 hooks) | [AGENT.md §7](AGENT.md) |
+| Hook architecture (6 hooks) | [AGENT.md §7](AGENT.md) |
 | Security / anti-cheat | [AGENT.md §8](AGENT.md) |
 | Claude Code 어댑터 | [CLAUDE.md](CLAUDE.md) |
 | Codex 어댑터 | [.codex/hooks.template.json](.codex/hooks.template.json) · `.agents/skills` 설치 |

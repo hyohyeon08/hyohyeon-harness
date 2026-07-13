@@ -69,8 +69,10 @@ test('installCodexHooks renders .codex/hooks.json', () => {
 
   assert.equal(hooksPath, join(project, '.codex', 'hooks.json'))
   assert.deepEqual(installed.hooks.UserPromptSubmit, ['keep'])
-  assert.match(installed.hooks.PreToolUse[0].matcher, /apply_patch/)
-  assert.match(installed.hooks.PreToolUse[0].hooks[0].command, /dist\/hooks\/pre-write-guard\.js/)
+  const preWrite = installed.hooks.PreToolUse.find((group) => /apply_patch/.test(group.matcher))
+  const preCommand = installed.hooks.PreToolUse.find((group) => group.matcher === 'Bash')
+  assert.match(preWrite.hooks[0].command, /dist\/hooks\/pre-write-guard\.js/)
+  assert.match(preCommand.hooks[0].command, /dist\/hooks\/pre-command-guard\.js/)
   assert.equal(installed.hooks.PostToolUse[0].matcher, 'Bash')
   assert.match(installed.hooks.PostToolUse[0].hooks[0].command, /dist\/hooks\/post-command\.js/)
 })
