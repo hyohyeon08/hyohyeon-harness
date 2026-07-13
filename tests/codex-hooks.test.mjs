@@ -190,7 +190,7 @@ test('Codex Stop hook uses active contract evidence and records false_success de
 
   const run = JSON.parse(readFileSync(join(project, '.intent', 'runs', 'RUN-001.json'), 'utf8'))
   const detection = JSON.parse(readFileSync(join(project, '.intent', 'detections', 'DET-001.json'), 'utf8'))
-  assert.equal(run.status, 'blocked')
+  assert.equal(run.status, 'active')
   assert.equal(detection.type, 'false_success')
   assert.deepEqual(detection.attributes.missingEvidenceTypes, ['typecheck', 'unit_test'])
 

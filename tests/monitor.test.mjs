@@ -394,6 +394,10 @@ test('candidate detections do not hard-block a run until confirmed', () => {
   }
 
   assert.equal(blockRunForDetections(root, run.runId, [candidate]), null)
+  assert.equal(
+    blockRunForDetections(root, run.runId, [{ ...candidate, detectionId: 'DET-002', type: 'false_success' }]),
+    null,
+  )
   const blocked = blockRunForDetections(root, run.runId, [{ ...candidate, result: 'confirmed' }])
   assert.equal(blocked.status, 'blocked')
 })

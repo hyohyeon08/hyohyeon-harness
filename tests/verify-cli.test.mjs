@@ -122,7 +122,7 @@ test('intent complete checks active run required evidence', () => {
   const blocked = cli(project, ['complete', 'INT-001'])
   assert.equal(blocked.status, 1)
   assert.match(blocked.stderr, /required evidence missing: unit_test/)
-  assert.equal(readRun(project).status, 'blocked')
+  assert.equal(readRun(project).status, 'active')
   assert.equal(readDetection(project).type, 'false_success')
   assert.deepEqual(readDetection(project).attributes.missingEvidenceTypes, ['unit_test'])
 
@@ -149,7 +149,7 @@ test('intent complete checks active contract requiredChecks', () => {
   const blocked = cli(project, ['complete', 'INT-001'])
   assert.equal(blocked.status, 1)
   assert.match(blocked.stderr, /required evidence missing: typecheck/)
-  assert.equal(readRun(project).status, 'blocked')
+  assert.equal(readRun(project).status, 'active')
   assert.equal(readDetection(project).type, 'false_success')
   assert.deepEqual(readDetection(project).attributes.missingEvidenceTypes, ['typecheck'])
 
@@ -175,7 +175,7 @@ test('intent stop-check records false_success detection for missing active contr
 
   assert.equal(result.status, 1)
   assert.match(result.stderr, /required evidence missing: typecheck/)
-  assert.equal(readRun(project).status, 'blocked')
+  assert.equal(readRun(project).status, 'active')
   const detection = readDetection(project)
   assert.equal(detection.type, 'false_success')
   assert.deepEqual(detection.attributes.missingEvidenceTypes, ['typecheck'])

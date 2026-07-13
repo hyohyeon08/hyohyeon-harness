@@ -283,9 +283,7 @@ export function uniqueDetections(detections: DetectionRecord[]): DetectionRecord
 }
 
 export function blockRunForDetections(root: string, runId: string, detections: DetectionRecord[]): RunState | null {
-  const unique = uniqueDetections(detections).filter((detection) => (
-    detection.result === 'confirmed' || detection.type === 'false_success'
-  ))
+  const unique = uniqueDetections(detections).filter((detection) => detection.result === 'confirmed')
   if (unique.length === 0) return null
   const ids = unique.map((detection) => detection.detectionId).join(', ')
   return blockRun(
