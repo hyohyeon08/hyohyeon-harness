@@ -18,6 +18,10 @@ function humanEnv() {
   return env
 }
 
+function codexEnv() {
+  return { ...humanEnv(), CODEX_THREAD_ID: 'agent-thread' }
+}
+
 function cli(project, args, env = humanEnv()) {
   const bin = join(process.cwd(), 'dist', 'src', 'cli', 'index.js')
   return spawnSync(process.execPath, [bin, ...args], { cwd: project, encoding: 'utf8', env })
@@ -79,10 +83,10 @@ test('intent detection show prints details, evidence refs, and attributes', () =
   assert.match(result.stdout, /"missingEvidenceTypes"/)
 })
 
-test('intent detection resolve updates result and resolution from a human shell', () => {
+test('Codex can dismiss a detection and persist the resolution', () => {
   const project = setupProject()
 
-  const result = cli(project, ['detection', 'resolve', 'DET-001', 'dismissed', 'Known local-only run'])
+  const result = cli(project, ['detection', 'resolve', 'DET-001', 'dismissed', 'Known local-only run'], codexEnv())
 
   assert.equal(result.status, 0, result.stderr)
   assert.match(result.stdout, /resolved DET-001 as dismissed/)
@@ -99,14 +103,12 @@ test('intent detection resolve updates result and resolution from a human shell'
   assert.match(wiki, /Known local-only run/)
 })
 
-test('intent detection resolve is human-only', () => {
+test('Codex can confirm a detection', () => {
   const project = setupProject()
 
-  const result = cli(project, ['detection', 'resolve', 'DET-001', 'confirmed', 'Real issue'], {
-    ...humanEnv(),
-    CODEX_THREAD_ID: 'thread',
-  })
+  const result = cli(project, ['detection', 'resolve', 'DET-001', 'confirmed', 'Real issue'], codexEnv())
 
-  assert.equal(result.status, 1)
-  assert.match(result.stderr, /detection resolve is human-only/)
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(readDetection(project).result, 'confirmed')
+  assert.equal(readDetection(project).resolution, 'Real issue')
 })

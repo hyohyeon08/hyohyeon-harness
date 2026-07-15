@@ -69,7 +69,7 @@ export interface DraftRuleOptions {
   sourceDetectionId?: string | null
 }
 
-/** AI may draft a rule (e.g. from a postmortem); only a human can approve it. */
+/** Draft a rule; activation remains a separate, auditable transition. */
 export function draftRule(
   root: string,
   kind: RuleKind,
@@ -94,7 +94,7 @@ export function draftRule(
   }
 }
 
-export function approveRule(root: string, id: string, by = 'human'): Rule {
+export function approveRule(root: string, id: string, by = 'agent:runtime'): Rule {
   return updateRule(root, id, (rule) => {
     if (rule.kind === 'forbid-pattern') {
       try {

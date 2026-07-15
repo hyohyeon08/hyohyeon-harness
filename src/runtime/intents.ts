@@ -42,10 +42,7 @@ function nextId(root: string): string {
   return nextSequentialId('INT', loadIntents(root).map((intent) => intent.id))
 }
 
-/**
- * AI creates a draft. It can NEVER set status to 'approved' through this path —
- * only `approveIntent` (run from the human's shell) can. (decision: 승인 주체 = 사람만)
- */
+/** Create a draft; activation remains an explicit, auditable CLI transition. */
 export function draftIntent(
   root: string,
   args: { what: string; why: string; type?: IntentType; scope?: string[]; dod?: string[] },
@@ -79,8 +76,8 @@ function updateIntent(root: string, id: string, fn: (i: Intent) => Intent): Inte
   return updated
 }
 
-/** Human-only approval. */
-export function approveIntent(root: string, id: string, by = 'human'): Intent {
+/** Mark the intent ready for governed execution and record the transition actor. */
+export function approveIntent(root: string, id: string, by = 'agent:runtime'): Intent {
   return updateIntent(root, id, (i) => ({ ...i, status: 'approved', approvedBy: by }))
 }
 

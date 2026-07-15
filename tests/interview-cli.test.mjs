@@ -18,6 +18,10 @@ function humanEnv() {
   return env
 }
 
+function codexEnv() {
+  return { ...humanEnv(), CODEX_THREAD_ID: 'agent-thread' }
+}
+
 function cli(project, args, env = humanEnv()) {
   const bin = join(process.cwd(), 'dist', 'src', 'cli', 'index.js')
   return spawnSync(process.execPath, [bin, ...args], { cwd: project, encoding: 'utf8', env })
@@ -79,8 +83,8 @@ test('intent interview archive and revise creates a new draft revision', () => {
   const project = projectRoot()
   assert.equal(cli(project, ['setup']).status, 0)
   assert.equal(cli(project, ['interview', 'draft', 'Original interview']).status, 0)
-  assert.equal(cli(project, ['interview', 'approve', 'INTERVIEW-001']).status, 0)
-  assert.equal(cli(project, ['interview', 'archive', 'INTERVIEW-001']).status, 0)
+  assert.equal(cli(project, ['interview', 'approve', 'INTERVIEW-001'], codexEnv()).status, 0)
+  assert.equal(cli(project, ['interview', 'archive', 'INTERVIEW-001'], codexEnv()).status, 0)
   const revised = cli(project, ['interview', 'revise', 'INTERVIEW-001', 'Revised interview'])
 
   assert.equal(revised.status, 0, revised.stderr)
@@ -126,31 +130,24 @@ test('intent interview link updates Interview, Plan, and Run lineage', () => {
   assert.equal(run.interviewId, 'INTERVIEW-001')
 })
 
-test('intent interview approve is human-only and records approval', () => {
+test('Codex can approve an interview and records its actor', () => {
   const project = projectRoot()
   assert.equal(cli(project, ['setup']).status, 0)
   assert.equal(cli(project, ['interview', 'draft', 'Approval', '--goal', 'Confirm shared understanding.']).status, 0)
 
-  const rejected = cli(project, ['interview', 'approve', 'INTERVIEW-001'], {
-    ...humanEnv(),
-    CODEX_THREAD_ID: 'agent-thread',
-  })
-  assert.equal(rejected.status, 1)
-  assert.match(rejected.stderr, /interview approval is human-only/)
-
-  const approved = cli(project, ['interview', 'approve', 'INTERVIEW-001'])
+  const approved = cli(project, ['interview', 'approve', 'INTERVIEW-001'], codexEnv())
   assert.equal(approved.status, 0, approved.stderr)
   assert.match(approved.stdout, /approved INTERVIEW-001/)
   const summary = readJson(project, ['.intent', 'interviews', 'INTERVIEW-001.json'])
   assert.equal(summary.status, 'approved')
-  assert.equal(summary.approvedBy, 'human')
+  assert.equal(summary.approvedBy, 'agent:codex')
 })
 
 test('approved Interview lineage propagates through Run, Spec, and Plan workflow', () => {
   const project = projectRoot()
   assert.equal(cli(project, ['setup']).status, 0)
   assert.equal(cli(project, ['interview', 'draft', 'Checkout', '--goal', 'Align checkout behavior.']).status, 0)
-  assert.equal(cli(project, ['interview', 'approve', 'INTERVIEW-001']).status, 0)
+  assert.equal(cli(project, ['interview', 'approve', 'INTERVIEW-001'], codexEnv()).status, 0)
   assert.equal(cli(project, ['draft', 'Checkout flow', 'implement shared understanding', '--type', 'feature']).status, 0)
   assert.equal(
     cli(project, ['run', 'start', 'INT-001', 'Implement checkout', '--interview', 'INTERVIEW-001']).status,

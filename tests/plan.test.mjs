@@ -142,7 +142,7 @@ test('updatePlan applies an immutable transform and refreshes updatedAt', () => 
   assert.notEqual(updated.updatedAt, plan.updatedAt)
 })
 
-test('approvePlan records human approval metadata and freezes the plan', () => {
+test('approvePlan records actor provenance and freezes the plan', () => {
   const root = tempRoot()
   const plan = createPlan(root, { title: 'Approval lifecycle' })
 

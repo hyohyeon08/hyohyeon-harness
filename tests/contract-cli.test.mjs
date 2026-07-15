@@ -18,6 +18,10 @@ function humanEnv() {
   return env
 }
 
+function codexEnv() {
+  return { ...humanEnv(), CODEX_THREAD_ID: 'agent-thread' }
+}
+
 function cli(project, args, env = humanEnv()) {
   const bin = join(process.cwd(), 'dist', 'src', 'cli', 'index.js')
   return spawnSync(process.execPath, [bin, ...args], { cwd: project, encoding: 'utf8', env })
@@ -44,7 +48,7 @@ function setupProject() {
   )
   assert.equal(cli(project, ['run', 'start', 'INT-001', 'Wire contract CLI']).status, 0)
   assert.equal(cli(project, ['plan', 'draft', 'Contract execution plan']).status, 0)
-  assert.equal(cli(project, ['plan', 'approve', 'PLAN-001']).status, 0)
+  assert.equal(cli(project, ['plan', 'approve', 'PLAN-001'], codexEnv()).status, 0)
   return project
 }
 
@@ -71,38 +75,65 @@ test('intent contract draft creates a contract for the active run and links it b
   assert.equal(run.contractId, 'CONTRACT-001')
 })
 
-test('intent contract show prints scope, required checks, and definition of done', () => {
+test('intent contract show separates machine policy from reviewer metadata', () => {
   const project = setupProject()
   assert.equal(cli(project, ['contract', 'draft']).status, 0)
+  assert.equal(
+    cli(project, [
+      'contract',
+      'edit',
+      'CONTRACT-001',
+      '--forbid',
+      'dist/**',
+      '--boundary',
+      'runtime schemas stay zod-validated',
+      '--stop',
+      'pause when evidence is ambiguous',
+      '--decision',
+      'select public CLI names',
+      '--rubric',
+      'risk=2',
+    ]).status,
+    0,
+  )
 
   const result = cli(project, ['contract', 'show', 'CONTRACT-001'])
 
   assert.equal(result.status, 0, result.stderr)
   assert.match(result.stdout, /CONTRACT-001 \[draft\] RUN-001 INT-001/)
+  assert.match(result.stdout, /machine-enforced policy \(active only when approved and linked\):/)
+  assert.match(result.stdout, /status: draft/)
+  assert.match(result.stdout, /lineage: run=RUN-001 intent=INT-001 revision=1 supersedes=—/)
   assert.match(result.stdout, /allowed scope:\s+- src\/\*\*\s+- tests\/\*\*/)
+  assert.match(result.stdout, /forbidden scope:\s+- dist\/\*\*/)
   assert.match(result.stdout, /required checks:\s+- typecheck\s+- unit_test/)
+  assert.match(result.stdout, /reviewer metadata \(not automatic completion gates\):/)
+  assert.match(result.stdout, /architecture boundaries:\s+- runtime schemas stay zod-validated/)
   assert.match(result.stdout, /definition of done:\s+- typecheck passes\s+- tests pass/)
+  assert.match(result.stdout, /rubric:\s+- risk: 2/)
+  assert.match(result.stdout, /stop conditions:\s+- pause when evidence is ambiguous/)
+  assert.match(result.stdout, /requires user decision:\s+- select public CLI names/)
 })
 
-test('intent contract approve marks the contract approved from a human shell', () => {
+test('intent contract approve records the Codex actor', () => {
   const project = setupProject()
   assert.equal(cli(project, ['contract', 'draft']).status, 0)
 
-  const result = cli(project, ['contract', 'approve', 'CONTRACT-001'])
+  const result = cli(project, ['contract', 'approve', 'CONTRACT-001'], codexEnv())
 
   assert.equal(result.status, 0, result.stderr)
   assert.match(result.stdout, /approved CONTRACT-001/)
   const contract = readJson(project, ['.intent', 'contracts', 'CONTRACT-001.json'])
   assert.equal(contract.status, 'approved')
-  assert.equal(contract.approvedBy, 'human')
+  assert.equal(contract.approvedBy, 'agent:codex')
   assert.match(contract.approvedAt, /^\d{4}-\d{2}-\d{2}T/)
 })
 
 test('intent contract archive and revise pauses the Run on a new draft revision', () => {
   const project = setupProject()
   assert.equal(cli(project, ['contract', 'draft']).status, 0)
-  assert.equal(cli(project, ['contract', 'approve', 'CONTRACT-001']).status, 0)
-  assert.equal(cli(project, ['contract', 'archive', 'CONTRACT-001']).status, 0)
+  assert.equal(cli(project, ['contract', 'approve', 'CONTRACT-001'], codexEnv()).status, 0)
+  assert.equal(cli(project, ['contract', 'archive', 'CONTRACT-001'], codexEnv()).status, 0)
   const pausedRun = readJson(project, ['.intent', 'runs', 'RUN-001.json'])
   assert.equal(pausedRun.contractId, null)
   assert.equal(pausedRun.phase, 'contract')
@@ -118,18 +149,16 @@ test('intent contract archive and revise pauses the Run on a new draft revision'
   assert.equal(run.phase, 'contract')
 })
 
-test('intent contract approve is human-only and approved contracts cannot be edited', () => {
+test('Codex can approve contracts and approved contracts cannot be edited', () => {
   const project = setupProject()
   assert.equal(cli(project, ['contract', 'draft']).status, 0)
 
   const agentApproval = cli(project, ['contract', 'approve', 'CONTRACT-001'], {
-    ...humanEnv(),
-    CODEX_THREAD_ID: 'agent-thread',
+    ...codexEnv(),
   })
-  assert.equal(agentApproval.status, 1)
-  assert.match(agentApproval.stderr, /contract approval is human-only/)
+  assert.equal(agentApproval.status, 0, agentApproval.stderr)
+  assert.equal(readJson(project, ['.intent', 'contracts', 'CONTRACT-001.json']).approvedBy, 'agent:codex')
 
-  assert.equal(cli(project, ['contract', 'approve', 'CONTRACT-001']).status, 0)
   const edit = cli(project, ['contract', 'edit', 'CONTRACT-001', '--require', 'build'])
   assert.equal(edit.status, 1)
   assert.match(edit.stderr, /approved contract CONTRACT-001 is immutable/)
@@ -173,14 +202,37 @@ test('intent contract edit appends lifecycle fields and rubric scores', () => {
 test('intent contract report summarizes required check evidence', () => {
   const project = setupProject()
   assert.equal(cli(project, ['contract', 'draft']).status, 0)
+  assert.equal(
+    cli(project, [
+      'contract',
+      'edit',
+      'CONTRACT-001',
+      '--boundary',
+      'runtime schemas stay zod-validated',
+      '--stop',
+      'pause when evidence is ambiguous',
+      '--decision',
+      'select public CLI names',
+      '--rubric',
+      'risk=2',
+    ]).status,
+    0,
+  )
   assert.equal(cli(project, ['verify', 'typecheck', '--', process.execPath, '-e', 'process.exit(0)']).status, 0)
 
   const result = cli(project, ['contract', 'report', 'CONTRACT-001'])
 
   assert.equal(result.status, 0, result.stderr)
   assert.match(result.stdout, /contract report CONTRACT-001 \[draft\]/)
+  assert.match(result.stdout, /machine-enforced policy \(active only when approved and linked\):/)
   assert.match(result.stdout, /typecheck: passed \(VE-001\)/)
   assert.match(result.stdout, /unit_test: missing/)
+  assert.match(result.stdout, /reviewer metadata \(not automatic completion gates\):/)
+  assert.match(result.stdout, /architecture boundaries:\s+- runtime schemas stay zod-validated/)
+  assert.match(result.stdout, /definition of done:\s+- typecheck passes\s+- tests pass/)
+  assert.match(result.stdout, /rubric:\s+- risk: 2/)
+  assert.match(result.stdout, /stop conditions:\s+- pause when evidence is ambiguous/)
+  assert.match(result.stdout, /requires user decision:\s+- select public CLI names/)
 })
 
 test('intent contract report uses the latest result for each required check', () => {

@@ -64,8 +64,8 @@ export interface RecordOptions {
 
 /**
  * Record a failure: always to the wiki (the readable ledger), and — when the
- * prevention is expressible deterministically — also draft a gate rule for a
- * human to approve. This is the "분류해서: 게이트 가능한 건 게이트로" branch.
+ * prevention is expressible deterministically — also draft a gate rule for the
+ * agent to validate and activate. This is the "분류해서: 게이트 가능한 건 게이트로" branch.
  */
 export function recordPostmortem(root: string, opts: RecordOptions): { slug: string; ruleId?: string } {
   const slug = `failure-${slugify(opts.title)}`

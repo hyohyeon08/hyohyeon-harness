@@ -1,12 +1,12 @@
 import { resolve, relative, isAbsolute } from 'node:path'
 
 /**
- * Anti-cheat guard: `.intent/` is a human-only state channel.
+ * Anti-cheat guard: `.intent/` is a CLI-only protected state channel.
  *
  * Approval status, DoD checks, and learnings must flow through the `intent`
- * CLI (which runs in the human's shell), never through an AI Edit/Write to the
- * state files. Otherwise the AI could flip an intent to `approved` itself and
- * defeat the whole gate. This blocks any AI write that lands under `.intent/`.
+ * CLI, never through an Edit/Write to the state files. This preserves schema
+ * validation, atomic updates, lineage, and provenance while allowing the agent
+ * to perform every lifecycle transition autonomously.
  */
 export function isProtectedPath(targetPath: string, root: string): boolean {
   const intentDir = resolve(root, '.intent')

@@ -8,7 +8,7 @@ import { matchesScope } from './scope.js'
  *   trivial change                                   -> allow (low friction)
  *   non-trivial + no approved intent                  -> BLOCK (declare intent first)
  *   non-trivial + approved intent, path out of scope  -> BLOCK (scope creep)
- *   non-trivial + approved intent covering the path   -> allow (human understood it)
+ *   non-trivial + approved intent covering the path   -> allow (agent marked it ready)
  *
  * Pure function: takes the proposed change and the set of intents, returns a
  * decision. The PreToolUse hook (Phase 4) is a thin adapter over this.
@@ -28,7 +28,7 @@ export function decideGate(change: Change, intents: Intent[], maxLines = 5): Gat
   if (approved.length === 0) {
     const drafts = intents.filter((i) => i.status === 'draft')
     const hint = drafts.length > 0
-      ? `${drafts.length} draft intent(s) awaiting human approval — run \`intent approve <id>\``
+      ? `${drafts.length} draft intent(s) not activated — run \`intent approve <id>\` when ready`
       : 'declare one first — run `intent draft`'
     return {
       allow: false,

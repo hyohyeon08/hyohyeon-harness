@@ -1,4 +1,4 @@
-/** PreToolUse(Bash) — block approval commands and direct `.intent/` writes. */
+/** PreToolUse(Bash) — block direct `.intent/` writes; allow lifecycle CLI commands. */
 import { readStdinJson } from './_stdin.js'
 import { rootOf, isIntentProject } from './_env.js'
 import { checkAgentCommand } from '../src/runtime/command-guard.js'

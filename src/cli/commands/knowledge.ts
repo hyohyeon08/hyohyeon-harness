@@ -117,5 +117,5 @@ export function cmdPostmortem(context: CliContext): void {
     prevention: flag('--prevent') ?? '',
     rule,
   })
-  console.log(`postmortem recorded: wiki/${res.slug}` + (res.ruleId ? ` + drafted ${res.ruleId} (needs human approval)` : ''))
+  console.log(`postmortem recorded: wiki/${res.slug}` + (res.ruleId ? ` + drafted ${res.ruleId} (activate when ready)` : ''))
 }

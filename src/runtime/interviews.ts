@@ -145,7 +145,7 @@ export function updateInterview(
   return updated
 }
 
-export function approveInterview(root: string, interviewId: string, approvedBy = 'human'): InterviewSummary {
+export function approveInterview(root: string, interviewId: string, approvedBy = 'agent:runtime'): InterviewSummary {
   const existing = findInterview(root, interviewId)
   if (!existing) throw new Error(`no such interview: ${interviewId}`)
   if (existing.status !== 'draft') {

@@ -113,7 +113,7 @@ test('recordRuleReflection stores AGENTS and CI reflection state on a rule', () 
   assert.match(updated.reflections[1].updatedAt, /^20/)
 })
 
-test('composeAgentsRuleCandidate renders a human-reviewable AGENTS.md rule snippet', () => {
+test('composeAgentsRuleCandidate renders an operator-readable AGENTS.md rule snippet', () => {
   const md = composeAgentsRuleCandidate(rule({
     id: 'RULE-009',
     kind: 'forbid-pattern',

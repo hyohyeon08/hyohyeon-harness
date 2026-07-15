@@ -148,7 +148,7 @@ test('loadContracts returns valid contract records sorted by id', () => {
   assert.deepEqual(loadContracts(root).map((contract) => contract.contractId), ['CONTRACT-001', 'CONTRACT-002'])
 })
 
-test('approveContract records human approval metadata and freezes the contract', () => {
+test('approveContract records actor provenance and freezes the contract', () => {
   const root = tempRoot()
   const run = createRun(root, { objective: 'approve contract', intentId: 'INT-001' })
   const plan = createPlan(root, { title: 'Approved plan', runId: run.runId, intentId: 'INT-001' })

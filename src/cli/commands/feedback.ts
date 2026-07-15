@@ -16,7 +16,7 @@ import { runJudgeAdapter } from '../../runtime/judge-adapter.js'
 import { loadJudgePolicy, runEmbeddingAdapter, runJudgeBatch, selectJudgeCandidates } from '../../runtime/judge-policy.js'
 import { buildReviewerChecklist } from '../../runtime/reviewer.js'
 import { draftEvalCaseFromDetection, runEvalCases } from '../../runtime/evals.js'
-import { assertHumanShell, flagValue, type CliContext } from '../shared.js'
+import { approvalActorForCli, flagValue, type CliContext } from '../shared.js'
 
 export function cmdRule(context: CliContext): void {
   const { root, args } = context
@@ -29,7 +29,7 @@ export function cmdRule(context: CliContext): void {
         process.exit(1)
       }
       const r = draftRule(root, kind, args[2], args[3] ?? '')
-      console.log(`drafted ${r.id} (${r.kind}) — awaiting human approval via \`intent rule approve ${r.id}\``)
+      console.log(`drafted ${r.id} (${r.kind}) — activate with \`intent rule approve ${r.id}\``)
     } else if (sub === 'draft-from-detection') {
       const detectionId = args[1]
       const kind = args[2] as RuleKind
@@ -42,7 +42,7 @@ export function cmdRule(context: CliContext): void {
       if (!detection) throw new Error(`no such detection: ${detectionId}`)
       const reason = args[4] ?? `${detection.type}: ${detection.summary}`
       const r = draftRule(root, kind, pattern, reason, { sourceDetectionId: detection.detectionId })
-      console.log(`drafted ${r.id} from ${detection.detectionId} (${r.kind}) — awaiting human approval via \`intent rule approve ${r.id}\``)
+      console.log(`drafted ${r.id} from ${detection.detectionId} (${r.kind}) — activate with \`intent rule approve ${r.id}\``)
     } else if (sub === 'agents-candidate') {
       const id = args[1]
       if (!id) {
@@ -87,8 +87,7 @@ export function cmdRule(context: CliContext): void {
       if (!rule) throw new Error(`no such rule: ${id}`)
       process.stdout.write(composeRuleImpactReport(rule) + '\n')
     } else if (sub === 'approve') {
-      assertHumanShell()
-      const r = approveRule(root, args[1])
+      const r = approveRule(root, args[1], approvalActorForCli())
       console.log(`approved ${r.id} by ${r.approvedBy}`)
     } else if (sub === 'list' || !sub) {
       for (const r of loadRules(root)) console.log(`${r.id}  [${r.status}]  ${r.kind}  /${r.pattern}/  ${r.reason}`)
@@ -145,7 +144,6 @@ export function cmdDetection(context: CliContext): void {
       return
     }
     if (sub === 'resolve') {
-      assertHumanShell('detection resolve')
       const [id, resultText, resolution] = [args[1], args[2], args[3]]
       const result = DetectionResultSchema.safeParse(resultText)
       if (!id || !result.success || result.data === 'candidate' || !resolution) {

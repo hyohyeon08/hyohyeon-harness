@@ -4,7 +4,7 @@
  * A change is "trivial" (gate-exempt) only when it is small AND introduces no
  * new structure. Anything that adds a symbol, control flow, or a new file is
  * "non-trivial" and requires an approved intent. This keeps friction low for
- * typos/formatting while ensuring the human understands every real change.
+ * typos/formatting while ensuring every real change crosses a readiness gate.
  */
 export interface Change {
   path: string

@@ -123,3 +123,32 @@ test('buildReviewerChecklist marks missing required evidence on blocked runs', (
   assert.match(checklist, /- \[ \] unit_test: missing required evidence/)
   assert.match(checklist, /- \[ \] Contract reviewed: none/)
 })
+
+test('reviewer metadata is displayed without becoming required evidence', () => {
+  const root = tempRoot()
+  const run = createRun(root, { objective: 'Review metadata semantics', intentId: 'INT-001' })
+  const contract = createContract(root, {
+    runId: run.runId,
+    intent: intent(),
+    requiredChecks: [],
+    architectureBoundaries: ['runtime schemas stay zod-validated'],
+    definitionOfDone: ['review the operator wording'],
+    rubric: { clarity: 3 },
+    stopConditions: ['pause when evidence is ambiguous'],
+    requiresUserDecision: ['select public CLI names'],
+  })
+  updateRun(root, run.runId, (current) => ({
+    ...current,
+    contractId: contract.contractId,
+    requiredEvidenceTypes: [],
+  }))
+
+  const checklist = buildReviewerChecklist(root, run.runId)
+
+  assert.match(checklist, /- \[ \] Boundary: runtime schemas stay zod-validated/)
+  assert.match(checklist, /- \[ \] DoD: review the operator wording/)
+  assert.match(checklist, /- \[x\] No required evidence configured\./)
+  assert.doesNotMatch(checklist, /clarity: missing required evidence/)
+  assert.doesNotMatch(checklist, /pause when evidence is ambiguous: missing required evidence/)
+  assert.doesNotMatch(checklist, /select public CLI names: missing required evidence/)
+})

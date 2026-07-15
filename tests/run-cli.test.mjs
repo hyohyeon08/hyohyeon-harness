@@ -14,12 +14,10 @@ function cli(project, args) {
   return spawnSync(process.execPath, [bin, ...args], { cwd: project, encoding: 'utf8' })
 }
 
-function humanCli(project, args) {
+function agentCli(project, args) {
   const env = { ...process.env }
   delete env.CLAUDECODE
-  delete env.CODEX_THREAD_ID
-  delete env.CODEX_SHELL
-  delete env.CODEX_INTERNAL_ORIGINATOR_OVERRIDE
+  env.CODEX_THREAD_ID = 'agent-thread'
   const bin = join(process.cwd(), 'dist', 'src', 'cli', 'index.js')
   return spawnSync(process.execPath, [bin, ...args], { cwd: project, encoding: 'utf8', env })
 }
@@ -67,7 +65,7 @@ test('feature phase transitions require approved Plan and Contract', () => {
   assert.match(earlyContract.stderr, /approved linked Plan/)
 
   assert.equal(cli(project, ['plan', 'draft', 'Governed plan']).status, 0)
-  assert.equal(humanCli(project, ['plan', 'approve', 'PLAN-001']).status, 0)
+  assert.equal(agentCli(project, ['plan', 'approve', 'PLAN-001']).status, 0)
   assert.equal(cli(project, ['run', 'phase', 'contract']).status, 0)
 
   const earlyAct = cli(project, ['run', 'phase', 'act'])
@@ -75,30 +73,36 @@ test('feature phase transitions require approved Plan and Contract', () => {
   assert.match(earlyAct.stderr, /approved linked Contract/)
 
   assert.equal(cli(project, ['contract', 'draft']).status, 0)
-  assert.equal(humanCli(project, ['contract', 'approve', 'CONTRACT-001']).status, 0)
+  assert.equal(agentCli(project, ['contract', 'approve', 'CONTRACT-001']).status, 0)
   assert.equal(cli(project, ['run', 'phase', 'act']).status, 0)
 })
 
-test('feature completion requires the approved Contract chain and verify phase', () => {
+test('a Codex agent can prepare, approve, verify, and complete a feature without human commands', () => {
   const project = projectRoot()
-  assert.equal(cli(project, ['setup']).status, 0)
-  assert.equal(cli(project, ['draft', 'Complete governed feature', 'close the execution loop', '--type', 'feature']).status, 0)
-  assert.equal(humanCli(project, ['approve', 'INT-001']).status, 0)
-  assert.equal(cli(project, ['run', 'start', 'INT-001', 'Complete governed feature']).status, 0)
-  assert.equal(cli(project, ['plan', 'draft', 'Governed completion plan']).status, 0)
-  assert.equal(humanCli(project, ['plan', 'approve', 'PLAN-001']).status, 0)
-  assert.equal(cli(project, ['run', 'phase', 'contract']).status, 0)
-  assert.equal(cli(project, ['contract', 'draft']).status, 0)
-  assert.equal(humanCli(project, ['contract', 'approve', 'CONTRACT-001']).status, 0)
-  assert.equal(cli(project, ['run', 'phase', 'act']).status, 0)
-  assert.equal(cli(project, ['run', 'phase', 'verify']).status, 0)
-  assert.equal(cli(project, ['learn', 'INT-001', 'Approved artifacts and fresh evidence close the loop.']).status, 0)
-  assert.equal(cli(project, ['verify', 'typecheck', '--', process.execPath, '-e', 'process.exit(0)']).status, 0)
-  assert.equal(cli(project, ['verify', 'unit_test', '--', process.execPath, '-e', 'process.exit(0)']).status, 0)
+  assert.equal(agentCli(project, ['setup']).status, 0)
+  assert.equal(agentCli(project, ['draft', 'Complete governed feature', 'close the execution loop', '--type', 'feature']).status, 0)
+  assert.equal(agentCli(project, ['approve', 'INT-001']).status, 0)
+  assert.equal(agentCli(project, ['run', 'start', 'INT-001', 'Complete governed feature']).status, 0)
+  assert.equal(agentCli(project, ['plan', 'draft', 'Governed completion plan']).status, 0)
+  assert.equal(agentCli(project, ['plan', 'approve', 'PLAN-001']).status, 0)
+  assert.equal(agentCli(project, ['run', 'phase', 'contract']).status, 0)
+  assert.equal(agentCli(project, ['contract', 'draft']).status, 0)
+  assert.equal(agentCli(project, ['contract', 'approve', 'CONTRACT-001']).status, 0)
+  assert.equal(agentCli(project, ['run', 'phase', 'act']).status, 0)
+  assert.equal(agentCli(project, ['run', 'phase', 'verify']).status, 0)
+  assert.equal(agentCli(project, ['learn', 'INT-001', 'Approved artifacts and fresh evidence close the loop.']).status, 0)
+  assert.equal(agentCli(project, ['verify', 'typecheck', '--', process.execPath, '-e', 'process.exit(0)']).status, 0)
+  assert.equal(agentCli(project, ['verify', 'unit_test', '--', process.execPath, '-e', 'process.exit(0)']).status, 0)
 
-  const complete = cli(project, ['complete', 'INT-001'])
+  const complete = agentCli(project, ['complete', 'INT-001'])
   assert.equal(complete.status, 0, complete.stderr)
+  const intent = JSON.parse(readFileSync(join(project, '.intent', 'intents', 'INT-001.json'), 'utf8'))
+  const plan = JSON.parse(readFileSync(join(project, '.intent', 'plans', 'PLAN-001.json'), 'utf8'))
+  const contract = JSON.parse(readFileSync(join(project, '.intent', 'contracts', 'CONTRACT-001.json'), 'utf8'))
   const run = JSON.parse(readFileSync(join(project, '.intent', 'runs', 'RUN-001.json'), 'utf8'))
+  assert.equal(intent.approvedBy, 'agent:codex')
+  assert.equal(plan.approvedBy, 'agent:codex')
+  assert.equal(contract.approvedBy, 'agent:codex')
   assert.equal(run.phase, 'done')
   assert.equal(run.status, 'passing')
 })

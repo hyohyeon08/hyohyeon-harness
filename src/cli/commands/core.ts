@@ -10,7 +10,7 @@ import { completeIntentTransaction } from '../../runtime/completion-transaction.
 import { parseDraftArgs } from '../../runtime/draft-args.js'
 import { rebuildIndex } from '../../runtime/wiki.js'
 import { reconcileState } from '../../runtime/reconcile.js'
-import { assertHumanShell, findIntent, type CliContext } from '../shared.js'
+import { approvalActorForCli, findIntent, type CliContext } from '../shared.js'
 
 export function cmdSetup(context: CliContext): void {
   const { root, args, harnessRoot } = context
@@ -87,18 +87,17 @@ export function cmdDraft(context: CliContext): void {
     process.exit(1)
   }
   const intent = draftIntent(root, parsed)
-  console.log(`drafted ${intent.id} (status: draft — awaiting human approval via \`intent approve ${intent.id}\`)`)
+  console.log(`drafted ${intent.id} (status: draft — activate with \`intent approve ${intent.id}\`)`)
 }
 
 export function cmdApprove(context: CliContext): void {
   const { root, args } = context
-  assertHumanShell()
   const id = args[0]
   if (!id) {
     console.error('usage: intent approve <id>')
     process.exit(1)
   }
-  const intent = approveIntent(root, id)
+  const intent = approveIntent(root, id, approvalActorForCli())
   console.log(`approved ${intent.id} by ${intent.approvedBy}`)
 }
 

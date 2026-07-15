@@ -47,6 +47,12 @@ test('intent reviewer checklist prints the active run checklist', () => {
   assert.match(result.stdout, /- \[ \] Contract reviewed: CONTRACT-001/)
   assert.match(result.stdout, /- \[x\] typecheck: passed via/)
   assert.match(result.stdout, /- \[ \] unit_test: missing required evidence/)
+  assert.match(result.stdout, /## Contract Field Semantics/)
+  assert.match(result.stdout, /Machine-enforced policy: status\/lineage, allowedScope, forbiddenScope, requiredChecks\./)
+  assert.match(
+    result.stdout,
+    /Reviewer metadata only \(not automatic completion gates\): architectureBoundaries, definitionOfDone, rubric, stopConditions, requiresUserDecision\./,
+  )
 })
 
 test('intent reviewer checklist accepts an explicit run id', () => {
@@ -56,4 +62,5 @@ test('intent reviewer checklist accepts an explicit run id', () => {
 
   assert.equal(result.status, 0, result.stderr)
   assert.match(result.stdout, /^# Reviewer Checklist: RUN-001/m)
+  assert.match(result.stdout, /## Contract Field Semantics/)
 })

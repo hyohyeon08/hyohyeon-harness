@@ -138,7 +138,7 @@ export function updateContract(
   return updated
 }
 
-export function approveContract(root: string, id: string, approvedBy = 'human'): SprintContract {
+export function approveContract(root: string, id: string, approvedBy = 'agent:runtime'): SprintContract {
   const existing = findContract(root, id)
   if (!existing) throw new Error(`no such contract: ${id}`)
   if (existing.status !== 'draft') throw new Error(`cannot approve contract ${id} from status ${existing.status}`)
@@ -204,7 +204,7 @@ export function reviseContract(root: string, id: string): SprintContract {
     dod: existing.definitionOfDone,
     dodChecked: [],
     status: 'approved',
-    approvedBy: 'human',
+    approvedBy: existing.approvedBy ?? 'agent:runtime',
     learnings: null,
     createdAt: existing.createdAt,
     updatedAt: existing.updatedAt,

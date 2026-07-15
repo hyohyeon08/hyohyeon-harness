@@ -2,8 +2,8 @@ import { z } from 'zod'
 
 /**
  * An Intent is the spine of the harness: AI declares "what + why" before
- * touching non-trivial code. A human approves it. Approval == scope boundary
- * == evidence that the human understood the change.
+ * touching non-trivial code. Approval is an agent-controlled readiness
+ * transition and an auditable scope boundary.
  */
 export const IntentTypeSchema = z.enum(['feature', 'fix', 'tidy', 'chore'])
 export type IntentType = z.infer<typeof IntentTypeSchema>
@@ -21,7 +21,7 @@ export const IntentSchema = z.object({
   dod: z.array(z.string()).default([]),
   dodChecked: z.array(z.string()).default([]),
   status: IntentStatusSchema.default('draft'),
-  /** Only a human sets this — AI cannot self-approve (see decision: 승인 주체 = 사람만). */
+  /** Provenance for the actor that performed the readiness transition. */
   approvedBy: z.string().nullable().default(null),
   /** Required for behavior-changing intents (feature/fix) before they reach 'done'. */
   learnings: z.string().nullable().default(null),
@@ -48,7 +48,7 @@ export type CompletionTransaction = z.infer<typeof CompletionTransactionSchema>
 /**
  * A machine-enforced gate rule, distinct from the readable wiki. Failures that
  * can be expressed deterministically become rules (Beck: a gate beats a text
- * reminder). Human-approved — only `approved` rules enforce.
+ * reminder). Only rules in the explicit `approved` readiness state enforce.
  */
 export const RuleKindSchema = z.enum(['forbid-path', 'forbid-pattern'])
 export type RuleKind = z.infer<typeof RuleKindSchema>
@@ -303,23 +303,41 @@ export type EvalCase = z.infer<typeof EvalCaseSchema>
 export const ContractStatusSchema = z.enum(['draft', 'approved', 'archived'])
 export type ContractStatus = z.infer<typeof ContractStatusSchema>
 
+/**
+ * Contract semantics are deliberately split:
+ * - Machine-enforced policy: lifecycle status and Run/Intent lineage,
+ *   allowedScope, forbiddenScope, and requiredChecks.
+ * - Reviewer metadata only: architectureBoundaries, definitionOfDone, rubric,
+ *   stopConditions, and requiresUserDecision. These fields are displayed to a
+ *   reviewer but are not interpreted as automatic write or completion gates.
+ */
 export const SprintContractSchema = z.object({
+  /** Machine-enforced identity and lifecycle lineage. */
   contractId: z.string(),
   revision: z.number().int().positive().default(1),
   supersedesContractId: z.string().nullable().default(null),
   runId: z.string(),
   intentId: z.string(),
   status: ContractStatusSchema.default('draft'),
+  /** Audit provenance for the readiness transition; not a completion predicate. */
   approvedBy: z.string().nullable().default(null),
   approvedAt: z.string().nullable().default(null),
+  /** Machine-enforced write policy once the linked Contract is approved. */
   allowedScope: z.array(z.string()).default(['**']),
   forbiddenScope: z.array(z.string()).default([]),
+  /** Reviewer metadata only; no natural-language boundary parser is a gate. */
   architectureBoundaries: z.array(z.string()).default([]),
+  /** Planning input used to default requiredChecks; completion reads requiredChecks. */
   testMatrix: TestMatrixSchema.default(TestMatrixSchema.parse({})),
+  /** Machine-enforced completion evidence policy. */
   requiredChecks: z.array(VerificationEvidenceTypeSchema).default([]),
+  /** Reviewer metadata only; Intent DoD remains the automatic DoD gate. */
   definitionOfDone: z.array(z.string()).default([]),
+  /** Reviewer metadata only; scores are not evaluated automatically. */
   rubric: z.record(z.number()).default({}),
+  /** Reviewer metadata only; entries do not automatically block execution. */
   stopConditions: z.array(z.string()).default([]),
+  /** Reviewer metadata only; entries do not create an automatic decision gate. */
   requiresUserDecision: z.array(z.string()).default([]),
   createdAt: z.string(),
   updatedAt: z.string(),

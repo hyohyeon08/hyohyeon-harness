@@ -211,6 +211,6 @@ export function linkPlanInterview(root: string, planId: string, interviewId: str
 }
 
 export function setPlanStatus(root: string, planId: string, status: PlanStatus): Plan {
-  if (status === 'approved') return approvePlan(root, planId, 'human')
+  if (status === 'approved') return approvePlan(root, planId, 'agent:runtime')
   return updatePlan(root, planId, (plan) => ({ ...plan, status }))
 }

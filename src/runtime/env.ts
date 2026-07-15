@@ -1,11 +1,4 @@
-/**
- * True when running inside an AI agent shell.
- *
- * Approvals (intent approve, rule approve) are human-only: the pre-write-guard
- * blocks the *file-edit* path, but the AI also has a shell and could run the CLI
- * directly. Gating those commands on agent-specific environment variables
- * closes that hole. A human runs them from their own terminal.
- */
+/** True when running inside a supported AI agent shell. */
 export function isAiAgent(env: NodeJS.ProcessEnv = process.env): boolean {
   return (
     env.CLAUDECODE === '1' ||
@@ -13,4 +6,16 @@ export function isAiAgent(env: NodeJS.ProcessEnv = process.env): boolean {
     Boolean(env.CODEX_SHELL) ||
     Boolean(env.CODEX_INTERNAL_ORIGINATOR_OVERRIDE)
   )
+}
+
+/**
+ * Record who performed a readiness transition without assigning special
+ * authority to any actor. The CLI remains the only writer of governance state.
+ */
+export function approvalActor(env: NodeJS.ProcessEnv = process.env): string {
+  if (env.CLAUDECODE === '1') return 'agent:claude-code'
+  if (env.CODEX_THREAD_ID || env.CODEX_SHELL || env.CODEX_INTERNAL_ORIGINATOR_OVERRIDE) {
+    return 'agent:codex'
+  }
+  return 'human'
 }

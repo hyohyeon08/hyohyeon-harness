@@ -56,7 +56,7 @@ import {
   updateContract,
 } from '../runtime/contracts.js'
 import { archivePlan, approvePlan, createPlan, findPlan, linkPlanInterview, loadPlans, revisePlan, updatePlan } from '../runtime/plans.js'
-import { isAiAgent } from '../runtime/env.js'
+import { approvalActorForCli } from './shared.js'
 import {
   defaultTestMatrixForIntentType,
   type Plan,
@@ -67,14 +67,6 @@ import {
   VerificationEvidenceTypeSchema,
   type SprintContract,
 } from '../runtime/schemas.js'
-
-/** Human decisions are human-only — refuse when an AI agent runs the CLI. */
-function assertHumanShell(action = 'approval'): void {
-  if (isAiAgent()) {
-    console.error(`${action} is human-only (AI agent environment detected). Run this from your own shell.`)
-    process.exit(1)
-  }
-}
 
 const root = process.cwd()
 const [, , command, ...args] = process.argv
@@ -308,16 +300,14 @@ function cmdInterview(): void {
       }
       for (const summary of summaries) console.log(interviewSummaryLine(summary))
     } else if (sub === 'approve') {
-      assertHumanShell('interview approval')
       const interviewId = args[1]
       if (!interviewId) {
         console.error('usage: intent interview approve <interviewId>')
         process.exit(1)
       }
-      const approved = approveInterview(root, interviewId, 'human')
-      console.log(`approved ${approved.interviewId}`)
+      const approved = approveInterview(root, interviewId, approvalActorForCli())
+      console.log(`approved ${approved.interviewId} by ${approved.approvedBy}`)
     } else if (sub === 'archive') {
-      assertHumanShell('interview archive')
       const interviewId = args[1]
       if (!interviewId) throw new Error('usage: intent interview archive <interviewId>')
       const archived = archiveInterview(root, interviewId)
@@ -472,16 +462,14 @@ function cmdPlan(): void {
       }))
       console.log(`linked ${linked.planId} to ${run.runId}`)
     } else if (sub === 'approve') {
-      assertHumanShell('plan approval')
       const planId = args[1]
       if (!planId) {
         console.error('usage: intent plan approve <planId>')
         process.exit(1)
       }
-      const plan = approvePlan(root, planId, 'human')
-      console.log(`approved ${plan.planId}`)
+      const plan = approvePlan(root, planId, approvalActorForCli())
+      console.log(`approved ${plan.planId} by ${plan.approvedBy}`)
     } else if (sub === 'archive') {
-      assertHumanShell('plan archive')
       const planId = args[1]
       if (!planId) throw new Error('usage: intent plan archive <planId>')
       const plan = archivePlan(root, planId)
@@ -578,23 +566,41 @@ function contractSummary(contract: SprintContract): string {
   return `${contract.contractId} [${contract.status}] ${contract.runId} ${contract.intentId}`
 }
 
-function printContract(contract: SprintContract): void {
-  console.log(contractSummary(contract))
-  console.log('allowed scope:')
+function printContractMachinePolicy(contract: SprintContract): void {
+  console.log('machine-enforced policy (active only when approved and linked):')
+  console.log(`  status: ${contract.status}`)
+  console.log(
+    `  lineage: run=${contract.runId} intent=${contract.intentId} revision=${contract.revision} supersedes=${contract.supersedesContractId ?? '—'}`,
+  )
+  console.log('  allowed scope:')
   for (const item of contract.allowedScope) console.log(`  - ${item}`)
-  console.log('forbidden scope:')
+  console.log('  forbidden scope:')
   for (const item of contract.forbiddenScope.length > 0 ? contract.forbiddenScope : ['—']) console.log(`  - ${item}`)
-  console.log('required checks:')
-  for (const item of contract.requiredChecks.length > 0 ? contract.requiredChecks : ['—']) console.log(`  - ${item}`)
-  console.log('definition of done:')
+}
+
+function printContractReviewerMetadata(contract: SprintContract): void {
+  console.log('reviewer metadata (not automatic completion gates):')
+  console.log('  architecture boundaries:')
+  for (const item of contract.architectureBoundaries.length > 0 ? contract.architectureBoundaries : ['—']) {
+    console.log(`  - ${item}`)
+  }
+  console.log('  definition of done:')
   for (const item of contract.definitionOfDone.length > 0 ? contract.definitionOfDone : ['—']) console.log(`  - ${item}`)
-  console.log('rubric:')
+  console.log('  rubric:')
   const rubricEntries = Object.entries(contract.rubric)
   for (const [key, value] of rubricEntries.length > 0 ? rubricEntries : [['—', '—']]) console.log(`  - ${key}: ${value}`)
-  console.log('stop conditions:')
+  console.log('  stop conditions:')
   for (const item of contract.stopConditions.length > 0 ? contract.stopConditions : ['—']) console.log(`  - ${item}`)
-  console.log('requires user decision:')
+  console.log('  requires user decision:')
   for (const item of contract.requiresUserDecision.length > 0 ? contract.requiresUserDecision : ['—']) console.log(`  - ${item}`)
+}
+
+function printContract(contract: SprintContract): void {
+  console.log(contractSummary(contract))
+  printContractMachinePolicy(contract)
+  console.log('  required checks:')
+  for (const item of contract.requiredChecks.length > 0 ? contract.requiredChecks : ['—']) console.log(`  - ${item}`)
+  printContractReviewerMetadata(contract)
 }
 
 function appendUnique<T>(current: T[], added: T[]): T[] {
@@ -620,20 +626,23 @@ function parseRubric(raw: string[]): Record<string, number> {
 function printContractReport(contractId: string): void {
   const report = buildContractReport(root, contractId)
   console.log(`contract report ${report.contract.contractId} [${report.contract.status}]`)
-  console.log(`run: ${report.contract.runId}`)
-  console.log('required checks:')
+  printContractMachinePolicy(report.contract)
+  console.log('  required checks:')
   for (const check of report.checks.length > 0 ? report.checks : []) {
     const evidence = check.evidence ? ` (${check.evidence.evidenceId})` : ''
     console.log(`  - ${check.type}: ${check.status}${evidence}`)
   }
   if (report.checks.length === 0) console.log('  - —')
-  console.log('rubric:')
-  const rubricEntries = Object.entries(report.contract.rubric)
-  for (const [key, value] of rubricEntries.length > 0 ? rubricEntries : [['—', '—']]) console.log(`  - ${key}: ${value}`)
-  console.log('stop conditions:')
-  for (const item of report.contract.stopConditions.length > 0 ? report.contract.stopConditions : ['—']) console.log(`  - ${item}`)
-  console.log('requires user decision:')
-  for (const item of report.contract.requiresUserDecision.length > 0 ? report.contract.requiresUserDecision : ['—']) console.log(`  - ${item}`)
+  printContractReviewerMetadata(report.contract)
+}
+
+function printReviewerContractSemantics(): void {
+  console.log('')
+  console.log('## Contract Field Semantics')
+  console.log('- Machine-enforced policy: status/lineage, allowedScope, forbiddenScope, requiredChecks.')
+  console.log(
+    '- Reviewer metadata only (not automatic completion gates): architectureBoundaries, definitionOfDone, rubric, stopConditions, requiresUserDecision.',
+  )
 }
 
 function cmdContract(): void {
@@ -663,16 +672,14 @@ function cmdContract(): void {
       if (!contract) throw new Error(`no such contract: ${id}`)
       printContract(contract)
     } else if (sub === 'approve') {
-      assertHumanShell('contract approval')
       const id = args[1]
       if (!id) {
         console.error('usage: intent contract approve <contractId>')
         process.exit(1)
       }
-      const contract = approveContract(root, id, 'human')
-      console.log(`approved ${contract.contractId}`)
+      const contract = approveContract(root, id, approvalActorForCli())
+      console.log(`approved ${contract.contractId} by ${contract.approvedBy}`)
     } else if (sub === 'archive') {
-      assertHumanShell('contract archive')
       const id = args[1]
       if (!id) throw new Error('usage: intent contract archive <contractId>')
       const contract = archiveContract(root, id)
@@ -747,12 +754,12 @@ function cmdSpec(): void {
           runId: run?.runId,
         })
       }
-      console.log(`spec drafted: wiki/${slug} — fill with \`intent wiki append ${slug} "..."\`, then human runs \`intent spec approve ${slug}\``)
+      console.log(`spec drafted: wiki/${slug} — fill with \`intent wiki append ${slug} "..."\`, then activate with \`intent spec approve ${slug}\``)
       if (run) console.log(`linked ${slug} to ${run.runId}`)
     } else if (sub === 'approve') {
-      assertHumanShell()
-      approveSpec(root, args[1])
-      console.log(`spec approved: ${args[1]}`)
+      const actor = approvalActorForCli()
+      approveSpec(root, args[1], actor)
+      console.log(`spec approved: ${args[1]} by ${actor}`)
     } else if (sub === 'link') {
       const slug = args[1]
       const runId = args[2] ?? activeRun(root)?.runId
@@ -832,6 +839,7 @@ switch (command) {
     break
   case 'reviewer':
     cmdReviewer(cliContext)
+    if (args[0] === 'checklist') printReviewerContractSemantics()
     break
   case 'eval':
     cmdEval(cliContext)

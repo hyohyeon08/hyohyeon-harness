@@ -45,7 +45,7 @@ test('non-trivial change with no intent is blocked', () => {
 test('non-trivial change with only a draft intent is blocked', () => {
   const d = decideGate(nonTrivial, [intent('draft')])
   assert.equal(d.allow, false)
-  assert.match(d.reason, /awaiting human approval/)
+  assert.match(d.reason, /intent approve <id>/)
 })
 
 test('non-trivial change with an approved intent is allowed', () => {

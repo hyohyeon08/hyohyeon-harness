@@ -18,6 +18,10 @@ function humanEnv() {
   return env
 }
 
+function codexEnv() {
+  return { ...humanEnv(), CODEX_THREAD_ID: 'agent-thread' }
+}
+
 function cli(project, args, env = humanEnv()) {
   const bin = join(process.cwd(), 'dist', 'src', 'cli', 'index.js')
   return spawnSync(process.execPath, [bin, ...args], { cwd: project, encoding: 'utf8', env })
@@ -61,8 +65,8 @@ test('intent setup creates the plans directory', () => {
 test('intent plan archive and revise creates an unlinked draft revision', () => {
   const project = setupProject()
   assert.equal(cli(project, ['plan', 'draft', 'Original plan']).status, 0)
-  assert.equal(cli(project, ['plan', 'approve', 'PLAN-001']).status, 0)
-  assert.equal(cli(project, ['plan', 'archive', 'PLAN-001']).status, 0)
+  assert.equal(cli(project, ['plan', 'approve', 'PLAN-001'], codexEnv()).status, 0)
+  assert.equal(cli(project, ['plan', 'archive', 'PLAN-001'], codexEnv()).status, 0)
   const pausedRun = readJson(project, ['.intent', 'runs', 'RUN-001.json'])
   assert.equal(pausedRun.planId, null)
   assert.equal(pausedRun.phase, 'plan')
@@ -157,29 +161,29 @@ test('intent plan link connects a plan to the active run', () => {
   assert.equal(plan.intentId, 'INT-001')
 })
 
-test('intent plan approve records a human decision and prevents relinking', () => {
+test('intent plan approve records the Codex actor and prevents relinking', () => {
   const project = setupProject()
   assert.equal(cli(project, ['plan', 'draft', 'Approved plan']).status, 0)
 
-  const approved = cli(project, ['plan', 'approve', 'PLAN-001'])
+  const approved = cli(project, ['plan', 'approve', 'PLAN-001'], codexEnv())
   const relink = cli(project, ['plan', 'link', 'PLAN-001'])
   const plan = readJson(project, ['.intent', 'plans', 'PLAN-001.json'])
 
   assert.equal(approved.status, 0, approved.stderr)
   assert.match(approved.stdout, /approved PLAN-001/)
   assert.equal(plan.status, 'approved')
-  assert.equal(plan.approvedBy, 'human')
+  assert.equal(plan.approvedBy, 'agent:codex')
   assert.match(plan.approvedAt, /^\d{4}-\d{2}-\d{2}T/)
   assert.equal(relink.status, 1)
   assert.match(relink.stderr, /approved plan PLAN-001 is immutable/)
 })
 
-test('intent plan approve is human-only', () => {
+test('Claude Code can approve a prepared plan and records its actor', () => {
   const project = setupProject()
-  assert.equal(cli(project, ['plan', 'draft', 'Agent cannot approve']).status, 0)
+  assert.equal(cli(project, ['plan', 'draft', 'Agent approves']).status, 0)
 
-  const result = cli(project, ['plan', 'approve', 'PLAN-001'], { ...humanEnv(), CODEX_THREAD_ID: 'agent-thread' })
+  const result = cli(project, ['plan', 'approve', 'PLAN-001'], { ...humanEnv(), CLAUDECODE: '1' })
 
-  assert.equal(result.status, 1)
-  assert.match(result.stderr, /plan approval is human-only/)
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(readJson(project, ['.intent', 'plans', 'PLAN-001.json']).approvedBy, 'agent:claude-code')
 })
