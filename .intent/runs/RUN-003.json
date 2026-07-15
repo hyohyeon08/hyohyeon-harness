@@ -1,0 +1,54 @@
+{
+  "runId": "RUN-003",
+  "objective": "Update autonomous lifecycle product SSOT",
+  "phase": "done",
+  "status": "passing",
+  "intentId": "INT-002",
+  "interviewId": null,
+  "specSlug": null,
+  "planId": null,
+  "contractId": null,
+  "nextAction": null,
+  "budget": {
+    "maxAttempts": 3,
+    "attemptsUsed": 0
+  },
+  "notes": [],
+  "evidence": [
+    {
+      "evidenceId": "VE-001",
+      "type": "typecheck",
+      "status": "passed",
+      "command": "npm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "logPath": ".intent/raw/typecheck-results/RUN-003-2026-07-15T06-06-21-551Z.log",
+      "provenance": {
+        "version": 1,
+        "algorithm": "sha256",
+        "allowedScope": [
+          "hyohyeon-harness-최종목표.md"
+        ],
+        "forbiddenScope": [],
+        "digest": "47488894b9b2b8957721178a040ede5e9d5912a69eaf9b01801582a5cbe6eea8",
+        "files": [
+          {
+            "path": "hyohyeon-harness-최종목표.md",
+            "size": 42320,
+            "sha256": "351b52d0fe5e22fed407d70c41b047de166f80b2fddbdd1aa972183bf31e6985"
+          }
+        ]
+      },
+      "startedAt": "2026-07-15T06:06:20.605Z",
+      "finishedAt": "2026-07-15T06:06:21.551Z"
+    }
+  ],
+  "requiredEvidenceTypes": [
+    "typecheck"
+  ],
+  "createdAt": "2026-07-15T06:02:02.380Z",
+  "updatedAt": "2026-07-15T06:06:29.600Z"
+}

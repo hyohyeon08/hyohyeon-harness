@@ -1,0 +1,20 @@
+{
+  "id": "INT-002",
+  "what": "Autonomous lifecycle product SSOT",
+  "why": "Align the root final-goal document with the no-human lifecycle policy",
+  "type": "chore",
+  "scope": [
+    "hyohyeon-harness-최종목표.md"
+  ],
+  "dod": [
+    "Root product SSOT defines agent-run lifecycle transitions with no manual approval"
+  ],
+  "dodChecked": [
+    "Root product SSOT defines agent-run lifecycle transitions with no manual approval"
+  ],
+  "status": "done",
+  "approvedBy": "agent:codex",
+  "learnings": null,
+  "createdAt": "2026-07-15T06:00:55.045Z",
+  "updatedAt": "2026-07-15T06:06:29.599Z"
+}

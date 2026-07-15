@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "transactionId": "COMPLETE-INT-001",
+  "intentId": "INT-001",
+  "runId": "RUN-001",
+  "status": "committed",
+  "createdAt": "2026-07-15T06:15:03.642Z",
+  "updatedAt": "2026-07-15T06:15:03.645Z"
+}

@@ -1,0 +1,23 @@
+{
+  "runId": "RUN-002",
+  "objective": "Synchronize autonomous lifecycle product SSOT",
+  "phase": "act",
+  "status": "paused",
+  "intentId": "INT-002",
+  "interviewId": null,
+  "specSlug": null,
+  "planId": null,
+  "contractId": null,
+  "nextAction": null,
+  "budget": {
+    "maxAttempts": 3,
+    "attemptsUsed": 0
+  },
+  "notes": [],
+  "evidence": [],
+  "requiredEvidenceTypes": [
+    "typecheck"
+  ],
+  "createdAt": "2026-07-15T06:01:57.374Z",
+  "updatedAt": "2026-07-15T06:02:20.394Z"
+}

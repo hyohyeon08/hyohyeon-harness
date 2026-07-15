@@ -1,0 +1,66 @@
+{
+  "planId": "PLAN-001",
+  "revision": 1,
+  "supersedesPlanId": null,
+  "status": "approved",
+  "approvedBy": "human",
+  "approvedAt": "2026-07-15T05:51:25.547Z",
+  "title": "Full autonomous approval policy",
+  "objective": "Let agents prepare, approve, revise, archive, and resolve governance artifacts without human intervention",
+  "problem": "Current command guard and CLI reject approval-class actions in AI environments",
+  "intentId": "INT-001",
+  "interviewId": null,
+  "specSlug": null,
+  "runId": "RUN-001",
+  "allowedScope": [
+    "src/**",
+    "hooks/**",
+    "tests/**",
+    "skills/**",
+    "README.md",
+    "AGENT.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/**",
+    ".claude/**",
+    ".codex/**"
+  ],
+  "forbiddenScope": [],
+  "expectedChanges": [],
+  "researchRefs": [],
+  "implementationSteps": [
+    "Replace human-shell rejection with truthful agent actor provenance",
+    "Allow all approval, archive, and detection-resolution CLI actions from agent shells",
+    "Keep CLI-only .intent writes, lineage, immutability, verification, and completion gates",
+    "Update workflow skills and active documentation"
+  ],
+  "testStrategy": "",
+  "verificationCommands": [
+    {
+      "type": "typecheck",
+      "command": "npm",
+      "args": [
+        "run",
+        "typecheck"
+      ]
+    },
+    {
+      "type": "unit_test",
+      "command": "npm",
+      "args": [
+        "test"
+      ]
+    }
+  ],
+  "definitionOfDone": [
+    "Agent approval commands succeed without human intervention",
+    "Direct .intent writes remain blocked",
+    "Full autonomous feature workflow reaches act and completion"
+  ],
+  "risks": [
+    "Approval no longer proves human understanding; approved becomes an agent readiness checkpoint",
+    "External host permission prompts remain outside repository control"
+  ],
+  "createdAt": "2026-07-15T05:51:19.495Z",
+  "updatedAt": "2026-07-15T05:51:25.547Z"
+}

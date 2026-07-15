@@ -1,0 +1,69 @@
+{
+  "planId": "PLAN-002",
+  "revision": 1,
+  "supersedesPlanId": null,
+  "status": "approved",
+  "approvedBy": "agent:codex",
+  "approvedAt": "2026-07-15T06:57:55.639Z",
+  "title": "Governance integrity hardening",
+  "objective": "Block repository escapes, preserve 1000+ observations, serialize Run/Trace updates, and align product contracts",
+  "problem": "Three executable integrity defects and three documented contract drifts remain after the autonomy phase",
+  "intentId": "INT-003",
+  "interviewId": null,
+  "specSlug": null,
+  "runId": "RUN-004",
+  "allowedScope": [
+    "src/runtime/scope.ts",
+    "src/runtime/observability.ts",
+    "src/runtime/evals.ts",
+    "src/runtime/runs.ts",
+    "src/runtime/schemas.ts",
+    "src/utils/json.ts",
+    "hooks/pre-write-guard.ts",
+    "src/cli/index.ts",
+    "tests/**",
+    "README.md",
+    "AGENT.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "skills/**",
+    "docs/**",
+    "hyohyeon-harness-최종목표.md"
+  ],
+  "forbiddenScope": [],
+  "expectedChanges": [],
+  "researchRefs": [],
+  "implementationSteps": [
+    "Add canonical repository-relative containment and hook denial",
+    "Generalize sequential ID parsing and add per-record locks",
+    "Clarify enforceable Contract fields and align RunState SSOT",
+    "Add boundary, concurrency, and dogfood regression tests"
+  ],
+  "testStrategy": "Targeted boundary/concurrency tests followed by typecheck, full suite, coverage, and pack audit",
+  "verificationCommands": [
+    {
+      "type": "typecheck",
+      "command": "npm",
+      "args": [
+        "run",
+        "typecheck"
+      ]
+    },
+    {
+      "type": "unit_test",
+      "command": "npm",
+      "args": [
+        "test"
+      ]
+    }
+  ],
+  "definitionOfDone": [
+    "All seven Intent DoD items are evidenced"
+  ],
+  "risks": [
+    "Cross-process lock stale recovery must not deadlock",
+    "Historical phase documents must remain historical"
+  ],
+  "createdAt": "2026-07-15T06:57:30.500Z",
+  "updatedAt": "2026-07-15T06:57:55.639Z"
+}

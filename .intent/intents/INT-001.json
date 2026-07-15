@@ -1,0 +1,38 @@
+{
+  "id": "INT-001",
+  "what": "AI가 readiness를 판정하고 승인 사슬을 자율 실행하게 한다",
+  "why": "Interview·Intent·Plan·Contract 준비 후 사람이 여러 approve 명령을 입력해야 하는 수동 병목을 제거한다",
+  "type": "feature",
+  "scope": [
+    "src/**",
+    "hooks/**",
+    "tests/**",
+    "skills/**",
+    "README.md",
+    "AGENT.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/**",
+    ".claude/**",
+    ".codex/**"
+  ],
+  "dod": [
+    "AI agent 환경에서 readiness 조건을 만족한 승인 명령 또는 단일 자율 준비 명령이 성공한다",
+    "직접 .intent state write 차단과 artifact lineage 검증은 유지된다",
+    "feature workflow가 사람의 approve 명령 없이 plan-contract-act 단계에 도달한다",
+    "관련 문서와 skills가 AI 자율 승인 정책을 일관되게 설명한다",
+    "typecheck와 전체 테스트가 통과한다"
+  ],
+  "dodChecked": [
+    "AI agent 환경에서 readiness 조건을 만족한 승인 명령 또는 단일 자율 준비 명령이 성공한다",
+    "직접 .intent state write 차단과 artifact lineage 검증은 유지된다",
+    "feature workflow가 사람의 approve 명령 없이 plan-contract-act 단계에 도달한다",
+    "관련 문서와 skills가 AI 자율 승인 정책을 일관되게 설명한다",
+    "typecheck와 전체 테스트가 통과한다"
+  ],
+  "status": "done",
+  "approvedBy": "human",
+  "learnings": "자율성과 상태 무결성은 별개다. actor 기반 거부만 제거하고 CLI-only writer, 불변 revision, scope/lineage/phase/evidence gate를 유지하면 사람의 수동 명령 없이도 동일한 거버넌스를 보존할 수 있다.",
+  "createdAt": "2026-07-15T03:17:06.947Z",
+  "updatedAt": "2026-07-15T06:15:03.643Z"
+}

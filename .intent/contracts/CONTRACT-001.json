@@ -1,0 +1,50 @@
+{
+  "contractId": "CONTRACT-001",
+  "revision": 1,
+  "supersedesContractId": null,
+  "runId": "RUN-001",
+  "intentId": "INT-001",
+  "status": "archived",
+  "approvedBy": "human",
+  "approvedAt": "2026-07-15T05:51:36.935Z",
+  "allowedScope": [
+    "src/**",
+    "hooks/**",
+    "tests/**",
+    "skills/**",
+    "README.md",
+    "AGENT.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/**",
+    ".claude/**",
+    ".codex/**"
+  ],
+  "forbiddenScope": [],
+  "architectureBoundaries": [],
+  "testMatrix": {
+    "typecheck": "required",
+    "build": "optional",
+    "lint": "optional",
+    "unit_test": "required",
+    "integration_test": "optional",
+    "e2e_test": "optional",
+    "custom": "skipped"
+  },
+  "requiredChecks": [
+    "typecheck",
+    "unit_test"
+  ],
+  "definitionOfDone": [
+    "AI agent 환경에서 readiness 조건을 만족한 승인 명령 또는 단일 자율 준비 명령이 성공한다",
+    "직접 .intent state write 차단과 artifact lineage 검증은 유지된다",
+    "feature workflow가 사람의 approve 명령 없이 plan-contract-act 단계에 도달한다",
+    "관련 문서와 skills가 AI 자율 승인 정책을 일관되게 설명한다",
+    "typecheck와 전체 테스트가 통과한다"
+  ],
+  "rubric": {},
+  "stopConditions": [],
+  "requiresUserDecision": [],
+  "createdAt": "2026-07-15T05:51:31.995Z",
+  "updatedAt": "2026-07-15T05:57:22.629Z"
+}

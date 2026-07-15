@@ -1,0 +1,1966 @@
+{
+  "runId": "RUN-001",
+  "objective": "Replace human approval ceremony with fully autonomous agent governance",
+  "phase": "done",
+  "status": "passing",
+  "intentId": "INT-001",
+  "interviewId": null,
+  "specSlug": null,
+  "planId": "PLAN-001",
+  "contractId": "CONTRACT-002",
+  "nextAction": null,
+  "budget": {
+    "maxAttempts": 3,
+    "attemptsUsed": 0
+  },
+  "notes": [],
+  "evidence": [
+    {
+      "evidenceId": "VE-001",
+      "type": "typecheck",
+      "status": "passed",
+      "command": "npm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "logPath": ".intent/raw/typecheck-results/RUN-001-2026-07-15T06-13-55-018Z.log",
+      "provenance": {
+        "version": 1,
+        "algorithm": "sha256",
+        "allowedScope": [
+          "src/**",
+          "hooks/**",
+          "tests/**",
+          "skills/**",
+          "README.md",
+          "AGENT.md",
+          "AGENTS.md",
+          "CLAUDE.md",
+          "docs/**",
+          ".claude/**",
+          ".codex/**",
+          "hyohyeon-harness-최종목표.md"
+        ],
+        "forbiddenScope": [],
+        "digest": "56addf2e4a5e3e7598234a0d5f71adfbaf2bc9b3f25b292cbe85a1a4ae4be583",
+        "files": [
+          {
+            "path": ".claude/settings.json",
+            "size": 1011,
+            "sha256": "84c0391a69b539826c0d4b4860750759f468facbfd17b75c55241acae24e2915"
+          },
+          {
+            "path": ".claude/settings.template.json",
+            "size": 1107,
+            "sha256": "dcd9a466cdeeed30aea669a551ed2f1677fb434f4a065715256417168f752a3b"
+          },
+          {
+            "path": ".codex/hooks.json",
+            "size": 1658,
+            "sha256": "ef572ee0a25ba1911913b66f976f933d3b4b50a839d267cee45fb17222243410"
+          },
+          {
+            "path": ".codex/hooks.template.json",
+            "size": 1754,
+            "sha256": "64d84c44706642d01f16ae719c11ae071e5b86cd355b9e9943f13c94b2130abb"
+          },
+          {
+            "path": "AGENT.md",
+            "size": 22110,
+            "sha256": "cd4153d5adb089f6c46726c9bf0e4da92703f76b5c9d48fb4ac5499c792cd0ad"
+          },
+          {
+            "path": "AGENTS.md",
+            "size": 5469,
+            "sha256": "176fe6ca0e67173d2285b80ec2a6609798c7e892eaeda6ec4ba3585c9fc13eb1"
+          },
+          {
+            "path": "CLAUDE.md",
+            "size": 5504,
+            "sha256": "94f5ac3a5b5b470ccc7fe9b771c50b2dc82db925da074c4072c15f3520afbcc1"
+          },
+          {
+            "path": "docs/final-goal-gap-analysis.md",
+            "size": 22385,
+            "sha256": "ca50952f49e1c8c66b48b46feab16761a925a44cf54fc80e3cbc9401fc7d5a57"
+          },
+          {
+            "path": "docs/final-goal-phase-feature-spec.md",
+            "size": 137281,
+            "sha256": "58d0972878844a02a70cd00bd4bfa7742ff83dffb3e8a5716aff6c01cb1aa3a4"
+          },
+          {
+            "path": "docs/phase/_template.md",
+            "size": 1160,
+            "sha256": "fb49e6881384db59c0bd51ba6adcc4fc831000cf09760add51078ce38ff189e3"
+          },
+          {
+            "path": "docs/phase/phase-0-roadmap-and-operating-rules.md",
+            "size": 3060,
+            "sha256": "488c1baeb5a747ba5fc950e2c0943a101e09b3b59979f3a9e0f9d2b6f84103a9"
+          },
+          {
+            "path": "docs/phase/phase-1-handoff-active-run.md",
+            "size": 3231,
+            "sha256": "14cf6c8b1d91bd7f44a28f3d0d85a14f054bc5b7827d399a2b7af5efcfa37089"
+          },
+          {
+            "path": "docs/phase/phase-1-run-cli.md",
+            "size": 3332,
+            "sha256": "81db54e220c1adbed1ff7ef5dd42e596fa27db3a7c22b7ff608b159f1b5f0621"
+          },
+          {
+            "path": "docs/phase/phase-1-runstate-runtime-crud.md",
+            "size": 3499,
+            "sha256": "7e10fe9043012d1a3487fc0db47d27129641a5f7d9212b900d8d76cf9dde4728"
+          },
+          {
+            "path": "docs/phase/phase-1-runstate-schema-and-paths.md",
+            "size": 3159,
+            "sha256": "2a13aa9eef22bba393abfb6d4f1da4a460615a6185b12888038890ee85fe8be0"
+          },
+          {
+            "path": "docs/phase/phase-1-sessionstart-active-run.md",
+            "size": 3226,
+            "sha256": "ad61e1b5941c4c796e60ab9a2436109ba8644f4479b38c4277ff9cd1c5f52ca6"
+          },
+          {
+            "path": "docs/phase/phase-10-contract-required-checks-gate.md",
+            "size": 928,
+            "sha256": "63e62e4ade1cd3532725d0be5a22802b04d725260a2fd7301941da6fe1ee153a"
+          },
+          {
+            "path": "docs/phase/phase-11-judge-reviewer-eval-cli.md",
+            "size": 781,
+            "sha256": "9028f22ad67ad774170d2d0244a93630e42012e57f0db4233c2d0e011ee7a690"
+          },
+          {
+            "path": "docs/phase/phase-12-detection-feedback-cli.md",
+            "size": 769,
+            "sha256": "42665c694e987b334dcc5aa30bcbf1067f2fe32ece479ace3700441890835a85"
+          },
+          {
+            "path": "docs/phase/phase-13-execution-loop-policy.md",
+            "size": 856,
+            "sha256": "835791f406c3c985b45333cd750950cabbf2930bfe1f9c11cb09260cdaa02b12"
+          },
+          {
+            "path": "docs/phase/phase-14-contract-lifecycle-report.md",
+            "size": 886,
+            "sha256": "08a50f90660b549c9d8269b8ffc52dfad412fa7e03f82686699f800c4cbbe12e"
+          },
+          {
+            "path": "docs/phase/phase-15-judge-eval-rule-followups.md",
+            "size": 1034,
+            "sha256": "4f40abdac838a43d6ebaaf986fb6b01d3cf2702aaacc83113404e6efab4fd865"
+          },
+          {
+            "path": "docs/phase/phase-16-automation-loop-closure.md",
+            "size": 3408,
+            "sha256": "2d935778f2f7316fe7f0c68f464c548ad79579362e604f6fdc02d14306541bae"
+          },
+          {
+            "path": "docs/phase/phase-17-governed-completion-integrity.md",
+            "size": 3131,
+            "sha256": "3f08bc0aa07fbab35bbdb074763aee20bc376abf812182fb3423c4ec8911d2f2"
+          },
+          {
+            "path": "docs/phase/phase-18-approval-lifecycle-run-fsm.md",
+            "size": 3057,
+            "sha256": "7a0f4688981a51e31f8c80832f1ffda10823ccf8a495f940c0bf8f4eaab53ac1"
+          },
+          {
+            "path": "docs/phase/phase-19-structured-interview-lineage.md",
+            "size": 2979,
+            "sha256": "f92d57184813538fae61c0c0cae80813406ac5c11953b148d28125e2d4d92f0e"
+          },
+          {
+            "path": "docs/phase/phase-2-completion-gate-required-evidence.md",
+            "size": 3857,
+            "sha256": "07661a9d8f807c32ac32ef6371c70bbf7e8510e57aa60c590a42f23d1f1bc654"
+          },
+          {
+            "path": "docs/phase/phase-2-setup-run-raw-directories.md",
+            "size": 2761,
+            "sha256": "c35f538740c1f10c2b6e4c1dda19a7e4f45d91139d8170b8019bd8df3ab68950"
+          },
+          {
+            "path": "docs/phase/phase-2-verification-command-runner.md",
+            "size": 3272,
+            "sha256": "26c41a0a6ee8e7d55c5f7fd1529cc847c2548c00effdc95aee58d98189f914b7"
+          },
+          {
+            "path": "docs/phase/phase-2-verification-evidence-schema-and-paths.md",
+            "size": 3478,
+            "sha256": "f1b5ed7463c742f56b4ba6f54f400ffca5d8545b2e331ad7ded5a5135c9d46a3"
+          },
+          {
+            "path": "docs/phase/phase-2-verify-cli.md",
+            "size": 3027,
+            "sha256": "768f0db6a481980dd8c5ec870b06bc0c1112990775d11fcd8ea49e8b59d3f467"
+          },
+          {
+            "path": "docs/phase/phase-20-general-command-tracing.md",
+            "size": 2777,
+            "sha256": "76ee1b483303b721cda13ee924fb7fd347f3a4b9a3187df91fbbc5c89adbb2fd"
+          },
+          {
+            "path": "docs/phase/phase-21-structural-semantic-monitor-feedback.md",
+            "size": 3053,
+            "sha256": "eecbea659452904a9a658e4cca2af29f8cc82e57e0a2cab5849320992c4851c1"
+          },
+          {
+            "path": "docs/phase/phase-22-governance-integrity-hardening.md",
+            "size": 2726,
+            "sha256": "ee9bc73c32b46f20398b155f05ddda3faa3d0b01b449a3566297c595a20b79f1"
+          },
+          {
+            "path": "docs/phase/phase-23-execution-precondition.md",
+            "size": 2411,
+            "sha256": "f16a5ffb24ea1495847235c8fc24d9aea374a3278daa5da9a8ab4f0ff5bd7509"
+          },
+          {
+            "path": "docs/phase/phase-24-state-integrity-concurrent-create.md",
+            "size": 2573,
+            "sha256": "3a385807cbb0b6a95a370776c5568bcc530709e382ed03c460855af9aee4816d"
+          },
+          {
+            "path": "docs/phase/phase-25-verification-content-provenance.md",
+            "size": 2591,
+            "sha256": "c61f260ecfdc30eadaf2c28a663ce4a29e8205c446192caacb7f218a86cb4e03"
+          },
+          {
+            "path": "docs/phase/phase-26-lineage-reconciliation.md",
+            "size": 2306,
+            "sha256": "dfc164baeb2bdf46bb3b590f4ea53de237d75809a205c31634563f7d213b6b71"
+          },
+          {
+            "path": "docs/phase/phase-27-semantic-judge-completion-closure.md",
+            "size": 2460,
+            "sha256": "39d5fc360ab3a9fcda2fe8b34ae9da3b5ee29492df1eab1f584b139fd393b7e8"
+          },
+          {
+            "path": "docs/phase/phase-28-artifact-lifecycle-final-audit.md",
+            "size": 2656,
+            "sha256": "eb9444941128c0f67f071f715c089fda1fc29b1071718d6dbab6373d27914a44"
+          },
+          {
+            "path": "docs/phase/phase-29-governance-operational-hardening.md",
+            "size": 3577,
+            "sha256": "bb4be982178bd184c22d7664089fcd46ac1142d7edb034989c3faef4ae5983c5"
+          },
+          {
+            "path": "docs/phase/phase-3-contract-cli.md",
+            "size": 2714,
+            "sha256": "f90ddf9290a1886fbe4efd153f19c7374f2fbcd4a520c388da984da6fd3b1609"
+          },
+          {
+            "path": "docs/phase/phase-3-forbidden-scope-gate.md",
+            "size": 3398,
+            "sha256": "ab7423180e38630aa24a17a5d349195128d14e0d3cb53dd09d2411c242bf3999"
+          },
+          {
+            "path": "docs/phase/phase-3-sprint-contract-schema-runtime.md",
+            "size": 3115,
+            "sha256": "dc4b3ab76ab6290c8676146421f3aee64de2858a151608f59d92bb45b2580f81"
+          },
+          {
+            "path": "docs/phase/phase-3-test-matrix-schema.md",
+            "size": 2913,
+            "sha256": "31100b10347ec9883947be0bf32617bdd86dbdd99fab9a8316a5a9ae60331189"
+          },
+          {
+            "path": "docs/phase/phase-30-autonomous-approval-policy.md",
+            "size": 4283,
+            "sha256": "e30423ad955fbfdc6bfb108d795b0be4c28c945cdad9f881a4d454a22f9a2d26"
+          },
+          {
+            "path": "docs/phase/phase-4-error-signature-extraction.md",
+            "size": 2786,
+            "sha256": "d0b4eeba8637370784f26876d54968d374cefa54e1b4f7107e58df3064e70c86"
+          },
+          {
+            "path": "docs/phase/phase-4-pre-write-hook-edit-spans.md",
+            "size": 2938,
+            "sha256": "f66bf9a58b331cc0004576bf8bf1972323cc21dc44b4320b278b5487a2a907b9"
+          },
+          {
+            "path": "docs/phase/phase-4-span-writer-runtime.md",
+            "size": 2805,
+            "sha256": "fc9cf3c682a0e2dc96e67bc7cd432f6bf4ca5caf7bd5f631e9cea7b48568968d"
+          },
+          {
+            "path": "docs/phase/phase-4-trace-span-schema.md",
+            "size": 2942,
+            "sha256": "1c53a1891e0d1f44304ecb4f2e9107d62ae6dec25c5871801fdbf1cc6c5cd2be"
+          },
+          {
+            "path": "docs/phase/phase-4-verify-command-spans.md",
+            "size": 2995,
+            "sha256": "51dfdf1b66e8246ea6a717ff18d2d3d937c1f13323d196082d0fb85cf33c2d8f"
+          },
+          {
+            "path": "docs/phase/phase-5-detection-cli-list-show-resolve.md",
+            "size": 2658,
+            "sha256": "ff3e51ac986f7126f1cdb579dce2a310b93343805fb63a876bc9f91055784891"
+          },
+          {
+            "path": "docs/phase/phase-5-detection-record-schema-paths.md",
+            "size": 2926,
+            "sha256": "9ad00efc5b64f6115a11dd3c16124a9d9ac597e3fb1e60e018240cfc5a5feaef"
+          },
+          {
+            "path": "docs/phase/phase-5-false-success-structural-monitor.md",
+            "size": 2966,
+            "sha256": "13d91dd2b0d430985bdd0ecdf7d03c6972740285b42a2ba62039caf731a62237"
+          },
+          {
+            "path": "docs/phase/phase-5-repeated-command-failure-monitor.md",
+            "size": 2605,
+            "sha256": "4e13a8e05ce34594c3f918c86dc4ea97d51b711e2beb43dddd67d7867097827c"
+          },
+          {
+            "path": "docs/phase/phase-5-repeated-error-signature-monitor.md",
+            "size": 2564,
+            "sha256": "297a55bdbefd43a60e94bc41b7a7ad5747457c052950c53defe5c2684147d1cd"
+          },
+          {
+            "path": "docs/phase/phase-6-detection-to-failure-wiki-page.md",
+            "size": 2793,
+            "sha256": "470e77a562682febc7b298d7aa6145a3323a40b7184c8e62d7cf929dd9f19dda"
+          },
+          {
+            "path": "docs/phase/phase-6-rule-candidate-links-to-detection.md",
+            "size": 2489,
+            "sha256": "e36939d916eedc5ac8685f824daf244b9206b399f5f3f412194db5583a5c73a8"
+          },
+          {
+            "path": "docs/phase/phase-6-wiki-lint-un-ingested-detections.md",
+            "size": 2532,
+            "sha256": "f95c5349c684a0f1c326ff289b47a43136eda9285eafa80d499b2e3c0f2b56d8"
+          },
+          {
+            "path": "docs/phase/phase-7-detection-to-eval-case.md",
+            "size": 2464,
+            "sha256": "d6cb4f1b2abcf78292e81bf5307214f97c10f160b88a5e99e126ff9e74f16e88"
+          },
+          {
+            "path": "docs/phase/phase-7-eval-case-schema.md",
+            "size": 2380,
+            "sha256": "2c21d831df4f2f48886c7d93cd02473234ab860d822246666a35b2cd3624c789"
+          },
+          {
+            "path": "docs/phase/phase-7-judge-input-bundle-builder.md",
+            "size": 2617,
+            "sha256": "d2383e21129015fa92e1582a48f07e8869c6ac937783f28374dbfa69ac6a10f3"
+          },
+          {
+            "path": "docs/phase/phase-7-reviewer-checklist-generator.md",
+            "size": 2611,
+            "sha256": "c5fbb6e4a3dd5b008f046971b5a52ee5a9165016873ecb5fe8c5d216247eb9c2"
+          },
+          {
+            "path": "docs/phase/phase-8-plan-artifact-and-cli.md",
+            "size": 1006,
+            "sha256": "2bf1f373e5fb110ad3ff3ffff38d55b5bb237ba52478e018afca9c1de3485dbe"
+          },
+          {
+            "path": "docs/phase/phase-9-run-transition-and-monitor-cli.md",
+            "size": 1013,
+            "sha256": "118816e272ad16707e88bb21d0e484667d7f52104bebee57e33feb7e4e5c7793"
+          },
+          {
+            "path": "docs/phase/phase-hardening-immutable-scratch-update-cleanup.md",
+            "size": 2098,
+            "sha256": "0100422a713a1e35e20348bcd8ce513ec1a6d787754b9f835acba2f5b825582f"
+          },
+          {
+            "path": "docs/phase/phase-hardening-windows-command-guidance.md",
+            "size": 1918,
+            "sha256": "99797c9a33a6f50720f33656e90f83bd9bc3a11f7245a506274942c5ce7b0d0d"
+          },
+          {
+            "path": "docs/phase/README.md",
+            "size": 2370,
+            "sha256": "3f0fd41cd5490f120452efb744bbc96151427f85bf5fd74bcb239f7a378bbe00"
+          },
+          {
+            "path": "hooks/_env.ts",
+            "size": 615,
+            "sha256": "e8bfe0ef6e98a9f7b81303d319d572dc3b43ea49fe03995ccaaec26439aaadac"
+          },
+          {
+            "path": "hooks/_stdin.ts",
+            "size": 386,
+            "sha256": "42b48d750586a917505567f64c5498770cffcffccbd7bf2d48f9d2568807e1a5"
+          },
+          {
+            "path": "hooks/post-command.ts",
+            "size": 2228,
+            "sha256": "3f97e74df0d2a92bc4adc68f85f347050809e60f2459757141342cb43effeab3"
+          },
+          {
+            "path": "hooks/pre-command-guard.ts",
+            "size": 1307,
+            "sha256": "429c7a02339d8f12aad35ab19cd745d85b9e9905f138c46ad3d311524d934fc6"
+          },
+          {
+            "path": "hooks/pre-compact.ts",
+            "size": 1106,
+            "sha256": "919b1e4347547ce5891bdf2095969c71ce250427ce73feca372d2f517e9a6591"
+          },
+          {
+            "path": "hooks/pre-write-guard.ts",
+            "size": 7926,
+            "sha256": "6364ddb7932272e136622a6c43a6db36124ebef96d56288e1783f387b256413d"
+          },
+          {
+            "path": "hooks/session-start.ts",
+            "size": 857,
+            "sha256": "0276cdffc57003f6ba0046033af5de0aa1168f8adebc9851f7b0e3b6bb176a5b"
+          },
+          {
+            "path": "hooks/stop-continue.ts",
+            "size": 2184,
+            "sha256": "abd133d2c4831c224dbebc81a14e73d6ed1c8d32b11fe8539965c7b4aa8a4298"
+          },
+          {
+            "path": "hyohyeon-harness-최종목표.md",
+            "size": 42320,
+            "sha256": "351b52d0fe5e22fed407d70c41b047de166f80b2fddbdd1aa972183bf31e6985"
+          },
+          {
+            "path": "README.md",
+            "size": 10178,
+            "sha256": "fa0ea903b130ea001e20e94edbfeb43a7c8ec1945f1bcf45648d8933b0648cf7"
+          },
+          {
+            "path": "skills/intent/SKILL.md",
+            "size": 4115,
+            "sha256": "3a66acf608c881c604e408d3d926198abf751940ce079d7a65cb2550617a7953"
+          },
+          {
+            "path": "skills/interview/SKILL.md",
+            "size": 3984,
+            "sha256": "4ed575912f00ab7b6857501aea0a5c50a9330fd4e2ff1a48c19fcb2c7b1f35ec"
+          },
+          {
+            "path": "skills/postmortem/SKILL.md",
+            "size": 2820,
+            "sha256": "0d26b237699f0b566212b8e3bf547e6adc9ec3ea72a507cedc9ac917b0eeb282"
+          },
+          {
+            "path": "skills/wiki/SKILL.md",
+            "size": 5643,
+            "sha256": "5ae7e36c121bc5d1e402e6ecb72c6c74bd0b1addb80e7f5926fba164e9e636b2"
+          },
+          {
+            "path": "src/cli/commands/core.ts",
+            "size": 7328,
+            "sha256": "d9cb4dba336fb983b4228a63f2d41782670b3a813b5b6e2884fc82a365751ffd"
+          },
+          {
+            "path": "src/cli/commands/feedback.ts",
+            "size": 14496,
+            "sha256": "27dc8905b6b176ad08f3e64cc2804ed0efdb9b3bf405ca413f2230ff939ff2e9"
+          },
+          {
+            "path": "src/cli/commands/knowledge.ts",
+            "size": 5062,
+            "sha256": "0a11fafc79dbab88b031fed60f5685339f2fe0cdc6514f261a3721ad50a55474"
+          },
+          {
+            "path": "src/cli/index.ts",
+            "size": 34940,
+            "sha256": "61273ec784eb3b2b842cc937dd904c28a43613b3d6a6bb93004cc2c0da154b21"
+          },
+          {
+            "path": "src/cli/shared.ts",
+            "size": 727,
+            "sha256": "e3478b8622e1685bdcd2448bfad22f2fbf4abe8db42dbed21b4aa49ae996afff"
+          },
+          {
+            "path": "src/runtime/apply-patch.ts",
+            "size": 2941,
+            "sha256": "bb3d84a2008beaadb2dbe278d69eb64bdc33dbb7ef54dee04de47b6849855a6f"
+          },
+          {
+            "path": "src/runtime/change-extract.ts",
+            "size": 1680,
+            "sha256": "7efa390b3a9706c6e8d819d0bc4f15d07fd0d3dcfcbd16497cf5937453becc54"
+          },
+          {
+            "path": "src/runtime/command-guard.ts",
+            "size": 2326,
+            "sha256": "5036df5307d06d2df75f46185ea387d133282a1c69ebb878531f5a5b3dd8d984"
+          },
+          {
+            "path": "src/runtime/commands.ts",
+            "size": 3866,
+            "sha256": "dada1e1397e17cfbaa686bbdc4ec4060616715c583e690fdaa2bf0f7ff148636"
+          },
+          {
+            "path": "src/runtime/completion-transaction.ts",
+            "size": 7815,
+            "sha256": "15d0351d03436d11b36f7de4f9c277d88c6bf96b1930cc753eadf4d79af7d5af"
+          },
+          {
+            "path": "src/runtime/completion.ts",
+            "size": 4910,
+            "sha256": "57db32e2a24fe9ba9ccbc0c4e017b193d5650ac72a427eb4ff2e63f0d4a9a293"
+          },
+          {
+            "path": "src/runtime/contracts.ts",
+            "size": 10726,
+            "sha256": "b6fd62d0058354dbfe8fe8c6d6e56ce03454ed8f855c664e94949a09cb9c03c5"
+          },
+          {
+            "path": "src/runtime/detections.ts",
+            "size": 6777,
+            "sha256": "e5f3781623968d026cff4b800a510f5ba421692c0260e107f04d76db094d6e8f"
+          },
+          {
+            "path": "src/runtime/draft-args.ts",
+            "size": 1467,
+            "sha256": "6e7eb943cfe9408b267803335e784fc2a97117396a6b30710b819c59d5dbaa18"
+          },
+          {
+            "path": "src/runtime/edit-region.ts",
+            "size": 1108,
+            "sha256": "7595e5789ff1529af5b7ebbd676acaac25c0b522e7a767776d37694d91033fa1"
+          },
+          {
+            "path": "src/runtime/env.ts",
+            "size": 737,
+            "sha256": "3d44bfe4d6b6ae40b0f541be0b23588e5dbdd86b486b2670f87459f4648b8360"
+          },
+          {
+            "path": "src/runtime/evals.ts",
+            "size": 12304,
+            "sha256": "220121bd57cba969e739a0276fbe9b57a6d03d9ebe792297192b3051bcfda254"
+          },
+          {
+            "path": "src/runtime/execution-governance.ts",
+            "size": 2746,
+            "sha256": "9ef58af877c73a757266ff38509d6bfc6c746aaddc11c5e495ce367f24803734"
+          },
+          {
+            "path": "src/runtime/guard.ts",
+            "size": 707,
+            "sha256": "a7357122dbb4d3c168918b81230c188cacb657c457f01f7a3987f2e0db4d6e7a"
+          },
+          {
+            "path": "src/runtime/handoff.ts",
+            "size": 4418,
+            "sha256": "a71c5cc618374f2f0b3144fe4c198efef62db33d51ed2a491415861d05451e9d"
+          },
+          {
+            "path": "src/runtime/install.ts",
+            "size": 3890,
+            "sha256": "3ecc5a4ab5837b19917596ec55ee80c140509c64cdb882016ece1e52b41a6ea0"
+          },
+          {
+            "path": "src/runtime/intent-gate.ts",
+            "size": 1988,
+            "sha256": "18e0ab9624b3ba18255a5381f467659249ce311f0c299b961d9d0800796156e9"
+          },
+          {
+            "path": "src/runtime/intents.ts",
+            "size": 4032,
+            "sha256": "aed3b8c5c3baddd936ef4da32eddfa9f5033615afbbf8b2c4b9dacdf977b9603"
+          },
+          {
+            "path": "src/runtime/interviews.ts",
+            "size": 8983,
+            "sha256": "91d31198ea7eda4f08bf16a658be50366d77d225411cd25394551c396fdf6e13"
+          },
+          {
+            "path": "src/runtime/judge-adapter.ts",
+            "size": 3833,
+            "sha256": "7c10e8a0aaaed82deb52b045550b373a8ec58b14459127e99c38d32d3e07475a"
+          },
+          {
+            "path": "src/runtime/judge-policy.ts",
+            "size": 8111,
+            "sha256": "a64a61e684c22981ab76350840542252b7b864ea75550bd986b014af2921938d"
+          },
+          {
+            "path": "src/runtime/judge.ts",
+            "size": 6474,
+            "sha256": "9738f11e0c25158474d7f9d3940089daa49ef091985c002372bd221c52ec2faa"
+          },
+          {
+            "path": "src/runtime/memory.ts",
+            "size": 3534,
+            "sha256": "3604de0f0ffb19ee200455b0208195782717ab4b25629a6ee0a7d43d247bc647"
+          },
+          {
+            "path": "src/runtime/monitor.ts",
+            "size": 10860,
+            "sha256": "283c35e31bae2f7f9c124ab93cd5c1b737beb90a46ce6a66667e387647408aeb"
+          },
+          {
+            "path": "src/runtime/observability.ts",
+            "size": 3475,
+            "sha256": "35d5914a7abf44b47333e647ec956cc00657e61ca530ae28a21504a281981d13"
+          },
+          {
+            "path": "src/runtime/plans.ts",
+            "size": 7924,
+            "sha256": "aec488f817095e150db4507f2739ba41b3fdc13ec91258c9885417b324a9d841"
+          },
+          {
+            "path": "src/runtime/postmortem.ts",
+            "size": 3137,
+            "sha256": "7a3ca0b8241231ecae0ca83abd1340fb5655563c487f42a6fddebad89f87f5cb"
+          },
+          {
+            "path": "src/runtime/provenance.ts",
+            "size": 3205,
+            "sha256": "81baf37b8f8407bd4958c7fd57c2eff70995ad46148a9074b7bde1d1f20d6d23"
+          },
+          {
+            "path": "src/runtime/reconcile.ts",
+            "size": 10168,
+            "sha256": "beca03c9bec27baa447dbc488eca2394f6c57de93650accfe48b1df82eee23f8"
+          },
+          {
+            "path": "src/runtime/reviewer.ts",
+            "size": 4020,
+            "sha256": "1e1dae197234c6194214b08a05ef8aec8eadefa7465385cf3a5e556fa3bbf1f2"
+          },
+          {
+            "path": "src/runtime/rules.ts",
+            "size": 7478,
+            "sha256": "b80af9138b0492f291b98209b3743589873b6fb5bcd0df4b0c0a5c7e4954165a"
+          },
+          {
+            "path": "src/runtime/runs.ts",
+            "size": 9813,
+            "sha256": "c8f1c8aab9c5780d1555cf9a678fed1c9bdc6fae6138e1f4127c73e468e719c2"
+          },
+          {
+            "path": "src/runtime/schemas.ts",
+            "size": 17792,
+            "sha256": "50bbd7f94da055961ab9ad7413d1cabbf6043a68b4b737eb95ee7753c79fef2d"
+          },
+          {
+            "path": "src/runtime/scope.ts",
+            "size": 1203,
+            "sha256": "5e86ac0beee6bb047bbdd326581c7e81ec915772d6cff3646e11c37047483f45"
+          },
+          {
+            "path": "src/runtime/similarity.ts",
+            "size": 490,
+            "sha256": "84e35f53d1dfa78d546e5ec1906a705449f326ce9fa39671b8c58e34fda01434"
+          },
+          {
+            "path": "src/runtime/spec.ts",
+            "size": 1609,
+            "sha256": "4261a72cdf68fb26558367dcec9185fbcac36e985f1d6f6f13ff969abb62f87f"
+          },
+          {
+            "path": "src/runtime/stop-gate.ts",
+            "size": 5810,
+            "sha256": "8a813db99f1aa9497e613327bb40669b6bebd7707d1cca1bea18f93fd1328285"
+          },
+          {
+            "path": "src/runtime/triviality.ts",
+            "size": 1837,
+            "sha256": "f8ddd20c1f9f73baab814ac3f551c273c7398abb431494f40ea50ea8ddf00c8c"
+          },
+          {
+            "path": "src/runtime/verification.ts",
+            "size": 4879,
+            "sha256": "de53054d170cb4cb0fe00222d12250ee608bb78191be26399d94ce69d3c61397"
+          },
+          {
+            "path": "src/runtime/wiki.ts",
+            "size": 12871,
+            "sha256": "87c1ba745be8da1fbd9101a8c02c0bfb66e3b5ab9ec4ef0ef6c1208ec87cdb82"
+          },
+          {
+            "path": "src/state/paths.ts",
+            "size": 1995,
+            "sha256": "4eb9e64d11815b86e3f6b1495e603cc2707b7334829c21128c4008d84d58e0db"
+          },
+          {
+            "path": "src/utils/id.ts",
+            "size": 946,
+            "sha256": "2fcd5d42cb1ab12f49cfba2b361a31eda345a4b2131a4af65f4c7780796eeacf"
+          },
+          {
+            "path": "src/utils/json.ts",
+            "size": 1506,
+            "sha256": "03fbb668c96aca3a42f1e5b4200fb032b0b6a81875cda1cc736e7a2f4bb6df32"
+          },
+          {
+            "path": "tests/apply-patch.test.mjs",
+            "size": 2076,
+            "sha256": "fa5f465fb07218fad25f43fd9f9db7558913221581952c835489bf79099313c5"
+          },
+          {
+            "path": "tests/autonomy-cli.test.mjs",
+            "size": 2650,
+            "sha256": "6f672e1c0a323188a1a1f5e4e3e5eeea2cdda3dfaffba0d33e402369fc865ac4"
+          },
+          {
+            "path": "tests/change-extract.test.mjs",
+            "size": 1500,
+            "sha256": "71e132633fc6d574c107f445b83dea8b4bf28d4a3933bc83c9266001558bfd24"
+          },
+          {
+            "path": "tests/codex-hooks.test.mjs",
+            "size": 16430,
+            "sha256": "10490e931789272591477650ed4311cb75ef5ad600b246549d9b62d3ebe7bd38"
+          },
+          {
+            "path": "tests/command-cli.test.mjs",
+            "size": 1829,
+            "sha256": "7e4438d0203dc57182776a9be822c7dbf1ce606d7bd5dac4e0cd2bf3ce1153be"
+          },
+          {
+            "path": "tests/command-guard.test.mjs",
+            "size": 1485,
+            "sha256": "b5ac85a45afd11a1078cb73489814c9441edca048a39141fe2e8c7e5c43f609f"
+          },
+          {
+            "path": "tests/commands.test.mjs",
+            "size": 2387,
+            "sha256": "55af3acd93f98df5b9c1ba7e1c71b081302b05b6ecadceeb411965b37d3b0e06"
+          },
+          {
+            "path": "tests/completion-transaction.test.mjs",
+            "size": 2610,
+            "sha256": "5b7ccd31837dd727c89b71f4319b7226c40019e4fd5dcc20c57f4c982bef2cd4"
+          },
+          {
+            "path": "tests/completion.test.mjs",
+            "size": 2291,
+            "sha256": "845f85804cc9568b5c71eab79b52212288c3a079693d65f6f717f8490137549e"
+          },
+          {
+            "path": "tests/contract-cli.test.mjs",
+            "size": 8359,
+            "sha256": "b7394fad2a6859f74527e808c43c3d12595015669f22a461627a241c36191808"
+          },
+          {
+            "path": "tests/contracts.test.mjs",
+            "size": 8707,
+            "sha256": "d7b96fc17e38ea10674667bf19c4b7ea86f8b74d5ce520fd2205b9a2d9b1a0ce"
+          },
+          {
+            "path": "tests/detection-cli.test.mjs",
+            "size": 4049,
+            "sha256": "9e5bbd58e4df1c1a3f7df5024e532ef9354bc07bc4461d890f842a9df07b86b3"
+          },
+          {
+            "path": "tests/detection.test.mjs",
+            "size": 2283,
+            "sha256": "4b986d3bec7b782226611c9112f1b9fad2cd0dc193ffd9cdee1a2a62ee03c2e7"
+          },
+          {
+            "path": "tests/draft-args.test.mjs",
+            "size": 1273,
+            "sha256": "8acf97682c15a29bc21b6db6eb5763a653a5b9c2157877352cf966675e72eaec"
+          },
+          {
+            "path": "tests/edit-region.test.mjs",
+            "size": 901,
+            "sha256": "af88eecc29355daf7bf2f207cf816d642126b0eef3a9ada0d2974a3a2d71f291"
+          },
+          {
+            "path": "tests/env.test.mjs",
+            "size": 688,
+            "sha256": "7861dbc3933456427ea63fcde43c034be57c75aa35c8c3a38503867b6ac92885"
+          },
+          {
+            "path": "tests/eval-cli.test.mjs",
+            "size": 2530,
+            "sha256": "0ebfb0a613282e03e1bae2e3d60fb946e472fd9e20fa8f1b26bd55fa0bac83d6"
+          },
+          {
+            "path": "tests/evals.test.mjs",
+            "size": 5935,
+            "sha256": "80b20567b862a66fd93cceef97f2dc1bd302229d8f95cdb910405e0a1e4830c9"
+          },
+          {
+            "path": "tests/execution-governance.test.mjs",
+            "size": 1184,
+            "sha256": "cb1b7e35b411fd2b3ca5b5dbfb5ce2aa2c04e24dfdf450ec92c4a32d392bf1f0"
+          },
+          {
+            "path": "tests/feedback-cli.test.mjs",
+            "size": 4826,
+            "sha256": "ae7cdf2daf02b8b31783e65f61f4bd6d2eacd1e19a8ffa312cc1c5347920ce12"
+          },
+          {
+            "path": "tests/guard.test.mjs",
+            "size": 1074,
+            "sha256": "5151dc2804e682a9dfa5ffe3294898ac0f2c5afb05ee9068df750b6646634e34"
+          },
+          {
+            "path": "tests/handoff.test.mjs",
+            "size": 3292,
+            "sha256": "d2a7c6e3e60e1c17ac9fd0a15cf23e852130cd8d95a699708e58d7fe2c1503fc"
+          },
+          {
+            "path": "tests/id.test.mjs",
+            "size": 2536,
+            "sha256": "67add6e87e39fa4469e1088fdd2d2b357840bb706bdd6b9c8b99472316be350f"
+          },
+          {
+            "path": "tests/install.test.mjs",
+            "size": 4812,
+            "sha256": "5f9f6b828d8a9714821ecdb5bd1114fb6665cf528e3c93f1b398c90e13f806da"
+          },
+          {
+            "path": "tests/intent-gate.test.mjs",
+            "size": 1981,
+            "sha256": "ee3b417cda07b547ede29bff06172b32fed43bfa3532187050f8090e1ec1b1da"
+          },
+          {
+            "path": "tests/interview-cli.test.mjs",
+            "size": 6946,
+            "sha256": "07db7d6e7fd8d3c91f976b4bde1031453abca856603112303812d28702b47114"
+          },
+          {
+            "path": "tests/interviews.test.mjs",
+            "size": 5093,
+            "sha256": "2c0f9c60eee25f2758e37c53bb6d2bd78cbb97df7940f2ce61f201f76c0886f7"
+          },
+          {
+            "path": "tests/judge-cli.test.mjs",
+            "size": 4993,
+            "sha256": "f1225dcd3aff672d355dcff1682e3bbfe4b79324b15031951c442836790bbefd"
+          },
+          {
+            "path": "tests/judge-policy.test.mjs",
+            "size": 4187,
+            "sha256": "9c8c08334dbe893e5e268171a4c4406d0465b7b343089f6f4406004ce850e609"
+          },
+          {
+            "path": "tests/judge.test.mjs",
+            "size": 4270,
+            "sha256": "c2c611e09c9193088d98f4dc313b8e395f488c2fb16bbaa041cfeccad02538c1"
+          },
+          {
+            "path": "tests/memory.test.mjs",
+            "size": 2070,
+            "sha256": "d47631d4dfc75a69656d14e481e763f4792db0e613b467c0defbc75871b71f0a"
+          },
+          {
+            "path": "tests/monitor-cli.test.mjs",
+            "size": 3287,
+            "sha256": "ee25aa7fdfdf25af269ff9e30f7a416e5a142fd7acc65c50782cc88ccb15c89e"
+          },
+          {
+            "path": "tests/monitor.test.mjs",
+            "size": 13043,
+            "sha256": "9cc74c381cfdff8c5161195ab03f19909d838176e54ed1b125b7031afa344f61"
+          },
+          {
+            "path": "tests/observability.test.mjs",
+            "size": 5193,
+            "sha256": "74747fbbbda03832de22762ccc5a586558a9683347d18a252ebf331dc328ad12"
+          },
+          {
+            "path": "tests/plan-cli.test.mjs",
+            "size": 6780,
+            "sha256": "219552538f264ff60d7f0d22c2125816026c1994364e2898efc0d41ca35b91d0"
+          },
+          {
+            "path": "tests/plan.test.mjs",
+            "size": 5675,
+            "sha256": "ff54da60883673ca5059c008f884df80ba89d0704ad5ed6b1b772cf6f9b9003a"
+          },
+          {
+            "path": "tests/postmortem.test.mjs",
+            "size": 2193,
+            "sha256": "b82eb7c9e2a087d83952775fce423994e6e8d75b535207c78c864c58933691dd"
+          },
+          {
+            "path": "tests/provenance.test.mjs",
+            "size": 3193,
+            "sha256": "aff6f7dc4ea80b15ca3aa1a8eddf7660dbc5c73c89203c4fb5d4db7758c73746"
+          },
+          {
+            "path": "tests/reconcile-cli.test.mjs",
+            "size": 1340,
+            "sha256": "4c51cb93de38158c86afbd6afa56dd444927c3489f32a248ab66c8cf0df82509"
+          },
+          {
+            "path": "tests/reconcile.test.mjs",
+            "size": 3624,
+            "sha256": "4a986331dd55d5b58d7cafdcd05387204c6bedf5a509b8b93dc46d9b5e6cd042"
+          },
+          {
+            "path": "tests/repository-ops.test.mjs",
+            "size": 2079,
+            "sha256": "1afabdd520a8425836e91ecb61d274b5cc71ccecf1cfad4c1b8606b0815aacc9"
+          },
+          {
+            "path": "tests/reviewer-cli.test.mjs",
+            "size": 1918,
+            "sha256": "87274407cd21803b01e7a2038a23208712a6f40c79087278a7737cf4c559d2ab"
+          },
+          {
+            "path": "tests/reviewer.test.mjs",
+            "size": 4193,
+            "sha256": "6c4d94c2d5c1be0883d560a671b065071f4d42fc963fbcc4279cb09772013467"
+          },
+          {
+            "path": "tests/rules.test.mjs",
+            "size": 5093,
+            "sha256": "154b530f7b5318cfc7890e3e6dfe99182bd5b802274e6d99b8b81b137bfff357"
+          },
+          {
+            "path": "tests/run-cli.test.mjs",
+            "size": 10547,
+            "sha256": "a338483af156186ad29af92e714676cf9e585b79a97490666ded2509576d76f8"
+          },
+          {
+            "path": "tests/run-state.test.mjs",
+            "size": 3472,
+            "sha256": "7f1a9659ab8e51b5ac128783cb8bbcfd6cc342c3df12fad587a02fa7b6dce24e"
+          },
+          {
+            "path": "tests/runs.test.mjs",
+            "size": 4539,
+            "sha256": "a54e33523ed1eb1655e906dc70d6de869f206fdf129e2d13d63dcacb779337aa"
+          },
+          {
+            "path": "tests/scope.test.mjs",
+            "size": 1235,
+            "sha256": "a83896ae755a069c0d38b9b0c97cdc8af5b43815c2d1cd675232af716fc16653"
+          },
+          {
+            "path": "tests/spec-cli.test.mjs",
+            "size": 2001,
+            "sha256": "d7d15cd24bda58118be9f71496f527ea95b510e6684e0e257735b164b6ceb675"
+          },
+          {
+            "path": "tests/spec.test.mjs",
+            "size": 649,
+            "sha256": "08f8ffc1032a3a3bcbb08667540f1dd75aeb2eac752293f7b549a20efef8f0a7"
+          },
+          {
+            "path": "tests/state-integrity.test.mjs",
+            "size": 2888,
+            "sha256": "0f4d0c5983d95781cc641c72d933f152ccec442bddbfb7d02f8331188d045a39"
+          },
+          {
+            "path": "tests/stop-gate.test.mjs",
+            "size": 8748,
+            "sha256": "d3392ea1e9aa7365198443a4764a9fe1eeaa6c6d913c7fa41214adaa3b594f19"
+          },
+          {
+            "path": "tests/test-matrix.test.mjs",
+            "size": 1986,
+            "sha256": "57ceb4f8ad400acf4393cd9350da039296b6a324ff6e876c05ec44b226293ca7"
+          },
+          {
+            "path": "tests/triviality.test.mjs",
+            "size": 1575,
+            "sha256": "a010d0cd55b5cc7ba32359c67d7e47f04d30125493246a4f16ea98891d5db907"
+          },
+          {
+            "path": "tests/verification.test.mjs",
+            "size": 9220,
+            "sha256": "aabcf06f466cf8188d3eea07f1ceb5c88469ec1a54b755ef8e2b7094f22a7c19"
+          },
+          {
+            "path": "tests/verify-cli.test.mjs",
+            "size": 8245,
+            "sha256": "a812f4296fa7dc2db7996a9b21dff5d3c660fb7c552af366771beee0c43286e0"
+          },
+          {
+            "path": "tests/wiki.test.mjs",
+            "size": 5750,
+            "sha256": "339cdb48c847b3a2dbf6d7ec0c21decf6731e85ebac045be37b937b7f33d73ef"
+          }
+        ]
+      },
+      "startedAt": "2026-07-15T06:13:54.205Z",
+      "finishedAt": "2026-07-15T06:13:55.018Z"
+    },
+    {
+      "evidenceId": "VE-002",
+      "type": "unit_test",
+      "status": "passed",
+      "command": "npm",
+      "args": [
+        "test"
+      ],
+      "exitCode": 0,
+      "logPath": ".intent/raw/unit_test-results/RUN-001-2026-07-15T06-14-08-679Z.log",
+      "provenance": {
+        "version": 1,
+        "algorithm": "sha256",
+        "allowedScope": [
+          "src/**",
+          "hooks/**",
+          "tests/**",
+          "skills/**",
+          "README.md",
+          "AGENT.md",
+          "AGENTS.md",
+          "CLAUDE.md",
+          "docs/**",
+          ".claude/**",
+          ".codex/**",
+          "hyohyeon-harness-최종목표.md"
+        ],
+        "forbiddenScope": [],
+        "digest": "56addf2e4a5e3e7598234a0d5f71adfbaf2bc9b3f25b292cbe85a1a4ae4be583",
+        "files": [
+          {
+            "path": ".claude/settings.json",
+            "size": 1011,
+            "sha256": "84c0391a69b539826c0d4b4860750759f468facbfd17b75c55241acae24e2915"
+          },
+          {
+            "path": ".claude/settings.template.json",
+            "size": 1107,
+            "sha256": "dcd9a466cdeeed30aea669a551ed2f1677fb434f4a065715256417168f752a3b"
+          },
+          {
+            "path": ".codex/hooks.json",
+            "size": 1658,
+            "sha256": "ef572ee0a25ba1911913b66f976f933d3b4b50a839d267cee45fb17222243410"
+          },
+          {
+            "path": ".codex/hooks.template.json",
+            "size": 1754,
+            "sha256": "64d84c44706642d01f16ae719c11ae071e5b86cd355b9e9943f13c94b2130abb"
+          },
+          {
+            "path": "AGENT.md",
+            "size": 22110,
+            "sha256": "cd4153d5adb089f6c46726c9bf0e4da92703f76b5c9d48fb4ac5499c792cd0ad"
+          },
+          {
+            "path": "AGENTS.md",
+            "size": 5469,
+            "sha256": "176fe6ca0e67173d2285b80ec2a6609798c7e892eaeda6ec4ba3585c9fc13eb1"
+          },
+          {
+            "path": "CLAUDE.md",
+            "size": 5504,
+            "sha256": "94f5ac3a5b5b470ccc7fe9b771c50b2dc82db925da074c4072c15f3520afbcc1"
+          },
+          {
+            "path": "docs/final-goal-gap-analysis.md",
+            "size": 22385,
+            "sha256": "ca50952f49e1c8c66b48b46feab16761a925a44cf54fc80e3cbc9401fc7d5a57"
+          },
+          {
+            "path": "docs/final-goal-phase-feature-spec.md",
+            "size": 137281,
+            "sha256": "58d0972878844a02a70cd00bd4bfa7742ff83dffb3e8a5716aff6c01cb1aa3a4"
+          },
+          {
+            "path": "docs/phase/_template.md",
+            "size": 1160,
+            "sha256": "fb49e6881384db59c0bd51ba6adcc4fc831000cf09760add51078ce38ff189e3"
+          },
+          {
+            "path": "docs/phase/phase-0-roadmap-and-operating-rules.md",
+            "size": 3060,
+            "sha256": "488c1baeb5a747ba5fc950e2c0943a101e09b3b59979f3a9e0f9d2b6f84103a9"
+          },
+          {
+            "path": "docs/phase/phase-1-handoff-active-run.md",
+            "size": 3231,
+            "sha256": "14cf6c8b1d91bd7f44a28f3d0d85a14f054bc5b7827d399a2b7af5efcfa37089"
+          },
+          {
+            "path": "docs/phase/phase-1-run-cli.md",
+            "size": 3332,
+            "sha256": "81db54e220c1adbed1ff7ef5dd42e596fa27db3a7c22b7ff608b159f1b5f0621"
+          },
+          {
+            "path": "docs/phase/phase-1-runstate-runtime-crud.md",
+            "size": 3499,
+            "sha256": "7e10fe9043012d1a3487fc0db47d27129641a5f7d9212b900d8d76cf9dde4728"
+          },
+          {
+            "path": "docs/phase/phase-1-runstate-schema-and-paths.md",
+            "size": 3159,
+            "sha256": "2a13aa9eef22bba393abfb6d4f1da4a460615a6185b12888038890ee85fe8be0"
+          },
+          {
+            "path": "docs/phase/phase-1-sessionstart-active-run.md",
+            "size": 3226,
+            "sha256": "ad61e1b5941c4c796e60ab9a2436109ba8644f4479b38c4277ff9cd1c5f52ca6"
+          },
+          {
+            "path": "docs/phase/phase-10-contract-required-checks-gate.md",
+            "size": 928,
+            "sha256": "63e62e4ade1cd3532725d0be5a22802b04d725260a2fd7301941da6fe1ee153a"
+          },
+          {
+            "path": "docs/phase/phase-11-judge-reviewer-eval-cli.md",
+            "size": 781,
+            "sha256": "9028f22ad67ad774170d2d0244a93630e42012e57f0db4233c2d0e011ee7a690"
+          },
+          {
+            "path": "docs/phase/phase-12-detection-feedback-cli.md",
+            "size": 769,
+            "sha256": "42665c694e987b334dcc5aa30bcbf1067f2fe32ece479ace3700441890835a85"
+          },
+          {
+            "path": "docs/phase/phase-13-execution-loop-policy.md",
+            "size": 856,
+            "sha256": "835791f406c3c985b45333cd750950cabbf2930bfe1f9c11cb09260cdaa02b12"
+          },
+          {
+            "path": "docs/phase/phase-14-contract-lifecycle-report.md",
+            "size": 886,
+            "sha256": "08a50f90660b549c9d8269b8ffc52dfad412fa7e03f82686699f800c4cbbe12e"
+          },
+          {
+            "path": "docs/phase/phase-15-judge-eval-rule-followups.md",
+            "size": 1034,
+            "sha256": "4f40abdac838a43d6ebaaf986fb6b01d3cf2702aaacc83113404e6efab4fd865"
+          },
+          {
+            "path": "docs/phase/phase-16-automation-loop-closure.md",
+            "size": 3408,
+            "sha256": "2d935778f2f7316fe7f0c68f464c548ad79579362e604f6fdc02d14306541bae"
+          },
+          {
+            "path": "docs/phase/phase-17-governed-completion-integrity.md",
+            "size": 3131,
+            "sha256": "3f08bc0aa07fbab35bbdb074763aee20bc376abf812182fb3423c4ec8911d2f2"
+          },
+          {
+            "path": "docs/phase/phase-18-approval-lifecycle-run-fsm.md",
+            "size": 3057,
+            "sha256": "7a0f4688981a51e31f8c80832f1ffda10823ccf8a495f940c0bf8f4eaab53ac1"
+          },
+          {
+            "path": "docs/phase/phase-19-structured-interview-lineage.md",
+            "size": 2979,
+            "sha256": "f92d57184813538fae61c0c0cae80813406ac5c11953b148d28125e2d4d92f0e"
+          },
+          {
+            "path": "docs/phase/phase-2-completion-gate-required-evidence.md",
+            "size": 3857,
+            "sha256": "07661a9d8f807c32ac32ef6371c70bbf7e8510e57aa60c590a42f23d1f1bc654"
+          },
+          {
+            "path": "docs/phase/phase-2-setup-run-raw-directories.md",
+            "size": 2761,
+            "sha256": "c35f538740c1f10c2b6e4c1dda19a7e4f45d91139d8170b8019bd8df3ab68950"
+          },
+          {
+            "path": "docs/phase/phase-2-verification-command-runner.md",
+            "size": 3272,
+            "sha256": "26c41a0a6ee8e7d55c5f7fd1529cc847c2548c00effdc95aee58d98189f914b7"
+          },
+          {
+            "path": "docs/phase/phase-2-verification-evidence-schema-and-paths.md",
+            "size": 3478,
+            "sha256": "f1b5ed7463c742f56b4ba6f54f400ffca5d8545b2e331ad7ded5a5135c9d46a3"
+          },
+          {
+            "path": "docs/phase/phase-2-verify-cli.md",
+            "size": 3027,
+            "sha256": "768f0db6a481980dd8c5ec870b06bc0c1112990775d11fcd8ea49e8b59d3f467"
+          },
+          {
+            "path": "docs/phase/phase-20-general-command-tracing.md",
+            "size": 2777,
+            "sha256": "76ee1b483303b721cda13ee924fb7fd347f3a4b9a3187df91fbbc5c89adbb2fd"
+          },
+          {
+            "path": "docs/phase/phase-21-structural-semantic-monitor-feedback.md",
+            "size": 3053,
+            "sha256": "eecbea659452904a9a658e4cca2af29f8cc82e57e0a2cab5849320992c4851c1"
+          },
+          {
+            "path": "docs/phase/phase-22-governance-integrity-hardening.md",
+            "size": 2726,
+            "sha256": "ee9bc73c32b46f20398b155f05ddda3faa3d0b01b449a3566297c595a20b79f1"
+          },
+          {
+            "path": "docs/phase/phase-23-execution-precondition.md",
+            "size": 2411,
+            "sha256": "f16a5ffb24ea1495847235c8fc24d9aea374a3278daa5da9a8ab4f0ff5bd7509"
+          },
+          {
+            "path": "docs/phase/phase-24-state-integrity-concurrent-create.md",
+            "size": 2573,
+            "sha256": "3a385807cbb0b6a95a370776c5568bcc530709e382ed03c460855af9aee4816d"
+          },
+          {
+            "path": "docs/phase/phase-25-verification-content-provenance.md",
+            "size": 2591,
+            "sha256": "c61f260ecfdc30eadaf2c28a663ce4a29e8205c446192caacb7f218a86cb4e03"
+          },
+          {
+            "path": "docs/phase/phase-26-lineage-reconciliation.md",
+            "size": 2306,
+            "sha256": "dfc164baeb2bdf46bb3b590f4ea53de237d75809a205c31634563f7d213b6b71"
+          },
+          {
+            "path": "docs/phase/phase-27-semantic-judge-completion-closure.md",
+            "size": 2460,
+            "sha256": "39d5fc360ab3a9fcda2fe8b34ae9da3b5ee29492df1eab1f584b139fd393b7e8"
+          },
+          {
+            "path": "docs/phase/phase-28-artifact-lifecycle-final-audit.md",
+            "size": 2656,
+            "sha256": "eb9444941128c0f67f071f715c089fda1fc29b1071718d6dbab6373d27914a44"
+          },
+          {
+            "path": "docs/phase/phase-29-governance-operational-hardening.md",
+            "size": 3577,
+            "sha256": "bb4be982178bd184c22d7664089fcd46ac1142d7edb034989c3faef4ae5983c5"
+          },
+          {
+            "path": "docs/phase/phase-3-contract-cli.md",
+            "size": 2714,
+            "sha256": "f90ddf9290a1886fbe4efd153f19c7374f2fbcd4a520c388da984da6fd3b1609"
+          },
+          {
+            "path": "docs/phase/phase-3-forbidden-scope-gate.md",
+            "size": 3398,
+            "sha256": "ab7423180e38630aa24a17a5d349195128d14e0d3cb53dd09d2411c242bf3999"
+          },
+          {
+            "path": "docs/phase/phase-3-sprint-contract-schema-runtime.md",
+            "size": 3115,
+            "sha256": "dc4b3ab76ab6290c8676146421f3aee64de2858a151608f59d92bb45b2580f81"
+          },
+          {
+            "path": "docs/phase/phase-3-test-matrix-schema.md",
+            "size": 2913,
+            "sha256": "31100b10347ec9883947be0bf32617bdd86dbdd99fab9a8316a5a9ae60331189"
+          },
+          {
+            "path": "docs/phase/phase-30-autonomous-approval-policy.md",
+            "size": 4283,
+            "sha256": "e30423ad955fbfdc6bfb108d795b0be4c28c945cdad9f881a4d454a22f9a2d26"
+          },
+          {
+            "path": "docs/phase/phase-4-error-signature-extraction.md",
+            "size": 2786,
+            "sha256": "d0b4eeba8637370784f26876d54968d374cefa54e1b4f7107e58df3064e70c86"
+          },
+          {
+            "path": "docs/phase/phase-4-pre-write-hook-edit-spans.md",
+            "size": 2938,
+            "sha256": "f66bf9a58b331cc0004576bf8bf1972323cc21dc44b4320b278b5487a2a907b9"
+          },
+          {
+            "path": "docs/phase/phase-4-span-writer-runtime.md",
+            "size": 2805,
+            "sha256": "fc9cf3c682a0e2dc96e67bc7cd432f6bf4ca5caf7bd5f631e9cea7b48568968d"
+          },
+          {
+            "path": "docs/phase/phase-4-trace-span-schema.md",
+            "size": 2942,
+            "sha256": "1c53a1891e0d1f44304ecb4f2e9107d62ae6dec25c5871801fdbf1cc6c5cd2be"
+          },
+          {
+            "path": "docs/phase/phase-4-verify-command-spans.md",
+            "size": 2995,
+            "sha256": "51dfdf1b66e8246ea6a717ff18d2d3d937c1f13323d196082d0fb85cf33c2d8f"
+          },
+          {
+            "path": "docs/phase/phase-5-detection-cli-list-show-resolve.md",
+            "size": 2658,
+            "sha256": "ff3e51ac986f7126f1cdb579dce2a310b93343805fb63a876bc9f91055784891"
+          },
+          {
+            "path": "docs/phase/phase-5-detection-record-schema-paths.md",
+            "size": 2926,
+            "sha256": "9ad00efc5b64f6115a11dd3c16124a9d9ac597e3fb1e60e018240cfc5a5feaef"
+          },
+          {
+            "path": "docs/phase/phase-5-false-success-structural-monitor.md",
+            "size": 2966,
+            "sha256": "13d91dd2b0d430985bdd0ecdf7d03c6972740285b42a2ba62039caf731a62237"
+          },
+          {
+            "path": "docs/phase/phase-5-repeated-command-failure-monitor.md",
+            "size": 2605,
+            "sha256": "4e13a8e05ce34594c3f918c86dc4ea97d51b711e2beb43dddd67d7867097827c"
+          },
+          {
+            "path": "docs/phase/phase-5-repeated-error-signature-monitor.md",
+            "size": 2564,
+            "sha256": "297a55bdbefd43a60e94bc41b7a7ad5747457c052950c53defe5c2684147d1cd"
+          },
+          {
+            "path": "docs/phase/phase-6-detection-to-failure-wiki-page.md",
+            "size": 2793,
+            "sha256": "470e77a562682febc7b298d7aa6145a3323a40b7184c8e62d7cf929dd9f19dda"
+          },
+          {
+            "path": "docs/phase/phase-6-rule-candidate-links-to-detection.md",
+            "size": 2489,
+            "sha256": "e36939d916eedc5ac8685f824daf244b9206b399f5f3f412194db5583a5c73a8"
+          },
+          {
+            "path": "docs/phase/phase-6-wiki-lint-un-ingested-detections.md",
+            "size": 2532,
+            "sha256": "f95c5349c684a0f1c326ff289b47a43136eda9285eafa80d499b2e3c0f2b56d8"
+          },
+          {
+            "path": "docs/phase/phase-7-detection-to-eval-case.md",
+            "size": 2464,
+            "sha256": "d6cb4f1b2abcf78292e81bf5307214f97c10f160b88a5e99e126ff9e74f16e88"
+          },
+          {
+            "path": "docs/phase/phase-7-eval-case-schema.md",
+            "size": 2380,
+            "sha256": "2c21d831df4f2f48886c7d93cd02473234ab860d822246666a35b2cd3624c789"
+          },
+          {
+            "path": "docs/phase/phase-7-judge-input-bundle-builder.md",
+            "size": 2617,
+            "sha256": "d2383e21129015fa92e1582a48f07e8869c6ac937783f28374dbfa69ac6a10f3"
+          },
+          {
+            "path": "docs/phase/phase-7-reviewer-checklist-generator.md",
+            "size": 2611,
+            "sha256": "c5fbb6e4a3dd5b008f046971b5a52ee5a9165016873ecb5fe8c5d216247eb9c2"
+          },
+          {
+            "path": "docs/phase/phase-8-plan-artifact-and-cli.md",
+            "size": 1006,
+            "sha256": "2bf1f373e5fb110ad3ff3ffff38d55b5bb237ba52478e018afca9c1de3485dbe"
+          },
+          {
+            "path": "docs/phase/phase-9-run-transition-and-monitor-cli.md",
+            "size": 1013,
+            "sha256": "118816e272ad16707e88bb21d0e484667d7f52104bebee57e33feb7e4e5c7793"
+          },
+          {
+            "path": "docs/phase/phase-hardening-immutable-scratch-update-cleanup.md",
+            "size": 2098,
+            "sha256": "0100422a713a1e35e20348bcd8ce513ec1a6d787754b9f835acba2f5b825582f"
+          },
+          {
+            "path": "docs/phase/phase-hardening-windows-command-guidance.md",
+            "size": 1918,
+            "sha256": "99797c9a33a6f50720f33656e90f83bd9bc3a11f7245a506274942c5ce7b0d0d"
+          },
+          {
+            "path": "docs/phase/README.md",
+            "size": 2370,
+            "sha256": "3f0fd41cd5490f120452efb744bbc96151427f85bf5fd74bcb239f7a378bbe00"
+          },
+          {
+            "path": "hooks/_env.ts",
+            "size": 615,
+            "sha256": "e8bfe0ef6e98a9f7b81303d319d572dc3b43ea49fe03995ccaaec26439aaadac"
+          },
+          {
+            "path": "hooks/_stdin.ts",
+            "size": 386,
+            "sha256": "42b48d750586a917505567f64c5498770cffcffccbd7bf2d48f9d2568807e1a5"
+          },
+          {
+            "path": "hooks/post-command.ts",
+            "size": 2228,
+            "sha256": "3f97e74df0d2a92bc4adc68f85f347050809e60f2459757141342cb43effeab3"
+          },
+          {
+            "path": "hooks/pre-command-guard.ts",
+            "size": 1307,
+            "sha256": "429c7a02339d8f12aad35ab19cd745d85b9e9905f138c46ad3d311524d934fc6"
+          },
+          {
+            "path": "hooks/pre-compact.ts",
+            "size": 1106,
+            "sha256": "919b1e4347547ce5891bdf2095969c71ce250427ce73feca372d2f517e9a6591"
+          },
+          {
+            "path": "hooks/pre-write-guard.ts",
+            "size": 7926,
+            "sha256": "6364ddb7932272e136622a6c43a6db36124ebef96d56288e1783f387b256413d"
+          },
+          {
+            "path": "hooks/session-start.ts",
+            "size": 857,
+            "sha256": "0276cdffc57003f6ba0046033af5de0aa1168f8adebc9851f7b0e3b6bb176a5b"
+          },
+          {
+            "path": "hooks/stop-continue.ts",
+            "size": 2184,
+            "sha256": "abd133d2c4831c224dbebc81a14e73d6ed1c8d32b11fe8539965c7b4aa8a4298"
+          },
+          {
+            "path": "hyohyeon-harness-최종목표.md",
+            "size": 42320,
+            "sha256": "351b52d0fe5e22fed407d70c41b047de166f80b2fddbdd1aa972183bf31e6985"
+          },
+          {
+            "path": "README.md",
+            "size": 10178,
+            "sha256": "fa0ea903b130ea001e20e94edbfeb43a7c8ec1945f1bcf45648d8933b0648cf7"
+          },
+          {
+            "path": "skills/intent/SKILL.md",
+            "size": 4115,
+            "sha256": "3a66acf608c881c604e408d3d926198abf751940ce079d7a65cb2550617a7953"
+          },
+          {
+            "path": "skills/interview/SKILL.md",
+            "size": 3984,
+            "sha256": "4ed575912f00ab7b6857501aea0a5c50a9330fd4e2ff1a48c19fcb2c7b1f35ec"
+          },
+          {
+            "path": "skills/postmortem/SKILL.md",
+            "size": 2820,
+            "sha256": "0d26b237699f0b566212b8e3bf547e6adc9ec3ea72a507cedc9ac917b0eeb282"
+          },
+          {
+            "path": "skills/wiki/SKILL.md",
+            "size": 5643,
+            "sha256": "5ae7e36c121bc5d1e402e6ecb72c6c74bd0b1addb80e7f5926fba164e9e636b2"
+          },
+          {
+            "path": "src/cli/commands/core.ts",
+            "size": 7328,
+            "sha256": "d9cb4dba336fb983b4228a63f2d41782670b3a813b5b6e2884fc82a365751ffd"
+          },
+          {
+            "path": "src/cli/commands/feedback.ts",
+            "size": 14496,
+            "sha256": "27dc8905b6b176ad08f3e64cc2804ed0efdb9b3bf405ca413f2230ff939ff2e9"
+          },
+          {
+            "path": "src/cli/commands/knowledge.ts",
+            "size": 5062,
+            "sha256": "0a11fafc79dbab88b031fed60f5685339f2fe0cdc6514f261a3721ad50a55474"
+          },
+          {
+            "path": "src/cli/index.ts",
+            "size": 34940,
+            "sha256": "61273ec784eb3b2b842cc937dd904c28a43613b3d6a6bb93004cc2c0da154b21"
+          },
+          {
+            "path": "src/cli/shared.ts",
+            "size": 727,
+            "sha256": "e3478b8622e1685bdcd2448bfad22f2fbf4abe8db42dbed21b4aa49ae996afff"
+          },
+          {
+            "path": "src/runtime/apply-patch.ts",
+            "size": 2941,
+            "sha256": "bb3d84a2008beaadb2dbe278d69eb64bdc33dbb7ef54dee04de47b6849855a6f"
+          },
+          {
+            "path": "src/runtime/change-extract.ts",
+            "size": 1680,
+            "sha256": "7efa390b3a9706c6e8d819d0bc4f15d07fd0d3dcfcbd16497cf5937453becc54"
+          },
+          {
+            "path": "src/runtime/command-guard.ts",
+            "size": 2326,
+            "sha256": "5036df5307d06d2df75f46185ea387d133282a1c69ebb878531f5a5b3dd8d984"
+          },
+          {
+            "path": "src/runtime/commands.ts",
+            "size": 3866,
+            "sha256": "dada1e1397e17cfbaa686bbdc4ec4060616715c583e690fdaa2bf0f7ff148636"
+          },
+          {
+            "path": "src/runtime/completion-transaction.ts",
+            "size": 7815,
+            "sha256": "15d0351d03436d11b36f7de4f9c277d88c6bf96b1930cc753eadf4d79af7d5af"
+          },
+          {
+            "path": "src/runtime/completion.ts",
+            "size": 4910,
+            "sha256": "57db32e2a24fe9ba9ccbc0c4e017b193d5650ac72a427eb4ff2e63f0d4a9a293"
+          },
+          {
+            "path": "src/runtime/contracts.ts",
+            "size": 10726,
+            "sha256": "b6fd62d0058354dbfe8fe8c6d6e56ce03454ed8f855c664e94949a09cb9c03c5"
+          },
+          {
+            "path": "src/runtime/detections.ts",
+            "size": 6777,
+            "sha256": "e5f3781623968d026cff4b800a510f5ba421692c0260e107f04d76db094d6e8f"
+          },
+          {
+            "path": "src/runtime/draft-args.ts",
+            "size": 1467,
+            "sha256": "6e7eb943cfe9408b267803335e784fc2a97117396a6b30710b819c59d5dbaa18"
+          },
+          {
+            "path": "src/runtime/edit-region.ts",
+            "size": 1108,
+            "sha256": "7595e5789ff1529af5b7ebbd676acaac25c0b522e7a767776d37694d91033fa1"
+          },
+          {
+            "path": "src/runtime/env.ts",
+            "size": 737,
+            "sha256": "3d44bfe4d6b6ae40b0f541be0b23588e5dbdd86b486b2670f87459f4648b8360"
+          },
+          {
+            "path": "src/runtime/evals.ts",
+            "size": 12304,
+            "sha256": "220121bd57cba969e739a0276fbe9b57a6d03d9ebe792297192b3051bcfda254"
+          },
+          {
+            "path": "src/runtime/execution-governance.ts",
+            "size": 2746,
+            "sha256": "9ef58af877c73a757266ff38509d6bfc6c746aaddc11c5e495ce367f24803734"
+          },
+          {
+            "path": "src/runtime/guard.ts",
+            "size": 707,
+            "sha256": "a7357122dbb4d3c168918b81230c188cacb657c457f01f7a3987f2e0db4d6e7a"
+          },
+          {
+            "path": "src/runtime/handoff.ts",
+            "size": 4418,
+            "sha256": "a71c5cc618374f2f0b3144fe4c198efef62db33d51ed2a491415861d05451e9d"
+          },
+          {
+            "path": "src/runtime/install.ts",
+            "size": 3890,
+            "sha256": "3ecc5a4ab5837b19917596ec55ee80c140509c64cdb882016ece1e52b41a6ea0"
+          },
+          {
+            "path": "src/runtime/intent-gate.ts",
+            "size": 1988,
+            "sha256": "18e0ab9624b3ba18255a5381f467659249ce311f0c299b961d9d0800796156e9"
+          },
+          {
+            "path": "src/runtime/intents.ts",
+            "size": 4032,
+            "sha256": "aed3b8c5c3baddd936ef4da32eddfa9f5033615afbbf8b2c4b9dacdf977b9603"
+          },
+          {
+            "path": "src/runtime/interviews.ts",
+            "size": 8983,
+            "sha256": "91d31198ea7eda4f08bf16a658be50366d77d225411cd25394551c396fdf6e13"
+          },
+          {
+            "path": "src/runtime/judge-adapter.ts",
+            "size": 3833,
+            "sha256": "7c10e8a0aaaed82deb52b045550b373a8ec58b14459127e99c38d32d3e07475a"
+          },
+          {
+            "path": "src/runtime/judge-policy.ts",
+            "size": 8111,
+            "sha256": "a64a61e684c22981ab76350840542252b7b864ea75550bd986b014af2921938d"
+          },
+          {
+            "path": "src/runtime/judge.ts",
+            "size": 6474,
+            "sha256": "9738f11e0c25158474d7f9d3940089daa49ef091985c002372bd221c52ec2faa"
+          },
+          {
+            "path": "src/runtime/memory.ts",
+            "size": 3534,
+            "sha256": "3604de0f0ffb19ee200455b0208195782717ab4b25629a6ee0a7d43d247bc647"
+          },
+          {
+            "path": "src/runtime/monitor.ts",
+            "size": 10860,
+            "sha256": "283c35e31bae2f7f9c124ab93cd5c1b737beb90a46ce6a66667e387647408aeb"
+          },
+          {
+            "path": "src/runtime/observability.ts",
+            "size": 3475,
+            "sha256": "35d5914a7abf44b47333e647ec956cc00657e61ca530ae28a21504a281981d13"
+          },
+          {
+            "path": "src/runtime/plans.ts",
+            "size": 7924,
+            "sha256": "aec488f817095e150db4507f2739ba41b3fdc13ec91258c9885417b324a9d841"
+          },
+          {
+            "path": "src/runtime/postmortem.ts",
+            "size": 3137,
+            "sha256": "7a3ca0b8241231ecae0ca83abd1340fb5655563c487f42a6fddebad89f87f5cb"
+          },
+          {
+            "path": "src/runtime/provenance.ts",
+            "size": 3205,
+            "sha256": "81baf37b8f8407bd4958c7fd57c2eff70995ad46148a9074b7bde1d1f20d6d23"
+          },
+          {
+            "path": "src/runtime/reconcile.ts",
+            "size": 10168,
+            "sha256": "beca03c9bec27baa447dbc488eca2394f6c57de93650accfe48b1df82eee23f8"
+          },
+          {
+            "path": "src/runtime/reviewer.ts",
+            "size": 4020,
+            "sha256": "1e1dae197234c6194214b08a05ef8aec8eadefa7465385cf3a5e556fa3bbf1f2"
+          },
+          {
+            "path": "src/runtime/rules.ts",
+            "size": 7478,
+            "sha256": "b80af9138b0492f291b98209b3743589873b6fb5bcd0df4b0c0a5c7e4954165a"
+          },
+          {
+            "path": "src/runtime/runs.ts",
+            "size": 9813,
+            "sha256": "c8f1c8aab9c5780d1555cf9a678fed1c9bdc6fae6138e1f4127c73e468e719c2"
+          },
+          {
+            "path": "src/runtime/schemas.ts",
+            "size": 17792,
+            "sha256": "50bbd7f94da055961ab9ad7413d1cabbf6043a68b4b737eb95ee7753c79fef2d"
+          },
+          {
+            "path": "src/runtime/scope.ts",
+            "size": 1203,
+            "sha256": "5e86ac0beee6bb047bbdd326581c7e81ec915772d6cff3646e11c37047483f45"
+          },
+          {
+            "path": "src/runtime/similarity.ts",
+            "size": 490,
+            "sha256": "84e35f53d1dfa78d546e5ec1906a705449f326ce9fa39671b8c58e34fda01434"
+          },
+          {
+            "path": "src/runtime/spec.ts",
+            "size": 1609,
+            "sha256": "4261a72cdf68fb26558367dcec9185fbcac36e985f1d6f6f13ff969abb62f87f"
+          },
+          {
+            "path": "src/runtime/stop-gate.ts",
+            "size": 5810,
+            "sha256": "8a813db99f1aa9497e613327bb40669b6bebd7707d1cca1bea18f93fd1328285"
+          },
+          {
+            "path": "src/runtime/triviality.ts",
+            "size": 1837,
+            "sha256": "f8ddd20c1f9f73baab814ac3f551c273c7398abb431494f40ea50ea8ddf00c8c"
+          },
+          {
+            "path": "src/runtime/verification.ts",
+            "size": 4879,
+            "sha256": "de53054d170cb4cb0fe00222d12250ee608bb78191be26399d94ce69d3c61397"
+          },
+          {
+            "path": "src/runtime/wiki.ts",
+            "size": 12871,
+            "sha256": "87c1ba745be8da1fbd9101a8c02c0bfb66e3b5ab9ec4ef0ef6c1208ec87cdb82"
+          },
+          {
+            "path": "src/state/paths.ts",
+            "size": 1995,
+            "sha256": "4eb9e64d11815b86e3f6b1495e603cc2707b7334829c21128c4008d84d58e0db"
+          },
+          {
+            "path": "src/utils/id.ts",
+            "size": 946,
+            "sha256": "2fcd5d42cb1ab12f49cfba2b361a31eda345a4b2131a4af65f4c7780796eeacf"
+          },
+          {
+            "path": "src/utils/json.ts",
+            "size": 1506,
+            "sha256": "03fbb668c96aca3a42f1e5b4200fb032b0b6a81875cda1cc736e7a2f4bb6df32"
+          },
+          {
+            "path": "tests/apply-patch.test.mjs",
+            "size": 2076,
+            "sha256": "fa5f465fb07218fad25f43fd9f9db7558913221581952c835489bf79099313c5"
+          },
+          {
+            "path": "tests/autonomy-cli.test.mjs",
+            "size": 2650,
+            "sha256": "6f672e1c0a323188a1a1f5e4e3e5eeea2cdda3dfaffba0d33e402369fc865ac4"
+          },
+          {
+            "path": "tests/change-extract.test.mjs",
+            "size": 1500,
+            "sha256": "71e132633fc6d574c107f445b83dea8b4bf28d4a3933bc83c9266001558bfd24"
+          },
+          {
+            "path": "tests/codex-hooks.test.mjs",
+            "size": 16430,
+            "sha256": "10490e931789272591477650ed4311cb75ef5ad600b246549d9b62d3ebe7bd38"
+          },
+          {
+            "path": "tests/command-cli.test.mjs",
+            "size": 1829,
+            "sha256": "7e4438d0203dc57182776a9be822c7dbf1ce606d7bd5dac4e0cd2bf3ce1153be"
+          },
+          {
+            "path": "tests/command-guard.test.mjs",
+            "size": 1485,
+            "sha256": "b5ac85a45afd11a1078cb73489814c9441edca048a39141fe2e8c7e5c43f609f"
+          },
+          {
+            "path": "tests/commands.test.mjs",
+            "size": 2387,
+            "sha256": "55af3acd93f98df5b9c1ba7e1c71b081302b05b6ecadceeb411965b37d3b0e06"
+          },
+          {
+            "path": "tests/completion-transaction.test.mjs",
+            "size": 2610,
+            "sha256": "5b7ccd31837dd727c89b71f4319b7226c40019e4fd5dcc20c57f4c982bef2cd4"
+          },
+          {
+            "path": "tests/completion.test.mjs",
+            "size": 2291,
+            "sha256": "845f85804cc9568b5c71eab79b52212288c3a079693d65f6f717f8490137549e"
+          },
+          {
+            "path": "tests/contract-cli.test.mjs",
+            "size": 8359,
+            "sha256": "b7394fad2a6859f74527e808c43c3d12595015669f22a461627a241c36191808"
+          },
+          {
+            "path": "tests/contracts.test.mjs",
+            "size": 8707,
+            "sha256": "d7b96fc17e38ea10674667bf19c4b7ea86f8b74d5ce520fd2205b9a2d9b1a0ce"
+          },
+          {
+            "path": "tests/detection-cli.test.mjs",
+            "size": 4049,
+            "sha256": "9e5bbd58e4df1c1a3f7df5024e532ef9354bc07bc4461d890f842a9df07b86b3"
+          },
+          {
+            "path": "tests/detection.test.mjs",
+            "size": 2283,
+            "sha256": "4b986d3bec7b782226611c9112f1b9fad2cd0dc193ffd9cdee1a2a62ee03c2e7"
+          },
+          {
+            "path": "tests/draft-args.test.mjs",
+            "size": 1273,
+            "sha256": "8acf97682c15a29bc21b6db6eb5763a653a5b9c2157877352cf966675e72eaec"
+          },
+          {
+            "path": "tests/edit-region.test.mjs",
+            "size": 901,
+            "sha256": "af88eecc29355daf7bf2f207cf816d642126b0eef3a9ada0d2974a3a2d71f291"
+          },
+          {
+            "path": "tests/env.test.mjs",
+            "size": 688,
+            "sha256": "7861dbc3933456427ea63fcde43c034be57c75aa35c8c3a38503867b6ac92885"
+          },
+          {
+            "path": "tests/eval-cli.test.mjs",
+            "size": 2530,
+            "sha256": "0ebfb0a613282e03e1bae2e3d60fb946e472fd9e20fa8f1b26bd55fa0bac83d6"
+          },
+          {
+            "path": "tests/evals.test.mjs",
+            "size": 5935,
+            "sha256": "80b20567b862a66fd93cceef97f2dc1bd302229d8f95cdb910405e0a1e4830c9"
+          },
+          {
+            "path": "tests/execution-governance.test.mjs",
+            "size": 1184,
+            "sha256": "cb1b7e35b411fd2b3ca5b5dbfb5ce2aa2c04e24dfdf450ec92c4a32d392bf1f0"
+          },
+          {
+            "path": "tests/feedback-cli.test.mjs",
+            "size": 4826,
+            "sha256": "ae7cdf2daf02b8b31783e65f61f4bd6d2eacd1e19a8ffa312cc1c5347920ce12"
+          },
+          {
+            "path": "tests/guard.test.mjs",
+            "size": 1074,
+            "sha256": "5151dc2804e682a9dfa5ffe3294898ac0f2c5afb05ee9068df750b6646634e34"
+          },
+          {
+            "path": "tests/handoff.test.mjs",
+            "size": 3292,
+            "sha256": "d2a7c6e3e60e1c17ac9fd0a15cf23e852130cd8d95a699708e58d7fe2c1503fc"
+          },
+          {
+            "path": "tests/id.test.mjs",
+            "size": 2536,
+            "sha256": "67add6e87e39fa4469e1088fdd2d2b357840bb706bdd6b9c8b99472316be350f"
+          },
+          {
+            "path": "tests/install.test.mjs",
+            "size": 4812,
+            "sha256": "5f9f6b828d8a9714821ecdb5bd1114fb6665cf528e3c93f1b398c90e13f806da"
+          },
+          {
+            "path": "tests/intent-gate.test.mjs",
+            "size": 1981,
+            "sha256": "ee3b417cda07b547ede29bff06172b32fed43bfa3532187050f8090e1ec1b1da"
+          },
+          {
+            "path": "tests/interview-cli.test.mjs",
+            "size": 6946,
+            "sha256": "07db7d6e7fd8d3c91f976b4bde1031453abca856603112303812d28702b47114"
+          },
+          {
+            "path": "tests/interviews.test.mjs",
+            "size": 5093,
+            "sha256": "2c0f9c60eee25f2758e37c53bb6d2bd78cbb97df7940f2ce61f201f76c0886f7"
+          },
+          {
+            "path": "tests/judge-cli.test.mjs",
+            "size": 4993,
+            "sha256": "f1225dcd3aff672d355dcff1682e3bbfe4b79324b15031951c442836790bbefd"
+          },
+          {
+            "path": "tests/judge-policy.test.mjs",
+            "size": 4187,
+            "sha256": "9c8c08334dbe893e5e268171a4c4406d0465b7b343089f6f4406004ce850e609"
+          },
+          {
+            "path": "tests/judge.test.mjs",
+            "size": 4270,
+            "sha256": "c2c611e09c9193088d98f4dc313b8e395f488c2fb16bbaa041cfeccad02538c1"
+          },
+          {
+            "path": "tests/memory.test.mjs",
+            "size": 2070,
+            "sha256": "d47631d4dfc75a69656d14e481e763f4792db0e613b467c0defbc75871b71f0a"
+          },
+          {
+            "path": "tests/monitor-cli.test.mjs",
+            "size": 3287,
+            "sha256": "ee25aa7fdfdf25af269ff9e30f7a416e5a142fd7acc65c50782cc88ccb15c89e"
+          },
+          {
+            "path": "tests/monitor.test.mjs",
+            "size": 13043,
+            "sha256": "9cc74c381cfdff8c5161195ab03f19909d838176e54ed1b125b7031afa344f61"
+          },
+          {
+            "path": "tests/observability.test.mjs",
+            "size": 5193,
+            "sha256": "74747fbbbda03832de22762ccc5a586558a9683347d18a252ebf331dc328ad12"
+          },
+          {
+            "path": "tests/plan-cli.test.mjs",
+            "size": 6780,
+            "sha256": "219552538f264ff60d7f0d22c2125816026c1994364e2898efc0d41ca35b91d0"
+          },
+          {
+            "path": "tests/plan.test.mjs",
+            "size": 5675,
+            "sha256": "ff54da60883673ca5059c008f884df80ba89d0704ad5ed6b1b772cf6f9b9003a"
+          },
+          {
+            "path": "tests/postmortem.test.mjs",
+            "size": 2193,
+            "sha256": "b82eb7c9e2a087d83952775fce423994e6e8d75b535207c78c864c58933691dd"
+          },
+          {
+            "path": "tests/provenance.test.mjs",
+            "size": 3193,
+            "sha256": "aff6f7dc4ea80b15ca3aa1a8eddf7660dbc5c73c89203c4fb5d4db7758c73746"
+          },
+          {
+            "path": "tests/reconcile-cli.test.mjs",
+            "size": 1340,
+            "sha256": "4c51cb93de38158c86afbd6afa56dd444927c3489f32a248ab66c8cf0df82509"
+          },
+          {
+            "path": "tests/reconcile.test.mjs",
+            "size": 3624,
+            "sha256": "4a986331dd55d5b58d7cafdcd05387204c6bedf5a509b8b93dc46d9b5e6cd042"
+          },
+          {
+            "path": "tests/repository-ops.test.mjs",
+            "size": 2079,
+            "sha256": "1afabdd520a8425836e91ecb61d274b5cc71ccecf1cfad4c1b8606b0815aacc9"
+          },
+          {
+            "path": "tests/reviewer-cli.test.mjs",
+            "size": 1918,
+            "sha256": "87274407cd21803b01e7a2038a23208712a6f40c79087278a7737cf4c559d2ab"
+          },
+          {
+            "path": "tests/reviewer.test.mjs",
+            "size": 4193,
+            "sha256": "6c4d94c2d5c1be0883d560a671b065071f4d42fc963fbcc4279cb09772013467"
+          },
+          {
+            "path": "tests/rules.test.mjs",
+            "size": 5093,
+            "sha256": "154b530f7b5318cfc7890e3e6dfe99182bd5b802274e6d99b8b81b137bfff357"
+          },
+          {
+            "path": "tests/run-cli.test.mjs",
+            "size": 10547,
+            "sha256": "a338483af156186ad29af92e714676cf9e585b79a97490666ded2509576d76f8"
+          },
+          {
+            "path": "tests/run-state.test.mjs",
+            "size": 3472,
+            "sha256": "7f1a9659ab8e51b5ac128783cb8bbcfd6cc342c3df12fad587a02fa7b6dce24e"
+          },
+          {
+            "path": "tests/runs.test.mjs",
+            "size": 4539,
+            "sha256": "a54e33523ed1eb1655e906dc70d6de869f206fdf129e2d13d63dcacb779337aa"
+          },
+          {
+            "path": "tests/scope.test.mjs",
+            "size": 1235,
+            "sha256": "a83896ae755a069c0d38b9b0c97cdc8af5b43815c2d1cd675232af716fc16653"
+          },
+          {
+            "path": "tests/spec-cli.test.mjs",
+            "size": 2001,
+            "sha256": "d7d15cd24bda58118be9f71496f527ea95b510e6684e0e257735b164b6ceb675"
+          },
+          {
+            "path": "tests/spec.test.mjs",
+            "size": 649,
+            "sha256": "08f8ffc1032a3a3bcbb08667540f1dd75aeb2eac752293f7b549a20efef8f0a7"
+          },
+          {
+            "path": "tests/state-integrity.test.mjs",
+            "size": 2888,
+            "sha256": "0f4d0c5983d95781cc641c72d933f152ccec442bddbfb7d02f8331188d045a39"
+          },
+          {
+            "path": "tests/stop-gate.test.mjs",
+            "size": 8748,
+            "sha256": "d3392ea1e9aa7365198443a4764a9fe1eeaa6c6d913c7fa41214adaa3b594f19"
+          },
+          {
+            "path": "tests/test-matrix.test.mjs",
+            "size": 1986,
+            "sha256": "57ceb4f8ad400acf4393cd9350da039296b6a324ff6e876c05ec44b226293ca7"
+          },
+          {
+            "path": "tests/triviality.test.mjs",
+            "size": 1575,
+            "sha256": "a010d0cd55b5cc7ba32359c67d7e47f04d30125493246a4f16ea98891d5db907"
+          },
+          {
+            "path": "tests/verification.test.mjs",
+            "size": 9220,
+            "sha256": "aabcf06f466cf8188d3eea07f1ceb5c88469ec1a54b755ef8e2b7094f22a7c19"
+          },
+          {
+            "path": "tests/verify-cli.test.mjs",
+            "size": 8245,
+            "sha256": "a812f4296fa7dc2db7996a9b21dff5d3c660fb7c552af366771beee0c43286e0"
+          },
+          {
+            "path": "tests/wiki.test.mjs",
+            "size": 5750,
+            "sha256": "339cdb48c847b3a2dbf6d7ec0c21decf6731e85ebac045be37b937b7f33d73ef"
+          }
+        ]
+      },
+      "startedAt": "2026-07-15T06:14:00.668Z",
+      "finishedAt": "2026-07-15T06:14:08.679Z"
+    }
+  ],
+  "requiredEvidenceTypes": [
+    "typecheck",
+    "unit_test"
+  ],
+  "createdAt": "2026-07-15T05:51:10.190Z",
+  "updatedAt": "2026-07-15T06:15:03.644Z"
+}
