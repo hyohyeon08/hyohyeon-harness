@@ -20,6 +20,7 @@ Personal AI coding harness. Not a platform, not a framework.
 | Zod 계약 | [src/runtime/schemas.ts](src/runtime/schemas.ts) |
 | 최종목표 gap | [docs/final-goal-gap-analysis.md](docs/final-goal-gap-analysis.md) |
 | Phase ledger | [docs/final-goal-phase-feature-spec.md](docs/final-goal-phase-feature-spec.md) |
+| Dogfood evidence | [docs/dogfooding-baseline.md](docs/dogfooding-baseline.md) |
 
 ## Skills (필요할 때만 로드됨 — progressive disclosure)
 
@@ -40,14 +41,14 @@ Personal AI coding harness. Not a platform, not a framework.
 | `runs/*.json` `runs/latest-runs.json` | Agent 실행 상태, active run, evidence refs |
 | `transactions/completions/*.json` | Intent + Run 완료 전이 저널, retry/reconcile 복구 |
 | `interviews/*.json` | Structured InterviewSummary, approval, append-only lineage |
-| `plans/*.json` | Plan artifact, scope/test/risk/steps, human approval metadata |
-| `contracts/*.json` | Sprint Contract, human approval, allowed/forbidden scope, required checks |
+| `plans/*.json` | Plan artifact, scope/test/risk/steps, readiness approval metadata |
+| `contracts/*.json` | Sprint Contract: machine scope/check policy + reviewer metadata |
 | `raw/*-results/*.log` | `intent verify` 원본 stdout/stderr 로그 |
 | `raw/observability/traces/*.json` | Run trace index |
 | `raw/observability/spans/*.json` | edit/apply_patch/command/verify span |
 | `detections/*.json` | `thrashing` / `false_success` 후보와 판정 |
 | `evals/*.json` | Detection 기반 regression eval draft |
-| `rules/*.json` | 게이트 규칙 (draft → approved, 사람만) |
+| `rules/*.json` | 게이트 규칙 (draft → approved readiness checkpoint) |
 | `wiki/index.md` | 위키 인덱스 (SessionStart에 주입) |
 | `wiki/knowledge/*.md` | 정보 위키 본문 (`intent wiki show`로 drill-in) |
 | `wiki/problems/*.md` | 문제/실패 위키 본문 (`intent wiki show`로 drill-in) |
@@ -58,9 +59,9 @@ Personal AI coding harness. Not a platform, not a framework.
 
 ## Current Gap
 
-Phase 1-29 핵심 workflow와 운영 hardening이 구현되어 있고 344개 테스트가 통과한다. 저장소 자체가 `.intent/`와 상대경로 Claude/Codex hook을 dogfood하며, feature/fix는 approved Contract chain, verify phase, fresh content provenance를 끝까지 요구한다.
+Phase 1-31 핵심 workflow, 완전 자율 lifecycle, governance integrity hardening이 구현되어 있고 356개 테스트가 통과한다. 저장소 자체가 실제 Intent/Run/Plan/Contract/evidence/Wiki 이력으로 dogfood하며, feature/fix는 approved Contract chain, verify phase, fresh content provenance를 끝까지 요구한다.
 
-필수 구현 gap은 없다. Upstream hook 밖 shell은 `intent command` wrapper를 사용하며, AGENTS/CI 자동 patch는 candidate/reflection 이후 사람이 명시적으로 선택하는 후속 기능으로 유지한다.
+필수 구현 gap은 없다. 다만 운영 표본은 아직 작아 detection 정밀도와 Wiki 복리 효과는 입증되지 않았다. 다음 3~5개 독립 feature/fix의 수집 기준은 [dogfooding baseline](docs/dogfooding-baseline.md)에 있다. Upstream hook 밖 shell은 `intent command` wrapper를 사용하며, AGENTS/CI patch는 candidate/reflection 이후 Agent가 명시적으로 수행하는 별도 후속 작업으로 유지한다.
 
 ## Core Principles
 
@@ -75,8 +76,8 @@ Phase 1-29 핵심 workflow와 운영 hardening이 구현되어 있고 344개 테
 `active`는 현재 작업 초점이고 `governed`는 완료 책임이다. Run이 blocked되어 active index에서 빠져도 feature/fix complete와 Stop은 그 Run의 latest required evidence를 계속 평가한다.
 
 ### 철학 에센스
-1. **Intent-First** — 비사소 변경 전 의도 선언·사람 승인. 승인 = 이해의 증거.
-2. **Autonomy slider** (Karpathy) — 의도 승인이 leash의 손잡이. 승인 후 scope 내 자율.
+1. **Intent-First** — 비사소 변경 전 의도 선언·readiness 승인. 승인 = Agent가 의도·스코프·DoD를 검토하고 artifact를 동결했다는 증거.
+2. **Autonomy slider** (Karpathy) — 승인 checkpoint가 자율 실행의 경계를 고정한다. Agent는 준비되면 직접 승인하고 scope 안에서 진행한다.
 3. **작은 증분** — 한 의도 = 한 개념. 생성-검증 루프를 짧게.
 4. **이해 게이트** — behavior 변경엔 학습 노트 필수.
 5. **지식 복리** — LLM Wiki(Karpathy) + 핸드오프 + 실패→규칙. 컨텍스트가 압축돼도 손실 없음.

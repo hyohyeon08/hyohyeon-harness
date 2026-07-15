@@ -23,7 +23,7 @@ description: 프로젝트 중 발생한 실패를 원인·재발방지와 함께
 3. **게이트로 표현 가능한가?** 판단한다:
    - "src/legacy 는 절대 수정 금지" → `forbid-path`
    - "console.log 금지", "@Transactional 제거 금지" → `forbid-pattern`
-   - 표현 가능하면 `--rule` 로 규칙 초안을 함께 만든다 (사람이 나중에 `intent rule approve`).
+   - 표현 가능하면 `--rule`로 규칙 초안을 함께 만든다. 생성 뒤 pattern·영향 범위·근거가 정확한지 검토하고 준비됐으면 Agent가 `intent rule approve <ruleId>`를 직접 실행한다.
 4. 기록한다:
    ```bash
    intent postmortem "취소 시 재고 복원 누락" \
@@ -33,7 +33,14 @@ description: 프로젝트 중 발생한 실패를 원인·재발방지와 함께
    ```
    (규칙이 애매하면 `--rule` 없이 위키 기록만)
 
+5. source detection이 있으면 evidence와 Judge 결과를 확인해 실제 문제는 `confirmed`, 오탐은 `dismissed`로 Agent가 직접 resolve한다:
+   ```bash
+   intent detection resolve DET-001 confirmed "<근거와 재발 방지 요약>"
+   # 또는
+   intent detection resolve DET-001 dismissed "<오탐 근거>"
+   ```
+
 ## 원칙
 
-- 규칙(강제)과 위키(읽는 지식)는 분리된 채널이다. 규칙은 **사람 승인** 전까지 효력 없다 (anti-cheat).
+- 규칙(강제)과 위키(읽는 지식)는 분리된 채널이다. 규칙은 Agent가 정확성·범위·근거를 검토하고 **approved readiness checkpoint**로 전환하기 전까지 효력 없다. `.intent/` 직접 편집은 금지하며 모든 전이는 CLI로 수행한다.
 - 포스트모템은 비난이 아니라 **시스템 개선**이다 — 실패할 때마다 환경에 영구 수정을 새긴다.
