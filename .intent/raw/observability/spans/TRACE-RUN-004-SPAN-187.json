@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-187",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js check INT-003 \"typecheck와 전체 테스트가 통과한다\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js check INT-003 \"typecheck와 전체 테스트가 통과한다\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-45-10-273Z-18261.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:45:10.273Z",
+  "endedAt": "2026-07-15T07:45:10.273Z"
+}

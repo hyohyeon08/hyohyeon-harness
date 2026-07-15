@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-086",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"dogfood|Dogfood|운영 이력|운영 표본|Phase 30|Phase 31|Contract|reviewer metadata|machine-enforced|maxWallClockMs|unsafe|budget_exhausted\" README.md AGENT.md AGENTS.md CLAUDE.md docs hyohyeon-harness-최종목표.md",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"dogfood|Dogfood|운영 이력|운영 표본|Phase 30|Phase 31|Contract|reviewer metadata|machine-enforced|maxWallClockMs|unsafe|budget_exhausted\" README.md AGENT.md AGENTS.md CLAUDE.md docs hyohyeon-harness-최종목표.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-14-46-347Z-8722.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:14:46.347Z",
+  "endedAt": "2026-07-15T07:14:46.347Z"
+}

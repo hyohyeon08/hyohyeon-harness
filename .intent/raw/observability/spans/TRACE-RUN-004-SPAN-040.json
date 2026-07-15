@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-040",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command intent contract show CONTRACT-003 2>/dev/null || intent contract list; intent list",
+  "status": "ok",
+  "attributes": {
+    "command": "intent contract show CONTRACT-003 2>/dev/null || intent contract list; intent list",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-09-08-527Z-7310.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:09:08.527Z",
+  "endedAt": "2026-07-15T07:09:08.527Z"
+}

@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-054",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command git diff -- src/runtime/env.ts src/runtime/command-guard.ts src/cli/shared.ts src/cli/commands/core.ts src/cli/commands/feedback.ts src/cli/index.ts tests/command-guard.test.mjs tests/env.test.mjs",
+  "status": "ok",
+  "attributes": {
+    "command": "git diff -- src/runtime/env.ts src/runtime/command-guard.ts src/cli/shared.ts src/cli/commands/core.ts src/cli/commands/feedback.ts src/cli/index.ts tests/command-guard.test.mjs tests/env.test.mjs",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-55-52-097Z-90994.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:55:52.097Z",
+  "endedAt": "2026-07-15T05:55:52.097Z"
+}

@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-004",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run intent -- plan approve PLAN-002",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run intent -- plan approve PLAN-002",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T06-57-55-716Z-5051.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:57:55.716Z",
+  "endedAt": "2026-07-15T06:57:55.716Z"
+}

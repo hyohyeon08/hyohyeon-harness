@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-166",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run intent -- learn INT-001 \"자율성과 상태 무결성은 별개다. actor 기반 거부만 제거하고 CLI-only writer, 불변 revision, scope/lineage/phase/evidence gate를 유지하면 사람의 수동 명령 없이도 동일한 거버넌스를 보존할 수 있다.\"",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run intent -- learn INT-001 \"자율성과 상태 무결성은 별개다. actor 기반 거부만 제거하고 CLI-only writer, 불변 revision, scope/lineage/phase/evidence gate를 유지하면 사람의 수동 명령 없이도 동일한 거버넌스를 보존할 수 있다.\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T06-14-57-252Z-97907.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:14:57.252Z",
+  "endedAt": "2026-07-15T06:14:57.252Z"
+}

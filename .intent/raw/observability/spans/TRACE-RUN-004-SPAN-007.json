@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-007",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run intent -- contract approve CONTRACT-003",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run intent -- contract approve CONTRACT-003",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T06-59-28-070Z-5354.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:59:28.070Z",
+  "endedAt": "2026-07-15T06:59:28.070Z"
+}

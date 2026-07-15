@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-052",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"approveIntent\\(|approveRule\\(|approveInterview\\(|approveContract\\(|approveSpec\\(\" src tests --glob '!dist/**'; rg -n \"setPlanStatus|approvedBy: 'human'|approvedBy = 'human'|by = 'human'|\\bhuman\\b\" src hooks --glob '!dist/**'",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"approveIntent\\(|approveRule\\(|approveInterview\\(|approveContract\\(|approveSpec\\(\" src tests --glob '!dist/**'; rg -n \"setPlanStatus|approvedBy: 'human'|approvedBy = 'human'|by = 'human'|\\bhuman\\b\" src hooks --glob '!dist/**'",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-55-46-066Z-90969.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:55:46.066Z",
+  "endedAt": "2026-07-15T05:55:46.066Z"
+}

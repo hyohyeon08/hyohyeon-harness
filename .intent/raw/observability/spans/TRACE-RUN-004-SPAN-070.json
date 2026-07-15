@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-070",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "tests/concurrency.test.mjs",
+    "isNewFile": true,
+    "reason": "non-trivial change covered by approved intent INT-003",
+    "regionStartLine": 1,
+    "regionEndLine": 144,
+    "regionBucket": 0,
+    "regionKey": "tests/concurrency.test.mjs:0"
+  },
+  "startedAt": "2026-07-15T07:12:12.203Z",
+  "endedAt": "2026-07-15T07:12:12.203Z"
+}

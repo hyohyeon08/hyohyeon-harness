@@ -1,0 +1,17 @@
+{
+  "spanId": "SPAN-137",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "blocked",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "hyohyeon-harness-최종목표.md",
+    "isNewFile": false,
+    "reason": "[execution governance] active Run RUN-001 (INT-001) does not govern hyohyeon-harness-최종목표.md"
+  },
+  "startedAt": "2026-07-15T06:01:32.392Z",
+  "endedAt": "2026-07-15T06:01:32.392Z"
+}

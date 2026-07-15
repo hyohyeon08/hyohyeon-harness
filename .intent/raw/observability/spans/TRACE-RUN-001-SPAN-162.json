@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-162",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run intent -- check INT-001 \"직접 .intent state write 차단과 artifact lineage 검증은 유지된다\"",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run intent -- check INT-001 \"직접 .intent state write 차단과 artifact lineage 검증은 유지된다\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T06-14-30-831Z-97758.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:14:30.831Z",
+  "endedAt": "2026-07-15T06:14:30.831Z"
+}

@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-186",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js check INT-003 \"실제 dogfood Intent Run Wiki evidence와 한계가 정직하게 기록된다\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js check INT-003 \"실제 dogfood Intent Run Wiki evidence와 한계가 정직하게 기록된다\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-45-10-082Z-18256.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:45:10.082Z",
+  "endedAt": "2026-07-15T07:45:10.082Z"
+}

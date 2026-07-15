@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-015",
+  "traceId": "TRACE-RUN-003",
+  "runId": "RUN-003",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"344|Phase 30|active|pending|구현 중|진행 중|남은 필수 gap|Detection.*actor provenance|resolve.*actor\" AGENTS.md docs/final-goal-gap-analysis.md docs/final-goal-phase-feature-spec.md docs/phase/phase-30-autonomous-approval-policy.md hyohyeon-harness-최종목표.md README.md AGENT.md CLAUDE.md",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"344|Phase 30|active|pending|구현 중|진행 중|남은 필수 gap|Detection.*actor provenance|resolve.*actor\" AGENTS.md docs/final-goal-gap-analysis.md docs/final-goal-phase-feature-spec.md docs/phase/phase-30-autonomous-approval-policy.md hyohyeon-harness-최종목표.md README.md AGENT.md CLAUDE.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-003-2026-07-15T06-03-42-394Z-95140.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:03:42.394Z",
+  "endedAt": "2026-07-15T06:03:42.394Z"
+}

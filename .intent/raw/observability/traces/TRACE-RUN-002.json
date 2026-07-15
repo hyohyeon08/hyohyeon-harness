@@ -1,0 +1,10 @@
+{
+  "traceId": "TRACE-RUN-002",
+  "runId": "RUN-002",
+  "rootSpanId": "SPAN-001",
+  "spanIds": [
+    "SPAN-001"
+  ],
+  "createdAt": "2026-07-15T06:01:57.444Z",
+  "updatedAt": "2026-07-15T06:01:57.444Z"
+}

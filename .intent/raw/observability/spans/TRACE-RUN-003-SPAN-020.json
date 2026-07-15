@@ -1,0 +1,17 @@
+{
+  "spanId": "SPAN-020",
+  "traceId": "TRACE-RUN-003",
+  "runId": "RUN-003",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "blocked",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "README.md",
+    "isNewFile": false,
+    "reason": "[execution governance] active Run RUN-003 (INT-002) does not govern README.md"
+  },
+  "startedAt": "2026-07-15T06:05:59.340Z",
+  "endedAt": "2026-07-15T06:05:59.340Z"
+}

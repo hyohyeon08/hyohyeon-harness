@@ -1,0 +1,17 @@
+{
+  "spanId": "SPAN-041",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "src/cli/shared.ts",
+    "isNewFile": false,
+    "reason": "non-trivial change covered by approved intent INT-001"
+  },
+  "startedAt": "2026-07-15T05:55:12.825Z",
+  "endedAt": "2026-07-15T05:55:12.825Z"
+}

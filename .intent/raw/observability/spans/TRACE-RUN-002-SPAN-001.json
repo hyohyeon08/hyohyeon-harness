@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-001",
+  "traceId": "TRACE-RUN-002",
+  "runId": "RUN-002",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run intent -- run start INT-002 \"Synchronize autonomous lifecycle product SSOT\"",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run intent -- run start INT-002 \"Synchronize autonomous lifecycle product SSOT\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-002-2026-07-15T06-01-57-442Z-94129.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:01:57.442Z",
+  "endedAt": "2026-07-15T06:01:57.442Z"
+}

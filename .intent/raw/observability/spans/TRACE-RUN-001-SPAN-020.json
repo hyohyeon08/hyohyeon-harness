@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-020",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command sed -n '1,220p' README.md; sed -n '1,120p' CLAUDE.md; sed -n '1,140p' AGENTS.md",
+  "status": "ok",
+  "attributes": {
+    "command": "sed -n '1,220p' README.md; sed -n '1,120p' CLAUDE.md; sed -n '1,140p' AGENTS.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-53-59-120Z-90573.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:53:59.120Z",
+  "endedAt": "2026-07-15T05:53:59.120Z"
+}

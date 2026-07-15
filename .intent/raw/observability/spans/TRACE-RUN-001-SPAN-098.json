@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-098",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run intent -- contract edit CONTRACT-002 --allow hyohyeon-harness-최종목표.md",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run intent -- contract edit CONTRACT-002 --allow hyohyeon-harness-최종목표.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-57-33-079Z-91861.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:57:33.079Z",
+  "endedAt": "2026-07-15T05:57:33.079Z"
+}

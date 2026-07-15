@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-009",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command sed -n '1,170p' tests/codex-hooks.test.mjs",
+  "status": "ok",
+  "attributes": {
+    "command": "sed -n '1,170p' tests/codex-hooks.test.mjs",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-00-14-730Z-5522.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:00:14.730Z",
+  "endedAt": "2026-07-15T07:00:14.730Z"
+}

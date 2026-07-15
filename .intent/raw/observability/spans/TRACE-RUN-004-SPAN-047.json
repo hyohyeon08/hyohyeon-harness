@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-047",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"maxWallClockMs|budget_exhausted|`unsafe`|`complete`|RunStatus|완료 상태|complete 상태|status.*complete|status.*failed\" hyohyeon-harness-최종목표.md docs/final-goal-gap-analysis.md; sed -n '240,305p' hyohyeon-harness-최종목표.md; sed -n '545,580p' hyohyeon-harness-최종목표.md; sed -n '85,105p' docs/final-goal-gap-analysis.md",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"maxWallClockMs|budget_exhausted|`unsafe`|`complete`|RunStatus|완료 상태|complete 상태|status.*complete|status.*failed\" hyohyeon-harness-최종목표.md docs/final-goal-gap-analysis.md; sed -n '240,305p' hyohyeon-harness-최종목표.md; sed -n '545,580p' hyohyeon-harness-최종목표.md; sed -n '85,105p' docs/final-goal-gap-analysis.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-09-50-917Z-7456.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:09:50.917Z",
+  "endedAt": "2026-07-15T07:09:50.917Z"
+}

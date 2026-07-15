@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-127",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js wiki append operating-baseline \"Current integrity decision: [[governance-integrity-hardening]].\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js wiki append operating-baseline \"Current integrity decision: [[governance-integrity-hardening]].\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-24-50-718Z-12122.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:24:50.718Z",
+  "endedAt": "2026-07-15T07:24:50.718Z"
+}

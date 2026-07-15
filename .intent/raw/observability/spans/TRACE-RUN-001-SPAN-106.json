@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-106",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "tests/env.test.mjs",
+    "isNewFile": false,
+    "reason": "non-trivial change covered by approved intent INT-001",
+    "regionStartLine": 3,
+    "regionEndLine": 3,
+    "regionBucket": 0,
+    "regionKey": "tests/env.test.mjs:0"
+  },
+  "startedAt": "2026-07-15T05:57:45.241Z",
+  "endedAt": "2026-07-15T05:57:45.241Z"
+}

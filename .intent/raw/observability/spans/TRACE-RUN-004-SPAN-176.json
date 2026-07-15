@@ -1,0 +1,23 @@
+{
+  "spanId": "SPAN-176",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_check",
+  "name": "verify unit_test",
+  "status": "ok",
+  "attributes": {
+    "type": "unit_test",
+    "evidenceId": "VE-002",
+    "evidenceStatus": "passed",
+    "command": "npm",
+    "args": [
+      "test"
+    ],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": 0,
+    "logPath": ".intent/raw/unit_test-results/RUN-004-2026-07-15T07-44-06-776Z.log"
+  },
+  "startedAt": "2026-07-15T07:43:58.631Z",
+  "endedAt": "2026-07-15T07:44:06.776Z"
+}

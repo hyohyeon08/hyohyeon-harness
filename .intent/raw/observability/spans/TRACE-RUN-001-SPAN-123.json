@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-123",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command sed -n '1,280p' tests/autonomy-cli.test.mjs; sed -n '360,430p' tests/codex-hooks.test.mjs; sed -n '1,210p' tests/run-cli.test.mjs",
+  "status": "ok",
+  "attributes": {
+    "command": "sed -n '1,280p' tests/autonomy-cli.test.mjs; sed -n '360,430p' tests/codex-hooks.test.mjs; sed -n '1,210p' tests/run-cli.test.mjs",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-59-33-895Z-92967.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:59:33.895Z",
+  "endedAt": "2026-07-15T05:59:33.895Z"
+}

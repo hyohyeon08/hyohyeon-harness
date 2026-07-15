@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-069",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "src/runtime/postmortem.ts",
+    "isNewFile": false,
+    "reason": "trivial: comments/formatting only",
+    "regionStartLine": 67,
+    "regionEndLine": 68,
+    "regionBucket": 3,
+    "regionKey": "src/runtime/postmortem.ts:3"
+  },
+  "startedAt": "2026-07-15T05:56:31.390Z",
+  "endedAt": "2026-07-15T05:56:31.390Z"
+}

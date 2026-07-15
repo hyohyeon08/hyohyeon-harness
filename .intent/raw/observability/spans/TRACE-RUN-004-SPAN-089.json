@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-089",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js list",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js list",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-15-12-718Z-8794.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:15:12.718Z",
+  "endedAt": "2026-07-15T07:15:12.718Z"
+}

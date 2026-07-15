@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-142",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "docs/final-goal-gap-analysis.md",
+    "isNewFile": false,
+    "reason": "non-trivial change covered by approved intent INT-003",
+    "regionStartLine": 144,
+    "regionEndLine": 145,
+    "regionBucket": 7,
+    "regionKey": "docs/final-goal-gap-analysis.md:7"
+  },
+  "startedAt": "2026-07-15T07:28:54.073Z",
+  "endedAt": "2026-07-15T07:28:54.073Z"
+}

@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-018",
+  "traceId": "TRACE-RUN-003",
+  "runId": "RUN-003",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command git diff --check -- hyohyeon-harness-최종목표.md docs/final-goal-gap-analysis.md docs/final-goal-phase-feature-spec.md docs/phase/phase-30-autonomous-approval-policy.md; git status --short -- hyohyeon-harness-최종목표.md docs/final-goal-gap-analysis.md docs/final-goal-phase-feature-spec.md docs/phase/phase-30-autonomous-approval-policy.md",
+  "status": "ok",
+  "attributes": {
+    "command": "git diff --check -- hyohyeon-harness-최종목표.md docs/final-goal-gap-analysis.md docs/final-goal-phase-feature-spec.md docs/phase/phase-30-autonomous-approval-policy.md; git status --short -- hyohyeon-harness-최종목표.md docs/final-goal-gap-analysis.md docs/final-goal-phase-feature-spec.md docs/phase/phase-30-autonomous-approval-policy.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-003-2026-07-15T06-03-49-697Z-95171.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:03:49.697Z",
+  "endedAt": "2026-07-15T06:03:49.697Z"
+}

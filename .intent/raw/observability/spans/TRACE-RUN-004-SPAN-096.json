@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-096",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js wiki append governance-integrity-hardening \"Decision: scope targets must be repository-relative before any filesystem read. Absolute paths and every parent traversal segment are denied even under a broad ** scope.\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js wiki append governance-integrity-hardening \"Decision: scope targets must be repository-relative before any filesystem read. Absolute paths and every parent traversal segment are denied even under a broad ** scope.\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-15-37-141Z-8875.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:15:37.141Z",
+  "endedAt": "2026-07-15T07:15:37.141Z"
+}

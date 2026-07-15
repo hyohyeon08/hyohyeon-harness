@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-017",
+  "traceId": "TRACE-RUN-003",
+  "runId": "RUN-003",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command date -Iseconds",
+  "status": "ok",
+  "attributes": {
+    "command": "date -Iseconds",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-003-2026-07-15T06-03-46-558Z-95159.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:03:46.558Z",
+  "endedAt": "2026-07-15T06:03:46.558Z"
+}

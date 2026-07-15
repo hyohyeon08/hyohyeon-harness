@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-015",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "blocked",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "/Users/hyohyeon/Desktop/hyohyeon-harness/tests/command-guard.test.mjs",
+    "isNewFile": false,
+    "reason": "[contract gate] CONTRACT-001 blocks /Users/hyohyeon/Desktop/hyohyeon-harness/tests/command-guard.test.mjs: outside allowedScope (src/**, hooks/**, tests/**, skills/**, README.md, AGENT.md, AGENTS.md, CLAUDE.md, docs/**, .claude/**, .codex/**)",
+    "regionStartLine": 5,
+    "regionEndLine": 20,
+    "regionBucket": 0,
+    "regionKey": "/Users/hyohyeon/Desktop/hyohyeon-harness/tests/command-guard.test.mjs:0"
+  },
+  "startedAt": "2026-07-15T05:53:27.277Z",
+  "endedAt": "2026-07-15T05:53:27.277Z"
+}

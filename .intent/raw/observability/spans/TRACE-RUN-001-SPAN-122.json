@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-122",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command find .intent -maxdepth 3 -type f -print",
+  "status": "ok",
+  "attributes": {
+    "command": "find .intent -maxdepth 3 -type f -print",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-59-17-388Z-92914.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:59:17.388Z",
+  "endedAt": "2026-07-15T05:59:17.388Z"
+}

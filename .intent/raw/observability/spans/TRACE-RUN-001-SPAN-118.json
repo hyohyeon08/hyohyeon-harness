@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-118",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n -i \"approval|approve|human|사람|수동\" .claude .codex hooks src skills README.md AGENT.md AGENTS.md CLAUDE.md --glob '!dist/**'",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n -i \"approval|approve|human|사람|수동\" .claude .codex hooks src skills README.md AGENT.md AGENTS.md CLAUDE.md --glob '!dist/**'",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-58-51-308Z-92832.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:58:51.308Z",
+  "endedAt": "2026-07-15T05:58:51.308Z"
+}

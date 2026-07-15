@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-047",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command sed -n '1,230p' src/runtime/contracts.ts; sed -n '120,190p' src/runtime/interviews.ts; sed -n '1,190p' src/runtime/plans.ts; sed -n '1,70p' src/runtime/spec.ts; sed -n '1,90p' src/runtime/intent-gate.ts; sed -n '1,90p' src/runtime/guard.ts; sed -n '135,175p' hooks/pre-write-guard.ts; sed -n '1,90p' hooks/pre-command-guard.ts; sed -n '1,75p' src/runtime/schemas.ts",
+  "status": "ok",
+  "attributes": {
+    "command": "sed -n '1,230p' src/runtime/contracts.ts; sed -n '120,190p' src/runtime/interviews.ts; sed -n '1,190p' src/runtime/plans.ts; sed -n '1,70p' src/runtime/spec.ts; sed -n '1,90p' src/runtime/intent-gate.ts; sed -n '1,90p' src/runtime/guard.ts; sed -n '135,175p' hooks/pre-write-guard.ts; sed -n '1,90p' hooks/pre-command-guard.ts; sed -n '1,75p' src/runtime/schemas.ts",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-55-39-219Z-90936.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:55:39.219Z",
+  "endedAt": "2026-07-15T05:55:39.219Z"
+}

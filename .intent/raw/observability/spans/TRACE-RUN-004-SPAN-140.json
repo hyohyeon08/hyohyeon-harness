@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-140",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "AGENT.md",
+    "isNewFile": false,
+    "reason": "non-trivial change covered by approved intent INT-003",
+    "regionStartLine": 31,
+    "regionEndLine": 31,
+    "regionBucket": 1,
+    "regionKey": "AGENT.md:1"
+  },
+  "startedAt": "2026-07-15T07:28:54.070Z",
+  "endedAt": "2026-07-15T07:28:54.070Z"
+}

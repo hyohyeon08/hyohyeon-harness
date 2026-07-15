@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-071",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "src/runtime/triviality.ts",
+    "isNewFile": false,
+    "reason": "trivial: comments/formatting only",
+    "regionStartLine": 7,
+    "regionEndLine": 7,
+    "regionBucket": 0,
+    "regionKey": "src/runtime/triviality.ts:0"
+  },
+  "startedAt": "2026-07-15T05:56:31.392Z",
+  "endedAt": "2026-07-15T05:56:31.392Z"
+}

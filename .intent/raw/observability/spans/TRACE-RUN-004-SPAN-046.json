@@ -1,0 +1,17 @@
+{
+  "spanId": "SPAN-046",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "blocked",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "/Users/hyohyeon/Desktop/hyohyeon-harness/hooks/pre-write-guard.ts",
+    "isNewFile": false,
+    "reason": "[root containment] /Users/hyohyeon/Desktop/hyohyeon-harness/hooks/pre-write-guard.ts is not a repository-relative path; parent traversal and absolute paths are forbidden"
+  },
+  "startedAt": "2026-07-15T07:09:43.075Z",
+  "endedAt": "2026-07-15T07:09:43.075Z"
+}

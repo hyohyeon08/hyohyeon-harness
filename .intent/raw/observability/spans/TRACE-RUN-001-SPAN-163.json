@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-163",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run intent -- check INT-001 \"feature workflow가 사람의 approve 명령 없이 plan-contract-act 단계에 도달한다\"",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run intent -- check INT-001 \"feature workflow가 사람의 approve 명령 없이 plan-contract-act 단계에 도달한다\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T06-14-36-877Z-97796.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:14:36.877Z",
+  "endedAt": "2026-07-15T06:14:36.877Z"
+}

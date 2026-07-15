@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-048",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"assertHumanShell|human-only|HUMAN_ONLY_ACTIONS|approvedBy.*human|approve.*human\" src/cli src/runtime | sort",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"assertHumanShell|human-only|HUMAN_ONLY_ACTIONS|approvedBy.*human|approve.*human\" src/cli src/runtime | sort",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-55-44-014Z-90950.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:55:44.014Z",
+  "endedAt": "2026-07-15T05:55:44.014Z"
+}

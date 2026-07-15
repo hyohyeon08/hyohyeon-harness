@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-121",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command sed -n '1,220p' .gitignore",
+  "status": "ok",
+  "attributes": {
+    "command": "sed -n '1,220p' .gitignore",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-59-13-379Z-92895.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:59:13.379Z",
+  "endedAt": "2026-07-15T05:59:13.379Z"
+}

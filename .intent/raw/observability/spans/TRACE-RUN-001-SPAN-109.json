@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-109",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"isAiAgent\" src tests hooks; rg -n \"approvalActor\" src tests; rg -n \"approve|archive|resolve\" src/runtime/command-guard.ts tests/command-guard.test.mjs | sed -n '1,220p'",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"isAiAgent\" src tests hooks; rg -n \"approvalActor\" src tests; rg -n \"approve|archive|resolve\" src/runtime/command-guard.ts tests/command-guard.test.mjs | sed -n '1,220p'",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-57-58-730Z-92549.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:57:58.730Z",
+  "endedAt": "2026-07-15T05:57:58.730Z"
+}

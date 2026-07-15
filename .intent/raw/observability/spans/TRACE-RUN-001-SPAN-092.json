@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-092",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run build",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run build",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-57-19-291Z-91439.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:57:19.291Z",
+  "endedAt": "2026-07-15T05:57:19.291Z"
+}

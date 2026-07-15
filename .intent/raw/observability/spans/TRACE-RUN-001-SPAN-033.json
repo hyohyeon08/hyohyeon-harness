@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-033",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"사람|human|승인|approve|archive|resolve|자율|autonom|approval|제품 경계|필수 gap|Phase 29|Phase dependency|현재 추천\" hyohyeon-harness-최종목표.md docs/final-goal-gap-analysis.md docs/final-goal-phase-feature-spec.md; sed -n '1,180p' docs/phase/_template.md; tail -n 100 hyohyeon-harness-최종목표.md; tail -n 140 docs/final-goal-gap-analysis.md",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"사람|human|승인|approve|archive|resolve|자율|autonom|approval|제품 경계|필수 gap|Phase 29|Phase dependency|현재 추천\" hyohyeon-harness-최종목표.md docs/final-goal-gap-analysis.md docs/final-goal-phase-feature-spec.md; sed -n '1,180p' docs/phase/_template.md; tail -n 100 hyohyeon-harness-최종목표.md; tail -n 140 docs/final-goal-gap-analysis.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-54-07-907Z-90644.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:54:07.907Z",
+  "endedAt": "2026-07-15T05:54:07.907Z"
+}

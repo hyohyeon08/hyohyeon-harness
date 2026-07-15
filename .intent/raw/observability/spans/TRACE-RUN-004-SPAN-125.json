@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-125",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command sed -n '1,260p' docs/phase/phase-31-governance-integrity-hardening.md",
+  "status": "ok",
+  "attributes": {
+    "command": "sed -n '1,260p' docs/phase/phase-31-governance-integrity-hardening.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-24-27-715Z-12037.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:24:27.715Z",
+  "endedAt": "2026-07-15T07:24:27.715Z"
+}

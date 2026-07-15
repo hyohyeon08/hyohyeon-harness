@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-001",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js run start INT-001 \"Replace human approval ceremony with fully autonomous agent governance\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js run start INT-001 \"Replace human approval ceremony with fully autonomous agent governance\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-51-10-264Z-89940.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:51:10.264Z",
+  "endedAt": "2026-07-15T05:51:10.264Z"
+}

@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-003",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run intent -- plan draft \"Governance integrity hardening\" --objective \"Block repository escapes, preserve 1000+ observations, serialize Run/Trace updates, and align product contracts\" --problem \"Three executable integrity defects and three documented contract drifts remain after the autonomy phase\" --scope \"src/runtime/scope.ts,src/runtime/observability.ts,src/runtime/evals.ts,src/runtime/runs.ts,src/runtime/schemas.ts,src/utils/json.ts,hooks/pre-write-guard.ts,src/cli/index.ts,tests/**,README.md,AGENT.md,AGENTS.md,CLAUDE.md,skills/**,docs/**,hyohyeon-harness-최종목표.md\" --step \"Add canonical repository-relative containment and hook denial\" --step \"Generalize sequential ID parsing and add per-record locks\" --step \"Clarify enforceable Contract fields and align RunState SSOT\" --step \"Add boundary, concurrency, and dogfood regression tests\" --test-strategy \"Targeted boundary/concurrency tests followed by typecheck, full suite, coverage, and pack audit\" --check \"typecheck:npm run typecheck\" --check \"unit_test:npm test\" --dod \"All seven Intent DoD items are evidenced\" --risk \"Cross-process lock stale recovery must not deadlock\" --risk \"Historical phase documents must remain historical\"",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run intent -- plan draft \"Governance integrity hardening\" --objective \"Block repository escapes, preserve 1000+ observations, serialize Run/Trace updates, and align product contracts\" --problem \"Three executable integrity defects and three documented contract drifts remain after the autonomy phase\" --scope \"src/runtime/scope.ts,src/runtime/observability.ts,src/runtime/evals.ts,src/runtime/runs.ts,src/runtime/schemas.ts,src/utils/json.ts,hooks/pre-write-guard.ts,src/cli/index.ts,tests/**,README.md,AGENT.md,AGENTS.md,CLAUDE.md,skills/**,docs/**,hyohyeon-harness-최종목표.md\" --step \"Add canonical repository-relative containment and hook denial\" --step \"Generalize sequential ID parsing and add per-record locks\" --step \"Clarify enforceable Contract fields and align RunState SSOT\" --step \"Add boundary, concurrency, and dogfood regression tests\" --test-strategy \"Targeted boundary/concurrency tests followed by typecheck, full suite, coverage, and pack audit\" --check \"typecheck:npm run typecheck\" --check \"unit_test:npm test\" --dod \"All seven Intent DoD items are evidenced\" --risk \"Cross-process lock stale recovery must not deadlock\" --risk \"Historical phase documents must remain historical\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T06-57-30-573Z-4965.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:57:30.573Z",
+  "endedAt": "2026-07-15T06:57:30.573Z"
+}

@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-001",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run intent -- run start INT-003 \"Close audited governance integrity gaps\"",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run intent -- run start INT-003 \"Close audited governance integrity gaps\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T06-56-50-589Z-4837.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:56:50.589Z",
+  "endedAt": "2026-07-15T06:56:50.589Z"
+}

@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-120",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command git ls-files .intent",
+  "status": "ok",
+  "attributes": {
+    "command": "git ls-files .intent",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-59-13-363Z-92894.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:59:13.363Z",
+  "endedAt": "2026-07-15T05:59:13.363Z"
+}

@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-129",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n -i \"human-only|human approval|human-approved|human approved|awaiting human|human-review|사람 승인|사람만|사용자 승인|needs human|human commands|human shell|human metadata\" tests src hooks skills README.md AGENT.md AGENTS.md CLAUDE.md --glob '!dist/**'",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n -i \"human-only|human approval|human-approved|human approved|awaiting human|human-review|사람 승인|사람만|사용자 승인|needs human|human commands|human shell|human metadata\" tests src hooks skills README.md AGENT.md AGENTS.md CLAUDE.md --glob '!dist/**'",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T06-00-17-282Z-93743.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:00:17.282Z",
+  "endedAt": "2026-07-15T06:00:17.282Z"
+}

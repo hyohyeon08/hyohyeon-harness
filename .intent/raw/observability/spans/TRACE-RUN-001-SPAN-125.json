@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-125",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command sed -n '1,75p' hyohyeon-harness-최종목표.md; sed -n '90,205p' hyohyeon-harness-최종목표.md; sed -n '285,315p' hyohyeon-harness-최종목표.md; sed -n '480,505p' hyohyeon-harness-최종목표.md; sed -n '728,742p' hyohyeon-harness-최종목표.md; sed -n '1078,1100p' hyohyeon-harness-최종목표.md; tail -n 40 hyohyeon-harness-최종목표.md",
+  "status": "ok",
+  "attributes": {
+    "command": "sed -n '1,75p' hyohyeon-harness-최종목표.md; sed -n '90,205p' hyohyeon-harness-최종목표.md; sed -n '285,315p' hyohyeon-harness-최종목표.md; sed -n '480,505p' hyohyeon-harness-최종목표.md; sed -n '728,742p' hyohyeon-harness-최종목표.md; sed -n '1078,1100p' hyohyeon-harness-최종목표.md; tail -n 40 hyohyeon-harness-최종목표.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-59-44-088Z-93004.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:59:44.088Z",
+  "endedAt": "2026-07-15T05:59:44.088Z"
+}

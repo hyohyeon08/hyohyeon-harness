@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-099",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js wiki append governance-integrity-hardening \"Dogfood evidence: INT-003 and RUN-004 exercised autonomous readiness, Plan, Contract, implementation, verification, and Wiki write through the CLI. This is an operational sample, not statistical proof of detection precision or long-term knowledge compounding.\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js wiki append governance-integrity-hardening \"Dogfood evidence: INT-003 and RUN-004 exercised autonomous readiness, Plan, Contract, implementation, verification, and Wiki write through the CLI. This is an operational sample, not statistical proof of detection precision or long-term knowledge compounding.\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-15-37-695Z-8887.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:15:37.695Z",
+  "endedAt": "2026-07-15T07:15:37.695Z"
+}

@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-133",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command git diff --check",
+  "status": "ok",
+  "attributes": {
+    "command": "git diff --check",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-25-56-410Z-12365.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:25:56.410Z",
+  "endedAt": "2026-07-15T07:25:56.410Z"
+}

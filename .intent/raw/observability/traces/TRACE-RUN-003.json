@@ -1,0 +1,33 @@
+{
+  "traceId": "TRACE-RUN-003",
+  "runId": "RUN-003",
+  "rootSpanId": "SPAN-001",
+  "spanIds": [
+    "SPAN-001",
+    "SPAN-002",
+    "SPAN-003",
+    "SPAN-004",
+    "SPAN-005",
+    "SPAN-006",
+    "SPAN-007",
+    "SPAN-008",
+    "SPAN-009",
+    "SPAN-010",
+    "SPAN-011",
+    "SPAN-012",
+    "SPAN-013",
+    "SPAN-014",
+    "SPAN-015",
+    "SPAN-016",
+    "SPAN-017",
+    "SPAN-018",
+    "SPAN-019",
+    "SPAN-020",
+    "SPAN-021",
+    "SPAN-022",
+    "SPAN-023",
+    "SPAN-024"
+  ],
+  "createdAt": "2026-07-15T06:02:02.458Z",
+  "updatedAt": "2026-07-15T06:06:21.643Z"
+}

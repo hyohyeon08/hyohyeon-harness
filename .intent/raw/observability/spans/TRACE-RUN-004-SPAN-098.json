@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-098",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js wiki append governance-integrity-hardening \"Contract semantics: allowedScope, forbiddenScope, requiredChecks, status, and lineage are machine policy. architectureBoundaries, definitionOfDone, rubric, stopConditions, and requiresUserDecision remain reviewer metadata, not automatic completion gates.\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js wiki append governance-integrity-hardening \"Contract semantics: allowedScope, forbiddenScope, requiredChecks, status, and lineage are machine policy. architectureBoundaries, definitionOfDone, rubric, stopConditions, and requiresUserDecision remain reviewer metadata, not automatic completion gates.\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-15-37-510Z-8883.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:15:37.510Z",
+  "endedAt": "2026-07-15T07:15:37.510Z"
+}

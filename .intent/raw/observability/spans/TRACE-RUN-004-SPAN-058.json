@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-058",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "hyohyeon-harness-최종목표.md",
+    "isNewFile": false,
+    "reason": "trivial: comments/formatting only",
+    "regionStartLine": 292,
+    "regionEndLine": 292,
+    "regionBucket": 14,
+    "regionKey": "hyohyeon-harness-최종목표.md:14"
+  },
+  "startedAt": "2026-07-15T07:11:01.329Z",
+  "endedAt": "2026-07-15T07:11:01.329Z"
+}

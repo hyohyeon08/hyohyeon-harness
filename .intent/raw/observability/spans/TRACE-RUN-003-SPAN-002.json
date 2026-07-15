@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-002",
+  "traceId": "TRACE-RUN-003",
+  "runId": "RUN-003",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command sed -n '65,145p' src/runtime/stop-gate.ts; sed -n '130,210p' src/cli/commands/core.ts; sed -n '1,130p' src/runtime/completion-transaction.ts",
+  "status": "ok",
+  "attributes": {
+    "command": "sed -n '65,145p' src/runtime/stop-gate.ts; sed -n '130,210p' src/cli/commands/core.ts; sed -n '1,130p' src/runtime/completion-transaction.ts",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-003-2026-07-15T06-02-05-733Z-94157.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:02:05.733Z",
+  "endedAt": "2026-07-15T06:02:05.733Z"
+}

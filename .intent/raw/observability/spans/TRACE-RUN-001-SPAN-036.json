@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-036",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "blocked",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "/Users/hyohyeon/Desktop/hyohyeon-harness/src/runtime/env.ts",
+    "isNewFile": false,
+    "reason": "[contract gate] CONTRACT-001 blocks /Users/hyohyeon/Desktop/hyohyeon-harness/src/runtime/env.ts: outside allowedScope (src/**, hooks/**, tests/**, skills/**, README.md, AGENT.md, AGENTS.md, CLAUDE.md, docs/**, .claude/**, .codex/**)",
+    "regionStartLine": 1,
+    "regionEndLine": 8,
+    "regionBucket": 0,
+    "regionKey": "/Users/hyohyeon/Desktop/hyohyeon-harness/src/runtime/env.ts:0"
+  },
+  "startedAt": "2026-07-15T05:54:34.069Z",
+  "endedAt": "2026-07-15T05:54:34.069Z"
+}

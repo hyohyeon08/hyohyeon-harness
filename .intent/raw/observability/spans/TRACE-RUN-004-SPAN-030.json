@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-030",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"maxWallClockMs|unsafe|budget_exhausted|complete|failed|RunStatus|RunState|status.*active|attemptsUsed|maxAttempts|phase.*done|evidence.*status\" hyohyeon-harness-최종목표.md docs/final-goal-gap-analysis.md src/runtime/schemas.ts src/runtime/runs.ts src/runtime/stop-gate.ts; intent run status; intent list",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"maxWallClockMs|unsafe|budget_exhausted|complete|failed|RunStatus|RunState|status.*active|attemptsUsed|maxAttempts|phase.*done|evidence.*status\" hyohyeon-harness-최종목표.md docs/final-goal-gap-analysis.md src/runtime/schemas.ts src/runtime/runs.ts src/runtime/stop-gate.ts; intent run status; intent list",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-08-25-220Z-7142.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:08:25.220Z",
+  "endedAt": "2026-07-15T07:08:25.220Z"
+}

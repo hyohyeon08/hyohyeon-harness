@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-184",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js check INT-003 \"Contract의 기계 강제 필드와 리뷰 메타데이터가 명확히 구분된다\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js check INT-003 \"Contract의 기계 강제 필드와 리뷰 메타데이터가 명확히 구분된다\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-45-09-710Z-18248.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:45:09.710Z",
+  "endedAt": "2026-07-15T07:45:09.710Z"
+}

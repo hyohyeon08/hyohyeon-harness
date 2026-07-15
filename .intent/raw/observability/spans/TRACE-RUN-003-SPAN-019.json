@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-019",
+  "traceId": "TRACE-RUN-003",
+  "runId": "RUN-003",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command sed -n '3260,3320p' docs/final-goal-phase-feature-spec.md; sed -n '1,110p' docs/phase/phase-29-governance-operational-hardening.md; sed -n '1,90p' docs/phase/phase-28-artifact-lifecycle-final-audit.md",
+  "status": "ok",
+  "attributes": {
+    "command": "sed -n '3260,3320p' docs/final-goal-phase-feature-spec.md; sed -n '1,110p' docs/phase/phase-29-governance-operational-hardening.md; sed -n '1,90p' docs/phase/phase-28-artifact-lifecycle-final-audit.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-003-2026-07-15T06-03-54-169Z-95185.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:03:54.169Z",
+  "endedAt": "2026-07-15T06:03:54.169Z"
+}

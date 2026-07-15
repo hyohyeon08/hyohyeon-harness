@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-090",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"사람만|사람 승인|사람에게|사람이 .*승인|human-only|human approval|human-confirmation|own shell|user's terminal|기다린다|실행해 주세요|승인받|human-selected|사람 선택|사람 전용|AI가 `intent approve`|승인 전\" README.md AGENT.md AGENTS.md CLAUDE.md skills/intent/SKILL.md skills/interview/SKILL.md skills/postmortem/SKILL.md skills/wiki/SKILL.md",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"사람만|사람 승인|사람에게|사람이 .*승인|human-only|human approval|human-confirmation|own shell|user's terminal|기다린다|실행해 주세요|승인받|human-selected|사람 선택|사람 전용|AI가 `intent approve`|승인 전\" README.md AGENT.md AGENTS.md CLAUDE.md skills/intent/SKILL.md skills/interview/SKILL.md skills/postmortem/SKILL.md skills/wiki/SKILL.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-57-14-932Z-91404.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:57:14.932Z",
+  "endedAt": "2026-07-15T05:57:14.932Z"
+}

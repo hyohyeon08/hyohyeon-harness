@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-006",
+  "traceId": "TRACE-RUN-003",
+  "runId": "RUN-003",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"사람 승인|사람이 archive|사람이 승인|human-only|수동 governance|수동 승인|승인받\" hyohyeon-harness-최종목표.md; tail -n 150 docs/final-goal-phase-feature-spec.md; sed -n '1,260p' docs/phase/phase-30-autonomous-approval-policy.md",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"사람 승인|사람이 archive|사람이 승인|human-only|수동 governance|수동 승인|승인받\" hyohyeon-harness-최종목표.md; tail -n 150 docs/final-goal-phase-feature-spec.md; sed -n '1,260p' docs/phase/phase-30-autonomous-approval-policy.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-003-2026-07-15T06-02-53-549Z-94300.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:02:53.549Z",
+  "endedAt": "2026-07-15T06:02:53.549Z"
+}

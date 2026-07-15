@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-074",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"human-only|human approval|human-approved|human approved|사람 승인|사람만|사람이|assertHumanShell|approvedBy: ['\\\"]human['\\\"]|by = ['\\\"]human['\\\"]|approvedBy = ['\\\"]human['\\\"]|awaiting human|human must|Human\" src hooks --glob '!dist/**'; rg -n \"\\bhuman\\b\" src hooks --glob '!dist/**'; rg -n \"HUMAN_ONLY_ACTIONS|humanOnlyAction|isIntentCliToken\" src hooks",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"human-only|human approval|human-approved|human approved|사람 승인|사람만|사람이|assertHumanShell|approvedBy: ['\\\"]human['\\\"]|by = ['\\\"]human['\\\"]|approvedBy = ['\\\"]human['\\\"]|awaiting human|human must|Human\" src hooks --glob '!dist/**'; rg -n \"\\bhuman\\b\" src hooks --glob '!dist/**'; rg -n \"HUMAN_ONLY_ACTIONS|humanOnlyAction|isIntentCliToken\" src hooks",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-56-40-609Z-91212.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:56:40.609Z",
+  "endedAt": "2026-07-15T05:56:40.609Z"
+}

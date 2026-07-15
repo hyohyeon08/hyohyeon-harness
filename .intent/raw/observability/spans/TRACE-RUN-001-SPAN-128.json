@@ -1,0 +1,17 @@
+{
+  "spanId": "SPAN-128",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "blocked",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "hyohyeon-harness-최종목표.md",
+    "isNewFile": false,
+    "reason": "[intent gate] change to hyohyeon-harness-최종목표.md is outside the scope of approved intent(s) INT-001 — widen an intent's scope or declare a new one"
+  },
+  "startedAt": "2026-07-15T06:00:12.901Z",
+  "endedAt": "2026-07-15T06:00:12.901Z"
+}

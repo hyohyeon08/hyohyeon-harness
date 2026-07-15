@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-086",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "skills/wiki/SKILL.md",
+    "isNewFile": false,
+    "reason": "non-trivial change covered by approved intent INT-001",
+    "regionStartLine": 94,
+    "regionEndLine": 94,
+    "regionBucket": 4,
+    "regionKey": "skills/wiki/SKILL.md:4"
+  },
+  "startedAt": "2026-07-15T05:57:07.903Z",
+  "endedAt": "2026-07-15T05:57:07.903Z"
+}

@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-013",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "src/runtime/scope.ts",
+    "isNewFile": false,
+    "reason": "non-trivial change covered by approved intent INT-003",
+    "regionStartLine": 42,
+    "regionEndLine": 42,
+    "regionBucket": 2,
+    "regionKey": "src/runtime/scope.ts:2"
+  },
+  "startedAt": "2026-07-15T07:01:08.122Z",
+  "endedAt": "2026-07-15T07:01:08.122Z"
+}

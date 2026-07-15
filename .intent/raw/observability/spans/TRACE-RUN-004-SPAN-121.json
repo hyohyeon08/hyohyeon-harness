@@ -1,0 +1,17 @@
+{
+  "spanId": "SPAN-121",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "docs/final-goal-phase-feature-spec.md",
+    "isNewFile": false,
+    "reason": "non-trivial change covered by approved intent INT-003"
+  },
+  "startedAt": "2026-07-15T07:24:14.816Z",
+  "endedAt": "2026-07-15T07:24:14.816Z"
+}

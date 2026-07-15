@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-002",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js plan draft \"Full autonomous approval policy\" --objective \"Let agents prepare, approve, revise, archive, and resolve governance artifacts without human intervention\" --problem \"Current command guard and CLI reject approval-class actions in AI environments\" --scope \"src/**,hooks/**,tests/**,skills/**,README.md,AGENT.md,AGENTS.md,CLAUDE.md,docs/**,.claude/**,.codex/**\" --step \"Replace human-shell rejection with truthful agent actor provenance\" --step \"Allow all approval, archive, and detection-resolution CLI actions from agent shells\" --step \"Keep CLI-only .intent writes, lineage, immutability, verification, and completion gates\" --step \"Update workflow skills and active documentation\" --check \"typecheck:npm run typecheck\" --check \"unit_test:npm test\" --dod \"Agent approval commands succeed without human intervention\" --dod \"Direct .intent writes remain blocked\" --dod \"Full autonomous feature workflow reaches act and completion\" --risk \"Approval no longer proves human understanding; approved becomes an agent readiness checkpoint\" --risk \"External host permission prompts remain outside repository control\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js plan draft \"Full autonomous approval policy\" --objective \"Let agents prepare, approve, revise, archive, and resolve governance artifacts without human intervention\" --problem \"Current command guard and CLI reject approval-class actions in AI environments\" --scope \"src/**,hooks/**,tests/**,skills/**,README.md,AGENT.md,AGENTS.md,CLAUDE.md,docs/**,.claude/**,.codex/**\" --step \"Replace human-shell rejection with truthful agent actor provenance\" --step \"Allow all approval, archive, and detection-resolution CLI actions from agent shells\" --step \"Keep CLI-only .intent writes, lineage, immutability, verification, and completion gates\" --step \"Update workflow skills and active documentation\" --check \"typecheck:npm run typecheck\" --check \"unit_test:npm test\" --dod \"Agent approval commands succeed without human intervention\" --dod \"Direct .intent writes remain blocked\" --dod \"Full autonomous feature workflow reaches act and completion\" --risk \"Approval no longer proves human understanding; approved becomes an agent readiness checkpoint\" --risk \"External host permission prompts remain outside repository control\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-51-19-577Z-89964.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:51:19.577Z",
+  "endedAt": "2026-07-15T05:51:19.577Z"
+}

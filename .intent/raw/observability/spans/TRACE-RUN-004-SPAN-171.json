@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-171",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js wiki append governance-integrity-hardening \"Adapter compatibility: an absolute Write/Edit payload is accepted only when it resolves inside the repository, then converted to a repository-relative matcher target. Outside-root absolute paths and every explicit parent traversal remain blocked before any target read.\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js wiki append governance-integrity-hardening \"Adapter compatibility: an absolute Write/Edit payload is accepted only when it resolves inside the repository, then converted to a repository-relative matcher target. Outside-root absolute paths and every explicit parent traversal remain blocked before any target read.\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-43-11-194Z-17156.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:43:11.194Z",
+  "endedAt": "2026-07-15T07:43:11.194Z"
+}

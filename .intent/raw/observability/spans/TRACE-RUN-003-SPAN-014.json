@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-014",
+  "traceId": "TRACE-RUN-003",
+  "runId": "RUN-003",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm pack --dry-run --json",
+  "status": "ok",
+  "attributes": {
+    "command": "npm pack --dry-run --json",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-003-2026-07-15T06-03-37-243Z-95126.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:03:37.243Z",
+  "endedAt": "2026-07-15T06:03:37.243Z"
+}

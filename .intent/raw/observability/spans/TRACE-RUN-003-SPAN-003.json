@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-003",
+  "traceId": "TRACE-RUN-003",
+  "runId": "RUN-003",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run intent -- run status-set paused RUN-002",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run intent -- run status-set paused RUN-002",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-003-2026-07-15T06-02-20-462Z-94210.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:02:20.462Z",
+  "endedAt": "2026-07-15T06:02:20.462Z"
+}

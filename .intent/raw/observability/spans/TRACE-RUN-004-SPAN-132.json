@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-132",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "docs/dogfooding-baseline.md",
+    "isNewFile": false,
+    "reason": "non-trivial change covered by approved intent INT-003",
+    "regionStartLine": 22,
+    "regionEndLine": 22,
+    "regionBucket": 1,
+    "regionKey": "docs/dogfooding-baseline.md:1"
+  },
+  "startedAt": "2026-07-15T07:25:44.635Z",
+  "endedAt": "2026-07-15T07:25:44.635Z"
+}

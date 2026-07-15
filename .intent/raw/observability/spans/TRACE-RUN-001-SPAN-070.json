@@ -1,0 +1,21 @@
+{
+  "spanId": "SPAN-070",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "ok",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "src/cli/commands/knowledge.ts",
+    "isNewFile": false,
+    "reason": "non-trivial change covered by approved intent INT-001",
+    "regionStartLine": 120,
+    "regionEndLine": 120,
+    "regionBucket": 5,
+    "regionKey": "src/cli/commands/knowledge.ts:5"
+  },
+  "startedAt": "2026-07-15T05:56:31.391Z",
+  "endedAt": "2026-07-15T05:56:31.391Z"
+}

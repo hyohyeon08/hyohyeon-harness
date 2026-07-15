@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-130",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command npm run intent -- draft \"Autonomous lifecycle product SSOT\" \"Align the root final-goal document with the no-human lifecycle policy\" --type chore --scope hyohyeon-harness-최종목표.md --dod \"Root product SSOT defines agent-run lifecycle transitions with no manual approval\"",
+  "status": "ok",
+  "attributes": {
+    "command": "npm run intent -- draft \"Autonomous lifecycle product SSOT\" \"Align the root final-goal document with the no-human lifecycle policy\" --type chore --scope hyohyeon-harness-최종목표.md --dod \"Root product SSOT defines agent-run lifecycle transitions with no manual approval\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T06-00-55-114Z-93905.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T06:00:55.114Z",
+  "endedAt": "2026-07-15T06:00:55.114Z"
+}

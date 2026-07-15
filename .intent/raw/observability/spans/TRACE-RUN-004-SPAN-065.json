@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-065",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"writeJsonAtomic|withFileLock|latest-runs|rebuildRunIndex\" tests src | head -200",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"writeJsonAtomic|withFileLock|latest-runs|rebuildRunIndex\" tests src | head -200",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-11-14-162Z-7783.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:11:14.162Z",
+  "endedAt": "2026-07-15T07:11:14.162Z"
+}

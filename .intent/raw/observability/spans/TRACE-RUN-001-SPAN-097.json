@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-097",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node --test tests/autonomy-cli.test.mjs tests/command-guard.test.mjs tests/codex-hooks.test.mjs tests/plan-cli.test.mjs tests/contract-cli.test.mjs tests/interview-cli.test.mjs tests/detection-cli.test.mjs tests/run-cli.test.mjs tests/spec.test.mjs tests/intent-gate.test.mjs",
+  "status": "ok",
+  "attributes": {
+    "command": "node --test tests/autonomy-cli.test.mjs tests/command-guard.test.mjs tests/codex-hooks.test.mjs tests/plan-cli.test.mjs tests/contract-cli.test.mjs tests/interview-cli.test.mjs tests/detection-cli.test.mjs tests/run-cli.test.mjs tests/spec.test.mjs tests/intent-gate.test.mjs",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-001-2026-07-15T05-57-32-035Z-91858.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T05:57:32.035Z",
+  "endedAt": "2026-07-15T05:57:32.035Z"
+}

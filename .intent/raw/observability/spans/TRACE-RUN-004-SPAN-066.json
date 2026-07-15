@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-066",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n 'governed Run이 없거나' hyohyeon-harness-최종목표.md",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n 'governed Run이 없거나' hyohyeon-harness-최종목표.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-11-17-302Z-7815.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:11:17.302Z",
+  "endedAt": "2026-07-15T07:11:17.302Z"
+}

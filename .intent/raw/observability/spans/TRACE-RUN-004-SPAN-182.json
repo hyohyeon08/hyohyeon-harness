@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-182",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js check INT-003 \"RUN-1000과 SPAN-1000 이상 observability/eval reference가 보존된다\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js check INT-003 \"RUN-1000과 SPAN-1000 이상 observability/eval reference가 보존된다\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-45-09-324Z-18241.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:45:09.324Z",
+  "endedAt": "2026-07-15T07:45:09.324Z"
+}

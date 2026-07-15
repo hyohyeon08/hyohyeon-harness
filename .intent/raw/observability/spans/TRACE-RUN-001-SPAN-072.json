@@ -1,0 +1,17 @@
+{
+  "spanId": "SPAN-072",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "blocked",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "hyohyeon-harness-최종목표.md",
+    "isNewFile": false,
+    "reason": "[contract gate] CONTRACT-001 blocks hyohyeon-harness-최종목표.md: outside allowedScope (src/**, hooks/**, tests/**, skills/**, README.md, AGENT.md, AGENTS.md, CLAUDE.md, docs/**, .claude/**, .codex/**)"
+  },
+  "startedAt": "2026-07-15T05:56:38.446Z",
+  "endedAt": "2026-07-15T05:56:38.446Z"
+}

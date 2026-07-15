@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-168",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command sed -n '620,650p' hyohyeon-harness-최종목표.md && sed -n '232,278p' hyohyeon-harness-최종목표.md && sed -n '995,1018p' hyohyeon-harness-최종목표.md && sed -n '1086,1105p' hyohyeon-harness-최종목표.md",
+  "status": "ok",
+  "attributes": {
+    "command": "sed -n '620,650p' hyohyeon-harness-최종목표.md && sed -n '232,278p' hyohyeon-harness-최종목표.md && sed -n '995,1018p' hyohyeon-harness-최종목표.md && sed -n '1086,1105p' hyohyeon-harness-최종목표.md",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-42-13-605Z-16950.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:42:13.605Z",
+  "endedAt": "2026-07-15T07:42:13.605Z"
+}

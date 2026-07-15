@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-188",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command node dist/src/cli/index.js learn INT-003 \"Scope containment must be decided before filesystem reads while preserving contained absolute tool payload compatibility; persisted read-transform-write state needs a short cross-process lock; natural-language Contract fields are review metadata until compiled into deterministic rules or required checks.\"",
+  "status": "ok",
+  "attributes": {
+    "command": "node dist/src/cli/index.js learn INT-003 \"Scope containment must be decided before filesystem reads while preserving contained absolute tool payload compatibility; persisted read-transform-write state needs a short cross-process lock; natural-language Contract fields are review metadata until compiled into deterministic rules or required checks.\"",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-45-24-721Z-18304.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:45:24.721Z",
+  "endedAt": "2026-07-15T07:45:24.721Z"
+}

@@ -1,0 +1,19 @@
+{
+  "spanId": "SPAN-041",
+  "traceId": "TRACE-RUN-004",
+  "runId": "RUN-004",
+  "parentSpanId": null,
+  "kind": "run_command",
+  "name": "command rg -n \"tool_name: 'Write'|tool_name: 'Edit'|file_path:\" tests hooks -g '*.mjs' -g '*.ts'",
+  "status": "ok",
+  "attributes": {
+    "command": "rg -n \"tool_name: 'Write'|tool_name: 'Edit'|file_path:\" tests hooks -g '*.mjs' -g '*.ts'",
+    "args": [],
+    "cwd": "/Users/hyohyeon/Desktop/hyohyeon-harness",
+    "exitCode": null,
+    "logPath": ".intent/raw/command-results/RUN-004-2026-07-15T07-09-10-893Z-7317.log",
+    "source": "post-tool-use-bash"
+  },
+  "startedAt": "2026-07-15T07:09:10.893Z",
+  "endedAt": "2026-07-15T07:09:10.893Z"
+}

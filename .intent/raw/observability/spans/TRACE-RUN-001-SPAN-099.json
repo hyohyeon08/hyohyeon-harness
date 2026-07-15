@@ -1,0 +1,17 @@
+{
+  "spanId": "SPAN-099",
+  "traceId": "TRACE-RUN-001",
+  "runId": "RUN-001",
+  "parentSpanId": null,
+  "kind": "apply_patch",
+  "name": "pre-write apply_patch",
+  "status": "blocked",
+  "attributes": {
+    "tool": "apply_patch",
+    "path": "docs/final-goal-gap-analysis.md",
+    "isNewFile": false,
+    "reason": "[execution governance] RUN-001 is in phase contract; feature/fix writes require act or verify"
+  },
+  "startedAt": "2026-07-15T05:57:34.927Z",
+  "endedAt": "2026-07-15T05:57:34.927Z"
+}
