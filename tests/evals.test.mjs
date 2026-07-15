@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { existsSync, mkdtempSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createDetection } from '../dist/src/runtime/detections.js'
@@ -150,4 +150,38 @@ test('thrashing eval replays span fixtures instead of trusting the source detect
   const failed = runEvalCase(root, evalCase.evalId)
   assert.equal(failed.status, 'failed')
   assert.match(failed.reason, /did not reproduce/)
+})
+
+test('thrashing eval captures RUN-1000 and SPAN-1000 evidence references', () => {
+  const root = tempRoot()
+  const now = new Date().toISOString()
+  mkdirSync(paths(root).spanDir, { recursive: true })
+  writeFileSync(
+    join(paths(root).spanDir, 'TRACE-RUN-1000-SPAN-1000.json'),
+    JSON.stringify({
+      spanId: 'SPAN-1000',
+      traceId: 'TRACE-RUN-1000',
+      runId: 'RUN-1000',
+      kind: 'run_command',
+      name: 'command npm test',
+      status: 'error',
+      attributes: { command: 'npm test', args: [], exitCode: 1 },
+      startedAt: now,
+      endedAt: now,
+    }, null, 2) + '\n',
+  )
+  const detection = createDetection(root, {
+    type: 'thrashing',
+    runId: 'RUN-1000',
+    title: 'Repeated command failure',
+    summary: 'The same command failed at the four-digit ID boundary.',
+    evidenceRefs: ['span:RUN-1000:SPAN-1000'],
+    attributes: { count: 1, command: 'npm test', exitCode: 1 },
+  })
+
+  const evalCase = draftEvalCaseFromDetection(root, detection.detectionId)
+
+  assert.equal(evalCase.input.spans.length, 1)
+  assert.equal(evalCase.input.spans[0].runId, 'RUN-1000')
+  assert.equal(evalCase.input.spans[0].spanId, 'SPAN-1000')
 })

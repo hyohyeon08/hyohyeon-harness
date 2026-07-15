@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { matchesScope } from '../dist/src/runtime/scope.js'
+import { isRepositoryRelativePath, matchesScope } from '../dist/src/runtime/scope.js'
 
 test('** matches anything', () => {
   assert.equal(matchesScope('src/anywhere/deep/file.ts', ['**']), true)
@@ -31,4 +31,17 @@ test('windows backslash paths are normalized', () => {
 
 test('any of multiple patterns matches', () => {
   assert.equal(matchesScope('src/stock/x.ts', ['src/order/**', 'src/stock/**']), true)
+})
+
+test('broad scope never matches a path outside the repository root', () => {
+  for (const path of ['../outside.txt', 'src/../../outside.txt', '/tmp/outside.txt', 'C:\\outside.txt', '\\\\server\\share\\outside.txt']) {
+    assert.equal(isRepositoryRelativePath(path), false, path)
+    assert.equal(matchesScope(path, ['**']), false, path)
+  }
+})
+
+test('unsafe scope patterns never authorize a repository path', () => {
+  assert.equal(matchesScope('src/app.ts', ['../**']), false)
+  assert.equal(matchesScope('src/app.ts', ['/src/**']), false)
+  assert.equal(matchesScope('src/app.ts', ['C:\\src\\**']), false)
 })

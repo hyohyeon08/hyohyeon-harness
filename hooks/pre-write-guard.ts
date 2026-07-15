@@ -7,7 +7,7 @@
  * write through.
  */
 import { existsSync, readFileSync } from 'node:fs'
-import { resolve, relative } from 'node:path'
+import { isAbsolute, relative, resolve } from 'node:path'
 import { readStdinJson } from './_stdin.js'
 import { extractChange, type RawEdit } from '../src/runtime/change-extract.js'
 import { extractApplyPatchEdits } from '../src/runtime/apply-patch.js'
@@ -20,7 +20,7 @@ import { tryAppendSpanToActiveRun } from '../src/runtime/observability.js'
 import { locateEditRegion } from '../src/runtime/edit-region.js'
 import { rootOf, isIntentProject } from './_env.js'
 import { activeRun, RunStateError } from '../src/runtime/runs.js'
-import { matchesScope } from '../src/runtime/scope.js'
+import { isRepositoryRelativePath, matchesScope } from '../src/runtime/scope.js'
 import { checkExecutionGovernance } from '../src/runtime/execution-governance.js'
 
 function deny(reason: string): void {
@@ -62,20 +62,18 @@ function patchText(payload: Record<string, any>, input: Record<string, any>): st
   )
 }
 
-function editsFromPayload(root: string, payload: Record<string, any>): RawEdit[] {
+function editsFromPayload(payload: Record<string, any>): RawEdit[] {
   const tool = toolName(payload)
   const input = toolInput(payload)
   const path: string | undefined = input.file_path ?? input.filePath ?? input.path
 
   if (tool === 'Write' && path) {
-    const target = resolve(root, path)
-    const isNewFile = !existsSync(target)
     return [
       {
-        path: relative(root, target) || path,
+        path,
         newText: input.content ?? '',
-        oldText: isNewFile ? '' : readFileSync(target, 'utf8'),
-        isNewFile,
+        oldText: '',
+        isNewFile: false,
       },
     ]
   }
@@ -83,7 +81,7 @@ function editsFromPayload(root: string, payload: Record<string, any>): RawEdit[]
   if (tool === 'Edit' && path) {
     return [
       {
-        path: relative(root, resolve(root, path)) || path,
+        path,
         newText: input.new_string ?? input.newString ?? '',
         oldText: input.old_string ?? input.oldString ?? '',
         isNewFile: false,
@@ -99,10 +97,32 @@ function editsFromPayload(root: string, payload: Record<string, any>): RawEdit[]
   return []
 }
 
-function recordEditSpan(root: string, tool: string, edit: RawEdit, status: 'ok' | 'blocked', reason: string): void {
+function materializeRepositoryEdit(root: string, tool: string, edit: RawEdit): RawEdit {
+  if (tool !== 'Write') return edit
   const target = resolve(root, edit.path)
-  const content = existsSync(target) ? readFileSync(target, 'utf8') : ''
-  const region = locateEditRegion(content, edit)
+  const isNewFile = !existsSync(target)
+  return {
+    ...edit,
+    oldText: isNewFile ? '' : readFileSync(target, 'utf8'),
+    isNewFile,
+  }
+}
+
+function normalizeRepositoryEditPath(root: string, edit: RawEdit): RawEdit | null {
+  const normalizedInput = edit.path.replace(/\\/g, '/')
+  if (normalizedInput.split('/').includes('..')) return null
+  if (!isAbsolute(normalizedInput)) {
+    return isRepositoryRelativePath(normalizedInput) ? { ...edit, path: normalizedInput } : null
+  }
+  const candidate = relative(root, resolve(normalizedInput)).replace(/\\/g, '/')
+  return isRepositoryRelativePath(candidate) ? { ...edit, path: candidate } : null
+}
+
+function recordEditSpan(root: string, tool: string, edit: RawEdit, status: 'ok' | 'blocked', reason: string): void {
+  const contained = isRepositoryRelativePath(edit.path)
+  const target = contained ? resolve(root, edit.path) : null
+  const content = target && existsSync(target) ? readFileSync(target, 'utf8') : ''
+  const region = contained ? locateEditRegion(content, edit) : null
   tryAppendSpanToActiveRun(root, {
     kind: tool.includes('apply_patch') ? 'apply_patch' : 'edit',
     name: `pre-write ${tool || 'write'}`,
@@ -121,8 +141,8 @@ async function main(): Promise<void> {
   const payload = await readStdinJson()
   const root = rootOf(payload)
   if (!isIntentProject(root)) return // not an intent project → no-op (safe global install)
-  const edits = editsFromPayload(root, payload)
-  if (edits.length === 0) return // not ours -> allow
+  const rawEdits = editsFromPayload(payload)
+  if (rawEdits.length === 0) return // not ours -> allow
 
   const tool = toolName(payload)
   let rules
@@ -153,11 +173,20 @@ async function main(): Promise<void> {
     deny(`[contract state] ${error.message}. Repair the state before editing.`)
     return
   }
-  for (const edit of edits) {
-    // anti-cheat: .intent/ is human-only — the AI must use the `intent` CLI.
+  for (const rawEdit of rawEdits) {
+    const normalizedEdit = normalizeRepositoryEditPath(root, rawEdit)
+    if (!normalizedEdit) {
+      const reason = `[root containment] ${rawEdit.path} does not resolve to a repository-contained path; parent traversal and outside-root absolute paths are forbidden`
+      recordEditSpan(root, tool, rawEdit, 'blocked', reason)
+      deny(reason)
+      return
+    }
+    const edit = materializeRepositoryEdit(root, tool, normalizedEdit)
+
+    // anti-cheat: .intent/ is CLI-only — the agent must use the `intent` CLI.
     if (isProtectedPath(edit.path, root)) {
       const reason =
-        '[intent guard] .intent/ is human-only state. Use the `intent` CLI ' +
+        '[intent guard] .intent/ is protected CLI-only state. Use the `intent` CLI ' +
         '(e.g. `intent approve <id>`), do not edit state files directly.'
       recordEditSpan(root, tool, edit, 'blocked', reason)
       deny(reason)

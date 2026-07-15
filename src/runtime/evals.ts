@@ -132,7 +132,7 @@ function expectedForDetection(detection: DetectionRecord): Record<string, unknow
 function detectionSpans(root: string, detection: DetectionRecord): Span[] {
   if (!detection.runId) return []
   const spanIds = new Set(detection.evidenceRefs
-    .map((ref) => ref.match(/^span:[^:]+:(SPAN-\d{3})$/)?.[1])
+    .map((ref) => ref.match(/^span:[^:]+:(SPAN-\d{3,})$/)?.[1])
     .filter((spanId): spanId is string => !!spanId))
   if (spanIds.size === 0) return []
   return listSpans(root, detection.runId).filter((span) => spanIds.has(span.spanId))

@@ -1,9 +1,10 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { existsSync, mkdtempSync, readFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import {
+  appendSpanToRun,
   appendSpanToActiveRun,
   listSpans,
   tryAppendSpanToActiveRun,
@@ -144,4 +145,47 @@ test('tryAppendSpanToActiveRun is failure-safe when no active run exists', () =>
   const root = tempRoot()
 
   assert.equal(tryAppendSpanToActiveRun(root, { kind: 'hook', name: 'ignored' }), null)
+})
+
+test('RUN-1000 and SPAN-1000 observation files remain loadable and numerically sorted', () => {
+  const root = tempRoot()
+  const seed = createRun(root, { objective: 'seed high ids' })
+  const highRun = { ...seed, runId: 'RUN-1000', objective: 'high id run' }
+  writeFileSync(join(root, '.intent', 'runs', 'RUN-1000.json'), JSON.stringify(highRun, null, 2) + '\n')
+
+  const spanIds = Array.from({ length: 999 }, (_, index) => `SPAN-${String(index + 1).padStart(3, '0')}`)
+  const now = new Date().toISOString()
+  mkdirSync(join(root, '.intent', 'raw', 'observability', 'traces'), { recursive: true })
+  mkdirSync(join(root, '.intent', 'raw', 'observability', 'spans'), { recursive: true })
+  writeFileSync(
+    join(root, '.intent', 'raw', 'observability', 'traces', 'TRACE-RUN-1000.json'),
+    JSON.stringify({
+      traceId: 'TRACE-RUN-1000',
+      runId: 'RUN-1000',
+      rootSpanId: 'SPAN-001',
+      spanIds,
+      createdAt: now,
+      updatedAt: now,
+    }, null, 2) + '\n',
+  )
+  writeFileSync(
+    join(root, '.intent', 'raw', 'observability', 'spans', 'TRACE-RUN-1000-SPAN-999.json'),
+    JSON.stringify({
+      spanId: 'SPAN-999',
+      traceId: 'TRACE-RUN-1000',
+      runId: 'RUN-1000',
+      kind: 'hook',
+      name: 'previous span',
+      status: 'ok',
+      attributes: {},
+      startedAt: now,
+      endedAt: now,
+    }, null, 2) + '\n',
+  )
+
+  const thousandth = appendSpanToRun(root, 'RUN-1000', { kind: 'hook', name: 'thousandth span' })
+  const spans = listSpans(root, 'RUN-1000')
+
+  assert.equal(thousandth.spanId, 'SPAN-1000')
+  assert.deepEqual(spans.map((span) => span.spanId), ['SPAN-999', 'SPAN-1000'])
 })

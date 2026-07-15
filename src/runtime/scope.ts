@@ -13,6 +13,18 @@ function normalize(p: string): string {
   return p.replace(/\\/g, '/')
 }
 
+/**
+ * A governed path must identify a location below the repository root.
+ * Absolute paths, drive-qualified paths, and parent traversal are never valid
+ * scope targets even when a broad glob such as `**` would otherwise match.
+ */
+export function isRepositoryRelativePath(path: string): boolean {
+  const target = normalize(path)
+  if (target.length === 0 || target.includes('\0')) return false
+  if (target.startsWith('/') || /^[A-Za-z]:/.test(target)) return false
+  return !target.split('/').includes('..')
+}
+
 function globToRegExp(pattern: string): RegExp {
   const p = normalize(pattern)
   let re = ''
@@ -39,5 +51,6 @@ function globToRegExp(pattern: string): RegExp {
 /** True if `path` is covered by at least one of the scope `patterns`. */
 export function matchesScope(path: string, patterns: readonly string[]): boolean {
   const target = normalize(path)
-  return patterns.some((pat) => globToRegExp(pat).test(target))
+  if (!isRepositoryRelativePath(target)) return false
+  return patterns.some((pat) => isRepositoryRelativePath(pat) && globToRegExp(pat).test(target))
 }

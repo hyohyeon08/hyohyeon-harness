@@ -1,7 +1,8 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { paths } from '../state/paths.js'
-import { readJson, writeJsonAtomic } from '../utils/json.js'
+import { readJson, withFileLock, writeJsonAtomic, writeJsonAtomicNew } from '../utils/json.js'
+import { compareSequentialIds, nextSequentialId } from '../utils/id.js'
 import { activeRun, findRun } from './runs.js'
 import {
   SpanSchema,
@@ -35,7 +36,7 @@ function spanFile(root: string, traceId: string, spanId: string): string {
 }
 
 function isSpanFile(name: string): boolean {
-  return /^TRACE-RUN-\d{3}-SPAN-\d{3}\.json$/.test(name)
+  return /^TRACE-RUN-\d{3,}-SPAN-\d{3,}\.json$/.test(name)
 }
 
 function loadTrace(root: string, runId: string): Trace {
@@ -52,36 +53,41 @@ function loadTrace(root: string, runId: string): Trace {
 }
 
 function nextSpanId(trace: Trace): string {
-  return `SPAN-${String(trace.spanIds.length + 1).padStart(3, '0')}`
+  return nextSequentialId('SPAN', trace.spanIds)
 }
 
 export function appendSpanToRun(root: string, runId: string, args: AppendSpanArgs): Span {
   const run = findRun(root, runId)
   if (!run) throw new Error(`no such run: ${runId}`)
 
-  const trace = loadTrace(root, run.runId)
-  const now = new Date().toISOString()
-  const span = SpanSchema.parse({
-    spanId: nextSpanId(trace),
-    traceId: trace.traceId,
-    runId: run.runId,
-    parentSpanId: args.parentSpanId ?? null,
-    kind: args.kind,
-    name: args.name,
-    status: args.status ?? 'ok',
-    attributes: args.attributes ?? {},
-    startedAt: args.startedAt ?? now,
-    endedAt: args.endedAt ?? now,
+  const file = traceFile(root, traceIdForRun(run.runId))
+  return withFileLock(file, () => {
+    const trace = loadTrace(root, run.runId)
+    const now = new Date().toISOString()
+    const span = SpanSchema.parse({
+      spanId: nextSpanId(trace),
+      traceId: trace.traceId,
+      runId: run.runId,
+      parentSpanId: args.parentSpanId ?? null,
+      kind: args.kind,
+      name: args.name,
+      status: args.status ?? 'ok',
+      attributes: args.attributes ?? {},
+      startedAt: args.startedAt ?? now,
+      endedAt: args.endedAt ?? now,
+    })
+    const updatedTrace = TraceSchema.parse({
+      ...trace,
+      rootSpanId: trace.rootSpanId ?? span.spanId,
+      spanIds: [...trace.spanIds, span.spanId],
+      updatedAt: now,
+    })
+    if (!writeJsonAtomicNew(spanFile(root, span.traceId, span.spanId), span)) {
+      throw new Error(`span already exists: ${span.traceId}/${span.spanId}`)
+    }
+    writeJsonAtomic(file, updatedTrace)
+    return span
   })
-  const updatedTrace = TraceSchema.parse({
-    ...trace,
-    rootSpanId: trace.rootSpanId ?? span.spanId,
-    spanIds: [...trace.spanIds, span.spanId],
-    updatedAt: now,
-  })
-  writeJsonAtomic(spanFile(root, span.traceId, span.spanId), span)
-  writeJsonAtomic(traceFile(root, span.traceId), updatedTrace)
-  return span
 }
 
 export function appendSpanToActiveRun(root: string, args: AppendSpanArgs): Span {
@@ -115,5 +121,5 @@ export function listSpans(root: string, runId?: string): Span[] {
     const parsed = SpanSchema.safeParse(readJson(join(dir, f)))
     if (parsed.success && (!runId || parsed.data.runId === runId)) out.push(parsed.data)
   }
-  return out.sort((a, b) => a.runId.localeCompare(b.runId) || a.spanId.localeCompare(b.spanId))
+  return out.sort((a, b) => compareSequentialIds(a.runId, b.runId) || compareSequentialIds(a.spanId, b.spanId))
 }

@@ -1,7 +1,7 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { paths } from '../state/paths.js'
-import { readJson, writeJsonAtomic, writeJsonAtomicNew } from '../utils/json.js'
+import { readJson, withFileLock, writeJsonAtomic, writeJsonAtomicNew } from '../utils/json.js'
 import { compareSequentialIds, nextSequentialId } from '../utils/id.js'
 import {
   RunIndexSchema,
@@ -60,10 +60,14 @@ export function loadRunIndex(root: string): RunIndex {
   return parsed.data
 }
 
-function writeRunIndex(root: string, index: RunIndex): RunIndex {
+function writeRunIndexUnlocked(root: string, index: RunIndex): RunIndex {
   const parsed = RunIndexSchema.parse(index)
   writeJsonAtomic(paths(root).runsLatest, parsed)
   return parsed
+}
+
+function updateRunIndex(root: string, fn: (index: RunIndex) => RunIndex): RunIndex {
+  return withFileLock(paths(root).runsLatest, () => writeRunIndexUnlocked(root, fn(loadRunIndex(root))))
 }
 
 function compareRunRecency(left: RunState, right: RunState): number {
@@ -84,7 +88,10 @@ export function deriveRunIndex(runs: RunState[]): RunIndex {
 }
 
 export function rebuildRunIndex(root: string): RunIndex {
-  return writeRunIndex(root, deriveRunIndex(loadRuns(root)))
+  return withFileLock(
+    paths(root).runsLatest,
+    () => writeRunIndexUnlocked(root, deriveRunIndex(loadRuns(root))),
+  )
 }
 
 function withRecentRun(index: RunIndex, run: RunState): RunIndex {
@@ -148,7 +155,7 @@ export function createRun(root: string, args: CreateRunArgs): RunState {
       updatedAt: now,
     })
     if (!writeJsonAtomicNew(runFile(root, run.runId), run)) continue
-    writeRunIndex(root, withRecentRun(loadRunIndex(root), run))
+    updateRunIndex(root, (index) => withRecentRun(index, run))
     return run
   }
 }
@@ -168,12 +175,15 @@ export function findRun(root: string, id: string): RunState | null {
 
 /** Load, validate, transform, and atomically write one run. */
 export function updateRun(root: string, id: string, fn: (run: RunState) => RunState): RunState {
-  const existing = findRun(root, id)
-  if (!existing) throw new Error(`no such run: ${id}`)
-  const updated = RunStateSchema.parse({ ...fn(existing), updatedAt: refreshedTimestamp(existing.updatedAt) })
-  writeJsonAtomic(runFile(root, id), updated)
-  writeRunIndex(root, withRecentRun(loadRunIndex(root), updated))
-  return updated
+  const file = runFile(root, id)
+  return withFileLock(file, () => {
+    const existing = findRun(root, id)
+    if (!existing) throw new Error(`no such run: ${id}`)
+    const updated = RunStateSchema.parse({ ...fn(existing), updatedAt: refreshedTimestamp(existing.updatedAt) })
+    writeJsonAtomic(file, updated)
+    updateRunIndex(root, (index) => withRecentRun(index, updated))
+    return updated
+  })
 }
 
 export function appendRunEvidence(root: string, id: string, evidence: VerificationEvidence): RunState {

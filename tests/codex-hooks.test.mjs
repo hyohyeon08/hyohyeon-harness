@@ -20,13 +20,10 @@ function runCli(project, args) {
   return result
 }
 
-function runHumanCli(project, args) {
+function runAgentCli(project, args) {
   const cli = join(process.cwd(), 'dist', 'src', 'cli', 'index.js')
-  const env = { ...process.env }
+  const env = { ...process.env, CODEX_THREAD_ID: 'agent-thread' }
   delete env.CLAUDECODE
-  delete env.CODEX_THREAD_ID
-  delete env.CODEX_SHELL
-  delete env.CODEX_INTERNAL_ORIGINATOR_OVERRIDE
   const result = spawnSync(process.execPath, [cli, ...args], { cwd: project, encoding: 'utf8', env })
   assert.equal(result.status, 0, result.stderr)
   return result
@@ -68,6 +65,64 @@ test('Codex apply_patch payload is blocked without an approved intent', () => {
   assert.equal(output.decision, 'block')
   assert.equal(output.hookSpecificOutput.permissionDecision, 'deny')
   assert.match(output.reason, /approved intent/)
+})
+
+test('Codex write hook blocks parent traversal and absolute apply_patch paths before scope evaluation', () => {
+  const project = setupProject()
+  runCli(project, ['draft', 'Broad scope', 'prove repository containment', '--type', 'chore', '--scope', '**'])
+  runAgentCli(project, ['approve', 'INT-001'])
+
+  for (const path of ['../outside.ts', '/tmp/outside.ts']) {
+    const result = runHook('pre-write-guard.js', {
+      cwd: project,
+      tool_name: 'apply_patch',
+      tool_input: {
+        patch: `*** Begin Patch\n*** Add File: ${path}\n+export const escaped = true\n*** End Patch`,
+      },
+    })
+
+    assert.equal(result.status, 0, result.stderr)
+    const output = JSON.parse(result.stdout)
+    assert.equal(output.decision, 'block')
+    assert.match(output.reason, /\[root containment\]/)
+    assert.match(output.reason, /repository-contained path/)
+  }
+})
+
+test('Codex Write payload outside cwd is blocked even when the edit is trivial', () => {
+  const project = setupProject()
+  for (const path of ['../outside.md', join(project, '..', 'outside.md')]) {
+    const result = runHook('pre-write-guard.js', {
+      cwd: project,
+      tool_name: 'Write',
+      tool_input: {
+        file_path: path,
+        content: '# comment only',
+      },
+    })
+
+    assert.equal(result.status, 0, result.stderr)
+    const output = JSON.parse(result.stdout)
+    assert.equal(output.decision, 'block')
+    assert.match(output.reason, /\[root containment\]/)
+  }
+})
+
+test('Codex Write normalizes an absolute path inside cwd before scope evaluation', () => {
+  const project = setupProject()
+  const file = join(project, 'notes.md')
+  writeFileSync(file, '# existing comment\n', 'utf8')
+  const result = runHook('pre-write-guard.js', {
+    cwd: project,
+    tool_name: 'Write',
+    tool_input: {
+      file_path: file,
+      content: '# updated comment',
+    },
+  })
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(result.stdout, '')
 })
 
 test('Codex SessionStart receives structured additional context', () => {
@@ -225,20 +280,31 @@ test('Codex PostToolUse Bash hook records an observed run_command span', () => {
   assert.equal(span.attributes.exitCode, 1)
 })
 
-test('Codex PreToolUse Bash hook blocks approval and direct intent-state writes', () => {
+test('Codex PreToolUse Bash hook allows autonomous governance commands but blocks direct intent-state writes', () => {
   const project = setupProject()
-  const approval = runHook('pre-command-guard.js', {
-    cwd: project,
-    hook_event_name: 'PreToolUse',
-    tool_name: 'Bash',
-    tool_input: {
-      command: 'env -u CODEX_THREAD_ID -u CODEX_SHELL intent approve INT-001',
-    },
-  })
+  const commands = [
+    'intent approve INT-001',
+    'intent rule approve RULE-001',
+    'intent spec approve spec-checkout',
+    'intent interview approve INTERVIEW-001',
+    'intent interview archive INTERVIEW-001',
+    'intent plan approve PLAN-001',
+    'intent plan archive PLAN-001',
+    'intent contract approve CONTRACT-001',
+    'intent contract archive CONTRACT-001',
+    'intent detection resolve DET-001 dismissed "false positive"',
+  ]
 
-  assert.equal(approval.status, 0, approval.stderr)
-  assert.equal(JSON.parse(approval.stdout).decision, 'block')
-  assert.match(JSON.parse(approval.stdout).reason, /human-only approval/)
+  for (const command of commands) {
+    const result = runHook('pre-command-guard.js', {
+      cwd: project,
+      hook_event_name: 'PreToolUse',
+      tool_name: 'Bash',
+      tool_input: { command },
+    })
+    assert.equal(result.status, 0, result.stderr)
+    assert.equal(result.stdout, '', command)
+  }
 
   const directWrite = runHook('pre-command-guard.js', {
     cwd: project,
@@ -362,7 +428,7 @@ test('Codex write and Stop hooks fail closed on corrupt Run state', () => {
 test('Codex non-trivial feature write requires approved execution governance', () => {
   const project = setupProject()
   runCli(project, ['draft', 'Execution governance', 'require approved contract', '--type', 'feature', '--scope', 'src/**'])
-  approveIntentFixture(project)
+  runAgentCli(project, ['approve', 'INT-001'])
   runCli(project, ['run', 'start', 'INT-001', 'Guard feature writes'])
 
   const payload = {
@@ -380,11 +446,24 @@ test('Codex non-trivial feature write requires approved execution governance', (
   assert.match(JSON.parse(before.stdout).reason, /\[execution governance\].*phase plan/)
 
   runCli(project, ['plan', 'draft', 'Governed execution plan'])
-  runHumanCli(project, ['plan', 'approve', 'PLAN-001'])
+  runAgentCli(project, ['plan', 'approve', 'PLAN-001'])
   runCli(project, ['run', 'phase', 'contract'])
   runCli(project, ['contract', 'draft'])
-  runHumanCli(project, ['contract', 'approve', 'CONTRACT-001'])
+  runAgentCli(project, ['contract', 'approve', 'CONTRACT-001'])
   runCli(project, ['run', 'phase', 'act'])
+
+  assert.equal(
+    JSON.parse(readFileSync(join(project, '.intent', 'intents', 'INT-001.json'), 'utf8')).approvedBy,
+    'agent:codex',
+  )
+  assert.equal(
+    JSON.parse(readFileSync(join(project, '.intent', 'plans', 'PLAN-001.json'), 'utf8')).approvedBy,
+    'agent:codex',
+  )
+  assert.equal(
+    JSON.parse(readFileSync(join(project, '.intent', 'contracts', 'CONTRACT-001.json'), 'utf8')).approvedBy,
+    'agent:codex',
+  )
 
   const after = runHook('pre-write-guard.js', payload)
   assert.equal(after.status, 0, after.stderr)
